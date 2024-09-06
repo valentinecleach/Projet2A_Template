@@ -1,14 +1,14 @@
-# How to install the app 
+# How to install the app
 
 Make sure you have pdm installed (globally or for the current user)
 
 `> pip install --user pdm`
 
-Then run 
+Then run
 
-`> pdm install`
+`> python -m pdm install`
 
-# How to run the app 
+# How to run the app
 
 ```> pdm start```
 
