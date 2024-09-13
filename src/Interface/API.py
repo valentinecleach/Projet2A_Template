@@ -26,3 +26,5 @@ def run_app(movie_service: MovieService):
             raise HTTPException(status_code=400, detail="Invalid request") from Exception
 
     uvicorn.run(app, port=8000, host="localhost")
+
+# la clé API : fb0e5ded3d79bc5e571538030f7e5af8
