@@ -30,5 +30,3 @@ def run_app(movie_service: MovieService):
 
 # la clé API : fb0e5ded3d79bc5e571538030f7e5af8
 # le token : eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmYjBlNWRlZDNkNzliYzVlNTcxNTM4MDMwZjdlNWFmOCIsIm5iZiI6MTcyNjY2ODg3MS44OTQ2MjMsInN1YiI6IjY2ZTBhYmMyOWM3MzUzMmRkYmFhYWY0NyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.cZ0F3epj5FCX4MRlrqSAIdzErJP98tU9ZlfNHkrfUw0
-
-
