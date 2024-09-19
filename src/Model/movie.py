@@ -2,8 +2,8 @@ from pydantic import BaseModel
 from rating import Rating
 
 
-class Film(BaseModel):
-    """Film
+class Movie(BaseModel):
+    """Movie
 
     A series of moving pictures, usually shown in a cinema or on television and
     often telling a story

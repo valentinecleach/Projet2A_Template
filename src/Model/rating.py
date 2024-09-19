@@ -4,7 +4,7 @@ from user import User
 class Rating:
     """Rating
 
-    The rating of a film. A user can rate a film ou of ?? stars if they liked
+    The rating of a movie. A user can rate a movie ou of ?? stars if they liked
     it.
 
     Parameters
@@ -13,7 +13,7 @@ class Rating:
         The average rating
 
     who_rated : list[Users]
-        The list of people who have rated the film
+        The list of people who have rated the movie
 
     Examples:
     --------
@@ -25,7 +25,7 @@ class Rating:
 
     def nb_ratings(self) -> int:
         """
-        The number of users who have rated the film
+        The number of users who have rated the movie
 
         Returns
         -------
@@ -35,5 +35,5 @@ class Rating:
 
     def update_rating(self, user: User, new_rating: Rating):
         if User in self.who_rated:
-            raise ValueError("You cannot rate the film twice")
+            raise ValueError("You cannot rate the movie twice")
         # pb one cannot change their rating
