@@ -1,10 +1,12 @@
 from pydantic import BaseModel
+from rating import Rating
 
 
-class Movie(BaseModel):
-    """Movie
+class Film(BaseModel):
+    """Film
 
-    A movie is a ...
+    A series of moving pictures, usually shown in a cinema or on television and
+    often telling a story
 
     Parameters:
     -----------
@@ -30,7 +32,7 @@ class Movie(BaseModel):
 
     """
 
-    def __init(self, id, title, release_date, country, genre, plot, budget):
+    def __init(self, id, title, release_date, country, genre, plot, budget, rating):
         self.id = id
         self.title = title
         if isinstance(release_date, str) is False:
@@ -43,3 +45,4 @@ class Movie(BaseModel):
         self.genre = genre
         self.plot = plot
         self.budget = budget
+        self.rating = rating
