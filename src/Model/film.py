@@ -32,7 +32,15 @@ class Film(BaseModel):
 
     """
 
-    def __init(self, id, title, release_date, country, genre, plot, budget, rating):
+    def __init(self,
+               id,
+               title,
+               release_date,
+               country,
+               genre,
+               plot,
+               budget,
+               rating):
         self.id = id
         self.title = title
         if isinstance(release_date, str) is False:
@@ -45,4 +53,6 @@ class Film(BaseModel):
         self.genre = genre
         self.plot = plot
         self.budget = budget
+        if not isinstance(rating, Rating):
+            raise TypeError("rating must be a rating")
         self.rating = rating
