@@ -35,21 +35,39 @@ class ConnectedUser{
  }
 }
 class Movie{
-    +title : str  
-    +release_date : str 
-    +country : str
-    +duration : int
-    +genre : str
-    +plot : str
-    +budget :  float
-    +rating : MovieRating
-    +filmmaker : list[MovieMaker]
+    +adult : bool = false
+    +belongs_o_collection : dict
+    +budget : float
+    +genre : list[dict]
+    +id : int
+    +imdb_id : str
+    +origine_country : list
+    +original_language : str
+    +original_title : str
+    +title : str
+    +overview : str
+    +popularity : float
+    +release_date : str
+    +revenue : int
+    +runtime : int
+    +vote_average : float
+    +vote_count : int
+    +tagline : str
+    +status : str
+    
  }
 class MovieMaker{
+    +id : int
+    +imdb_id : str
+    +adult : bool = false
     +name : str
-    +date_of_birth : str
-    +country : str
-    +type : str
+    +biography : str
+    +birthday : str
+    +place_of_birth : str
+    +deathday : str
+    +known_for_department : str
+    +popularity : float
+    +known_for : list[Movie]
  }
 class MovieRating{
     +name : str
