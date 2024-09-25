@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-```plantuml  
-=======
 ```plantuml
 
->>>>>>> fa52feb3fa5a73dbc0211831548393bf978c2bc8
 @startuml
 left to right direction
 

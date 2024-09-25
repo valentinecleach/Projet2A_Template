@@ -1,7 +1,11 @@
-%% code à excécuter sur https://mermaid.js.org/syntax/classDiagram.html#syntax
----
+<!-- code à excécuter sur https://mermaid.js.org/syntax/classDiagram.html#syntax -->
+<!--  pour mettre un commentaire dans un fichier .md-->
+<!-- installer extension Markdown Preview Mermaid Support pour prévisualisation sur Vscode -->
+
 title: Cine & Films
 ---
+
+```mermaid
 classDiagram
 namespace Users {
 class NonConnectedUser{
