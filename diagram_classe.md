@@ -31,12 +31,12 @@ class ConnectedUser{
    +rate(film : Film, rating : int)
    +add_comment(film : Film, comment : str)
    +log_out()
-   +delete_account()    
+   +delete_account()
  }
 }
 class Movie{
     +adult : bool = false
-    +belongs_o_collection : dict
+    +belongs_to_collection : dict
     +budget : float
     +genre : list[dict]
     +id : int
@@ -54,7 +54,7 @@ class Movie{
     +vote_count : int
     +tagline : str
     +status : str
-    
+
  }
 class MovieMaker{
     +id : int
@@ -84,6 +84,3 @@ MovieRating --o Movie
 Rating_Comment --o MovieRating
 MovieMaker "*" --* "*" Movie
 ConnectedUser --|> NonConnectedUser : Extends
-
-
-
