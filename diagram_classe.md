@@ -2,45 +2,44 @@
 <!--  pour mettre un commentaire dans un fichier .md-->
 <!-- installer extension Markdown Preview Mermaid Support pour prévisualisation sur Vscode -->
 
-title: Cine & Films
----
 
 ```mermaid
+---
+title: Cine & Films
+---
 classDiagram
-namespace Users {
-class NonConnectedUser{
-    +sign_up(): ConnectedUser:
-    +search_film(film : str)
-    +log_in(id : str, password : str)
-    +search_user(user : str)
- }
 
+namespace Users {
 class ConnectedUser{
+    +id_user : int
     +name : str
     +phone_number : str
     +email_address : str
-    +date_of_birth : str
+    +birthday : str
     +password : str
-    +id : str
-    +film_collection : list
-    +scout_list : list
 
    +follow(user : User)
    +unfollow(user : User)
    +add_film(film : Film)
-   +rate(film : Film, rating : Rating_Comment)
-   +add_comment(film : Film, comment : Rating_Comment)
+   +rate(film : Film, rating : int)
+   +add_comment(film : Film, comment : str)
    +log_out()
    +delete_account()
  }
+class NonConnectedUser{
+    +sign_up(): ConnectedUser:
+    +search_movie(movie : str)
+    +log_in(id : str, password : str)
+    +search_user(user : str)
+ }
 }
 class Movie{
-    +id : int
+    +id_movie : int
     +title : str
     +adult : bool = false
     +belongs_to_collection : dict
     +budget : float
-    +genre : list[dict]
+    +genre : list[Genre]
     +origine_country : list
     +original_language : str
     +original_title : str
@@ -55,8 +54,12 @@ class Movie{
     +status : str
 
  }
-class MovieMaker{
+ class Genre{
     +id : int
+    +genre_name : str
+ }
+class MovieMaker{
+    +id_maker : int
     +imdb_id : str
     +adult : bool = false
     +name : str
@@ -66,20 +69,26 @@ class MovieMaker{
     +deathday : str
     +known_for_department : str
     +popularity : float
-    +known_for : list[Movie]
  }
-class MovieRating{
-    +name : str
-    +all_ratings : list[Rating_Comment]
-    +nbr_ratings() : int
-    +overall_rating() : float
- }
-class Rating_Comment{
+class RatingComment{
+    +id_user : int
+    +id_movie : int
     +comment : str
     +rating: int or NA
-    +who_rated : ConnectedUser
+    
  }
-MovieRating --o Movie
-Rating_Comment --o MovieRating
-MovieMaker "*" --* "*" Movie
 ConnectedUser --|> NonConnectedUser : Extends
+ConnectedUser "1" --> "*" RatingComment : Comment or rate
+Movie "1" <-- "*" RatingComment
+MovieMaker "1..*" *-- "*" Movie
+ConnectedUser "*" --> "*" ConnectedUser : follow
+ConnectedUser "*" --> "*" Movie : collect
+
+
+
+
+
+
+
+
+

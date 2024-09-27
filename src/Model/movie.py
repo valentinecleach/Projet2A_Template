@@ -18,6 +18,11 @@ class Movie(BaseModel):
         If the movie is an adult movie, adult = True. Here we wil only have
         movies that aren't adult movies.
     belongs_to_collection : dict
+        ??
+    budget : float
+        The budget in $ (?)
+    genre : list[Genre]
+        A list of
 
     release_date : str
         The release date of a movie. Its format is YYYY/MM/DD (?)
@@ -27,8 +32,7 @@ class Movie(BaseModel):
         The genre
     plot : str
         A description
-    budget : float
-        The budget in $ (?)
+
     rating : Rating
         The films rating out of ...
 
