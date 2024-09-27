@@ -6,9 +6,10 @@ class User:
     def search_film_by_name(self, film_name: str):
         """Recherche un film."""
 
-    def search_person_by_name(self, person_name :str)
+    def search_person_by_name(self, person_name :str):
+        """permet de chercher un people du cinema (acteur, realisateur)"""
 
-    def search_user(self, user_name :str)
+    def search_user(self, user_name :str):
         """Permet de chercher le profil d'un autre utilisateur""" 
 
     def sign_up(self):
