@@ -28,8 +28,8 @@ class ConnectedUser{
    +follow(user : User)
    +unfollow(user : User)
    +add_film(film : Film)
-   +rate(film : Film, rating : int)
-   +add_comment(film : Film, comment : str)
+   +rate(film : Film, rating : Rating_Comment)
+   +add_comment(film : Film, comment : Rating_Comment)
    +log_out()
    +delete_account()
  }
