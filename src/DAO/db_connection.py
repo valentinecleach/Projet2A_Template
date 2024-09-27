@@ -1,5 +1,5 @@
 import psycopg2
-from getpass import getpass
+from psycopg2.extras import RealDictCursor
 
 class DBConnection(metaclass=Singleton):
     """
@@ -10,11 +10,11 @@ class DBConnection(metaclass=Singleton):
         dotenv.load_dotenv(override=True)
         # Open the connection.
         self.__connection = psycopg2.connect(
-            host=os.environ["sgbd-eleves.domensai.ecole"],
-            port=os.environ["5432"],
-            dbname=os.environ["id2464"],
-            user=os.environ["id2464"],
-            password=os.environ["id2464"],
+            host=os.environ["host"],
+            port=os.environ["port"],
+            dbname=os.environ["dbname"],
+            user=os.environ["user"],
+            password=os.environ["password"],
             cursor_factory=RealDictCursor, # permet de récupérer les résultats des requêtes sous forme de dictionnaire et non de tupple
         )
 
