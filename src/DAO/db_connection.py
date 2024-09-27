@@ -1,3 +1,5 @@
+# ORM avec framework comme SQLAlchemy fait lesrequêtes pour nous. Mais pas le but du projet info
+
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
