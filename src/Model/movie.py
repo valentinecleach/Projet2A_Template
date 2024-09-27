@@ -14,6 +14,16 @@ class Movie(BaseModel):
         The id of a movie
     title : str
         The original title of a movie
+    adult : bool
+        If the movie is an adult movie, adult = True. Here we wil only have
+        movies that aren't adult movies.
+    belongs_to_collection : dict
+        ??
+    budget : float
+        The budget in $ (?)
+    genre : list[Genre]
+        A list of
+
     release_date : str
         The release date of a movie. Its format is YYYY/MM/DD (?)
     country : str
@@ -22,8 +32,7 @@ class Movie(BaseModel):
         The genre
     plot : str
         A description
-    budget : float
-        The budget in $ (?)
+
     rating : Rating
         The films rating out of ...
 
@@ -33,6 +42,7 @@ class Movie(BaseModel):
     """
 
     def __init(self,
+               adult,
                id,
                title,
                release_date,

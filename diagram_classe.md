@@ -34,15 +34,15 @@ class NonConnectedUser{
  }
 }
 class Movie{
-    +id_movie : int
+    +id : int
+    +title : str
     +adult : bool = false
     +belongs_to_collection : dict
     +budget : float
-    +genre : list[dict]
+    +genre : list[Genre]
     +origine_country : list
     +original_language : str
     +original_title : str
-    +title : str
     +overview : str
     +popularity : float
     +release_date : str
@@ -53,6 +53,10 @@ class Movie{
     +tagline : str
     +status : str
 
+ }
+ class Genre{
+    +id : int
+    +genre_name : str
  }
 class MovieMaker{
     +id_maker : int
