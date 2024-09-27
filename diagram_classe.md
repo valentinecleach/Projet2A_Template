@@ -34,7 +34,7 @@ class NonConnectedUser{
  }
 }
 class Movie{
-    +id : int
+    +id_movie : int
     +title : str
     +adult : bool = false
     +belongs_to_collection : dict
