@@ -14,6 +14,9 @@ class Movie(BaseModel):
         The id of a movie
     title : str
         The original title of a movie
+    adult : bool
+        If the movie is an adult movie, adult = True. Here we wil only have
+        movies that aren't adult movies.
     release_date : str
         The release date of a movie. Its format is YYYY/MM/DD (?)
     country : str
@@ -33,6 +36,7 @@ class Movie(BaseModel):
     """
 
     def __init(self,
+               adult,
                id,
                title,
                release_date,
