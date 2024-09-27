@@ -15,6 +15,7 @@ class ConnectedUser{
     +name : str
     +phone_number : str
     +email_address : str
+    +gender : int
     +birthday : str
     +password : str
 
@@ -52,6 +53,8 @@ class Movie{
     +vote_count : int
     +tagline : str
     +status : str
+    +nbr_ratings() : int
+    +overall_rating() : float
 
  }
  class Genre{
@@ -63,6 +66,7 @@ class MovieMaker{
     +imdb_id : str
     +adult : bool = false
     +name : str
+    +gender : int
     +biography : str
     +birthday : str
     +place_of_birth : str
@@ -77,12 +81,34 @@ class RatingComment{
     +rating: int or NA
     
  }
+
+class TMDBConnector{
+    +search_movie(movie : str)
+ }
+
+
+class MovieService{
+    +search_movie(movie : str  )
+ }
+class MovieDao{
+    +search_movie(movie : str)
+ }
+
+
+
+
+
+
 ConnectedUser --|> NonConnectedUser : Extends
 ConnectedUser "1" --> "*" RatingComment : Comment or rate
 Movie "1" <-- "*" RatingComment
-MovieMaker "1..*" *-- "*" Movie
+MovieMaker "1..*" --* "*" Movie
 ConnectedUser "*" --> "*" ConnectedUser : follow
 ConnectedUser "*" --> "*" Movie : collect
+Movie "1..*" --> "1..*" Genre
+Movie -- MovieService 
+MovieService-- MovieDao
+TMDBConnector -- MovieService
 
 
 
