@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-# from Rating import Rating
+from rating import Rating
 
 
 class Movie(BaseModel):
