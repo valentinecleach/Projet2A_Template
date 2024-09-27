@@ -35,16 +35,15 @@ class ConnectedUser{
  }
 }
 class Movie{
+    +id : int
+    +title : str
     +adult : bool = false
     +belongs_to_collection : dict
     +budget : float
     +genre : list[dict]
-    +id : int
-    +imdb_id : str
     +origine_country : list
     +original_language : str
     +original_title : str
-    +title : str
     +overview : str
     +popularity : float
     +release_date : str
