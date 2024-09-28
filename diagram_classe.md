@@ -2,7 +2,6 @@
 <!--  pour mettre un commentaire dans un fichier .md-->
 <!-- installer extension Markdown Preview Mermaid Support pour prévisualisation sur Vscode -->
 
-
 ```mermaid
 ---
 title: Cine & Films
@@ -19,20 +18,49 @@ class ConnectedUser{
     +birthday : str
     +password : str
 
-   +follow(user : User)
-   +unfollow(user : User)
-   +add_film(film : Film)
-   +rate(film : Film, rating : int)
-   +add_comment(film : Film, comment : str)
    +log_out()
-   +delete_account()
+   
  }
 class NonConnectedUser{
     +sign_up(): ConnectedUser:
     +search_movie(movie : str)
     +log_in(id : str, password : str)
-    +search_user(user : str)
+    +find_user(user : str)
  }
+
+%% UserService
+class UserService{
+    +find_user(name : str  )
+    +view_user_collection(id_user : int)
+    +follow(user : User)
+    +unfollow(user : User)
+    +add_movie(film : Movie)
+    +rate(film : Movie, rating : int)
+    +add_comment(film : Movie, comment : str)
+    +sign_up(): ConnectedUser:
+    +log_in(id : str, password : str)
+    +delete_account()
+ }
+class UserDao{
+    +find_user(name : str  )
+    +view_user_collection(id_user : int)
+    +follow(user : User)
+    +unfollow(user : User)
+    +add_movie(film : Movie)
+    +rate(film : Movie, rating : int)
+    +add_comment(film : Movie, comment : str)
+    +sign_up(): ConnectedUser:
+    +log_in(id : str, password : str)
+    +delete_account()
+ }
+class RatingComment{
+    +id_user : int
+    +id_movie : int
+    +comment : str
+    +rating: int or NA
+    +check_comment() 
+ }
+
 }
 class Movie{
     +id_movie : int
@@ -53,8 +81,6 @@ class Movie{
     +vote_count : int
     +tagline : str
     +status : str
-    +nbr_ratings() : int
-    +overall_rating() : float
 
  }
  class Genre{
@@ -74,47 +100,46 @@ class MovieMaker{
     +known_for_department : str
     +popularity : float
  }
-class RatingComment{
-    +id_user : int
-    +id_movie : int
-    +comment : str
-    +rating: int or NA
-    
- }
+
 
 class TMDBConnector{
-    +search_movie(movie : str)
+    +find_movie(movie : str  )
+    +view_comments(movie : str)
+    +filter_by_genre(genre : int)
+    +filter_by_popularity()
+
+    +find_movie_maker(movie : str  )
  }
 
-
+%% MovieService
 class MovieService{
-    +search_movie(movie : str  )
+    +find_movie(movie : str  )
+    +view_comments(movie : str)
+    +filter_by_genre(genre : int)
+    +filter_by_popularity()
+    +find_movie_maker(maker : str  )
  }
 class MovieDao{
-    +search_movie(movie : str)
- }
+    +find_movie(movie : str  )
+    +view_comments(movie : str)
+    +filter_by_genre(genre : int)
+    +filter_by_popularity()
+    +find_movie_maker(maker : str  )
+  }
 
 
 
-
-
-
+TMDBConnector >.. MovieService
 ConnectedUser --|> NonConnectedUser : Extends
 ConnectedUser "1" --> "*" RatingComment : Comment or rate
+ConnectedUser --> UserService 
+UserService ..> UserDao
+
 Movie "1" <-- "*" RatingComment
 MovieMaker "1..*" --* "*" Movie
 ConnectedUser "*" --> "*" ConnectedUser : follow
 ConnectedUser "*" --> "*" Movie : collect
 Movie "1..*" --> "1..*" Genre
-Movie -- MovieService 
-MovieService-- MovieDao
-TMDBConnector -- MovieService
 
-
-
-
-
-
-
-
-
+Movie --> MovieService 
+MovieService ..> MovieDao
