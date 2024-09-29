@@ -1,11 +1,26 @@
-from Model.MovieMaker import MovieMaker
-from tests.conftest import avatar, titanic
 import pytest
+from Model.MovieMaker import MovieMaker
+from test.conftest import james_cameron
 
-def test_movie_maker_constructor_ok(movie_maker_data):
-    movie_maker = MovieMaker(**movie_maker_data)
-    assert movie_maker.id_movie_maker == 2710
-    assert movie_maker.name == "James Cameron"
-    assert len(movie_maker.known_for) == 2  # Vérifie qu'il y a bien 2 films
-    assert movie_maker.known_for[0]['title'] == "Avatar"  # Vérifie le premier film
-    assert movie_maker.known_for[1]['title'] == "Titanic"  # Vérifie le deuxième film
+@pytest.mark.parametrize(
+    'kwargs, erreur, message_erreur',
+    [
+        ({'id_movie_maker': -1}, ValueError, "id_movie_maker must be a positive integer."),
+        ({'adult': True}, ValueError, "adult must be False."),
+        ({'name': ""}, ValueError, "name must be a non-empty string."),
+        ({'biography': None}, ValueError, "biography must be a string."),
+        ({'birthday': "invalid-date"}, ValueError, "birthday must be in the format YYYY-MM-DD."),
+        ({'place_of_birth': None}, ValueError, "place_of_birth must be a string."),
+        ({'deathday': "invalid-date"}, ValueError, "deathday must be empty or in the format YYYY-MM-DD."),
+        ({'known_for_department': 123}, ValueError, "known_for_department must be a string."),
+        ({'popularity': -5.0}, ValueError, "popularity must be a positive float."),
+        ({'known_for': "not_a_list"}, TypeError, "known_for must be a list of Movie objects."),
+        ({'known_for': [None]}, TypeError, "known_for must be a list of Movie objects."),
+    ]
+)
+def test_movie_maker_init_echec(james_cameron, kwargs, erreur, message_erreur):
+    # Mettre à jour james_cameron avec les arguments testés
+    test_kwargs = james_cameron.copy()  # Créer une copie pour éviter de modifier la fixture
+    test_kwargs.update(kwargs)  # Mettre à jour avec les arguments invalides
+    with pytest.raises(erreur, match=message_erreur):
+        MovieMaker(**test_kwargs)
