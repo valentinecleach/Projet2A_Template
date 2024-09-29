@@ -18,7 +18,7 @@ class Movie(BaseModel):
         If the movie is an adult movie, adult = True. Here we wil only have
         movies that aren't adult movies.
     belongs_to_collection : dict
-        ??
+        If there is a series
     budget : float
         The budget in $.
     genre : list[Genre]
@@ -36,17 +36,13 @@ class Movie(BaseModel):
     release_date : str
         The release date. It's format is YYYY-MM-DD.
     revenue : int
-        The revenue in ?
+        The revenue in $
     runtime : int
         The runtime (mins?)
     vote_average : float
         The current average float
     vote_count : int
         The amount of votes that the film has
-    tagline : str
-        ??
-    status : str
-        ???
     Examples
     --------
 
@@ -68,9 +64,7 @@ class Movie(BaseModel):
                revenue,
                runtime,
                vote_average,
-               vote_count,
-               tagline,
-               status
+               vote_count
                ):
         self.id_movie = id_movie
         self.title = title
@@ -95,6 +89,5 @@ class Movie(BaseModel):
         self.revenue = revenue,
         self.runtime = runtime,
         self.vote_average = vote_average,
-        self.vote_count = vote_count,
-        self.tagline = tagline,
-        self.status = status
+        self.vote_count = vote_count
+
