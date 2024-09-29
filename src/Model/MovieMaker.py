@@ -1,10 +1,11 @@
 import re
 from datetime import datetime
+from Model.Movie import Movie
 # mettre en anglais
 
 class MovieMaker :    
     def __init__(self, id_movie_maker: int, adult: bool, name: str, gender : int, biography: str, birthday: str, 
-                    place_of_birth: str, deathday: str, known_for_department: str, popularity: float):
+                    place_of_birth: str, deathday: str, known_for_department: str, popularity: float, known_for : list[Movie]):
         """
         Initializes a new MovieMaker object with the provided information.
 
@@ -71,6 +72,7 @@ class MovieMaker :
         self.deathday = deathday
         self.known_for_department = known_for_department
         self.popularity = popularity
+        self.known_for = known_for 
 
     def __str__(self):
         """
@@ -81,5 +83,6 @@ class MovieMaker :
                 f"Biography: {self.biography}, Birthday: {self.birthday}, "
                 f"Deathday : {self.deathday}"
                 f"Place of Birth: {self.place_of_birth}, "
-                f"Known For: {self.known_for_department}, "
-                f"Popularity: {self.popularity})")
+                f"Known For Department: {self.known_for_department}, "
+                f"Popularity: {self.popularity})"
+                f"Known for Movie : {self.known_for}")

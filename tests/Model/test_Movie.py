@@ -3,6 +3,15 @@ from pydantic_core import ValidationError
 
 from src.Model.Movie import Movie
 
+@pytest.fixture
+
+
+
+
+
+
+
+
 
 def test_movie_constructor_ok():
     the_shining = Movie(id=12, original_title="The Shining")
