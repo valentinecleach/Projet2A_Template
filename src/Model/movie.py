@@ -1,3 +1,4 @@
+from genre import Genre
 from pydantic import BaseModel
 from rating import Rating
 
@@ -51,7 +52,6 @@ class Movie(BaseModel):
     def __init(self,
                id_movie,
                title,
-               adult = False,
                belongs_to_collection,
                budget,
                genre,
@@ -64,30 +64,48 @@ class Movie(BaseModel):
                revenue,
                runtime,
                vote_average,
-               vote_count
+               vote_count,
+               adult=False
                ):
+
+        if (not isinstance(id_movie, int)) or id_movie < 0 :
+           TypeError("The id needs to be a positive integer")
         self.id_movie = id_movie
+
+        if not isinstance(title, str):
+           TypeError("The title must be a string")
         self.title = title
+
+        if not isinstance(belongs_to_collection, dict):
+           TypeError("belongs_to_collection must be a dictionnary")
+        self.belongs_to_collection = belongs_to_collection
+
+        if (not isinstance(budget, float)) or budget < 0 :
+            TypeError("The budget must be a float")
+        self.budget = budget
+
+        if not isinstance(genre, List):
+            raise TypeError("list")
+        for i in genre:
+            if not isinstance(i, Genre):
+                raise TypeError("genre element of list not ok")
+        self.genre = genre
+
+        self.origine_country = origine_country
+        self.original_language = original_language
+        self.original_title = original_title
+        self.overview = overview
+        self.popularity = popularity
+
+        if not self._is_valid_date(release_date):
+            raise ValueError("The release_date must be in the format YYYY-MM-DD.")
+        self.release_date = release_date
+
+        self.revenue = revenue
+        self.runtime = runtime
+        self.vote_average = vote_average
+        self.vote_count = vote_count
+
         if adult:
             raise ValueError("The film can't be an adult film.")
         self.adult = adult
-        self.belongs_to_collection  = belongs_to_collection
-        self.budget = budget
-        self.genre = genre
-        self.origine_country= origine_country,
-        self.original_language = original_language,
-        self.original_title = original_title,
-        self.overview = overview,
-        self.popularity = popularity,
-        if isinstance(release_date, str) is False:
-            raise TypeError("Release date must be a string")
-        if (release_date[4] != "-") or (release_date[] != "-"):
-            raise ValueError("Wrong format for film")
-        # ...YYYY-MM-DD
-        self.release_date = release_date
-
-        self.revenue = revenue,
-        self.runtime = runtime,
-        self.vote_average = vote_average,
-        self.vote_count = vote_count
-

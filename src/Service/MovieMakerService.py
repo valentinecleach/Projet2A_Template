@@ -1,5 +1,6 @@
 from datetime import datetime
 
+
 class MovieMakerService():
 
     @staticmethod
@@ -8,7 +9,7 @@ class MovieMakerService():
         if not isinstance(date_str, str):
             return False
         try:
-            datetime.strptime(date_str, "%Y-%m-%d") # check if str can be convert to valid datetime
+            datetime.strptime(date_str, "%Y-%m-%d")  # check if str can be convert to valid datetime
             return True
         except ValueError:
             return False

@@ -1,11 +1,16 @@
 import re
 from datetime import datetime
+
 from Model.Movie import Movie
+
 # mettre en anglais
 
-class MovieMaker :    
-    def __init__(self, id_movie_maker: int, adult: bool, name: str, gender : int, biography: str, birthday: str, 
-                    place_of_birth: str, deathday: str, known_for_department: str, popularity: float, known_for : list[Movie]):
+
+class MovieMaker:
+    def __init__(self, id_movie_maker: int, adult: bool, name: str,
+                 gender: int, biography: str, birthday: str,
+                 place_of_birth: str, deathday: str, known_for_department: str,
+                 popularity: float, known_for: list[Movie]):
         """
         Initializes a new MovieMaker object with the provided information.
 
@@ -33,35 +38,35 @@ class MovieMaker :
             Popularity score.
         """
 
-        if not isinstance(id_movie_maker, int) or id_movie_maker < 0: # 2710 for James Cameron
+        if not isinstance(id_movie_maker, int) or id_movie_maker < 0:  # 2710 for James Cameron
             raise ValueError("id_movie_maker must be a positive integer.")
-                
+
         if adult is not False:
             raise ValueError("adult must be False.")
-                
+
         if not isinstance(name, str) or len(name.strip()) == 0:
             raise ValueError("name must be a non-empty string.")
-                
+
         if not isinstance(biography, str):
             raise ValueError("biography must be a string.")
-                
+
         # Validation of birthday (format YYYY-MM-DD)
         if not self._is_valid_date(birthday):
             raise ValueError("birthday must be in the format YYYY-MM-DD.")
-                
+
         if not isinstance(place_of_birth, str):
             raise ValueError("place_of_birth must be a string.")
-                
+
         # Validation of deathday (empty or in the format YYYY-MM-DD)
-        if deathday and not self._is_valid_date(deathday): # first part for living person
+        if deathday and not self._is_valid_date(deathday):  # first part for living person
             raise ValueError("deathday must be empty or in the format YYYY-MM-DD.")
 
         if not isinstance(known_for_department, str):
             raise ValueError("known_for_department must be a string.")
-                
+
         if not isinstance(popularity, float) or popularity < 0:
             raise ValueError("popularity must be a positive float.")
-        
+
         self.id_movie_maker = id_movie_maker
         self.adult = adult
         self.name = name
@@ -72,7 +77,7 @@ class MovieMaker :
         self.deathday = deathday
         self.known_for_department = known_for_department
         self.popularity = popularity
-        self.known_for = known_for 
+        self.known_for = known_for
 
     def __str__(self):
         """
