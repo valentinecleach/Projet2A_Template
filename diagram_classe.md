@@ -19,7 +19,7 @@ class ConnectedUser{
     +password : str
 
    +log_out()
-   
+
  }
 class NonConnectedUser{
     +sign_up(): ConnectedUser:
@@ -58,7 +58,7 @@ class RatingComment{
     +id_movie : int
     +comment : str
     +rating: int or NA
-    +check_comment() 
+    +check_comment()
  }
 
 }
@@ -132,7 +132,7 @@ class MovieDao{
 TMDBConnector >.. MovieService
 ConnectedUser --|> NonConnectedUser : Extends
 ConnectedUser "1" --> "*" RatingComment : Comment or rate
-ConnectedUser --> UserService 
+ConnectedUser --> UserService
 UserService ..> UserDao
 
 Movie "1" <-- "*" RatingComment
@@ -141,5 +141,5 @@ ConnectedUser "*" --> "*" ConnectedUser : follow
 ConnectedUser "*" --> "*" Movie : collect
 Movie "1..*" --> "1..*" Genre
 
-Movie --> MovieService 
+Movie --> MovieService
 MovieService ..> MovieDao
