@@ -2,24 +2,19 @@
 
 from Model.MovieMaker import MovieMaker
 from DAO.DBConnection import DBConnection
-
+# to do : Documentation 
 class MovieMakerDAO:
     def __init__(self, db_connection: DBConnection):
         self.db_connection = db_connection
 
     def insert(self, movie_maker: MovieMaker) -> MovieMaker:
         """
-        Insère un nouveau MovieMaker dans la base de données.
+        Insert a new MovieMaker in the Database.
 
         Parameters:
         -----------
         movie_maker : MovieMaker
-            L'objet MovieMaker à insérer.
-
-        Returns:
-        --------
-        MovieMaker
-            L'objet MovieMaker inséré, avec son ID.
+            MovieMaker objet to insert.
         """
         try:
             with self.db_connection.connection.cursor() as cursor:
