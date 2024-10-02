@@ -1,9 +1,12 @@
 # src/TMDB/MovieMaker_tmdb.py
 
-import requests
 import os
+
+import requests
 from dotenv import load_dotenv
+
 from Model.MovieMaker import MovieMaker
+
 
 class MovieMakerTMDB:
     def __init__(self):
@@ -49,6 +52,7 @@ class MovieMakerTMDB:
         except requests.exceptions.RequestException as e:
             print("Error while fetching MovieMaker from TMDB: ", str(e))
             return None
+
 
 # Test with TMDB ID 2710 (James Cameron)
 if __name__ == "__main__":
