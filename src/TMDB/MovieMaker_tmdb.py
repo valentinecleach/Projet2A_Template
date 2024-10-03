@@ -1,11 +1,8 @@
 # src/TMDB/MovieMaker_tmdb.py
-
 import os
-
 import requests
 from dotenv import load_dotenv
-
-from Model.MovieMaker import MovieMaker
+from MovieMaker import MovieMaker
 
 
 class MovieMakerTMDB:

@@ -1,6 +1,6 @@
 from genre import Genre
 from pydantic import BaseModel
-from rating import Rating
+from Rating import Rating
 
 
 class Movie(BaseModel):
