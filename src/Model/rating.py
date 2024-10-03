@@ -1,4 +1,4 @@
-from user import User
+from src.Model.User import User
 
 
 class Rating:
@@ -33,7 +33,7 @@ class Rating:
         """
         return len(self.who_rated)
 
-    def update_rating(self, user: User, new_rating: Rating):
+    def update_rating(self, user: User, new_rating : Rating):
         if User in self.who_rated:
             raise ValueError("You cannot rate the movie twice")
         # pb one cannot change their rating

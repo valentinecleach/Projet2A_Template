@@ -1,7 +1,8 @@
 # Projet2A_Template\src\Model\MovieMaker.py
 import re
 from datetime import datetime
-from Model.Movie import Movie
+from src.Model.Movie import Movie
+from src.Service.MovieMakerService import MovieMakerService as MMS
 
 # mettre en anglais
 
@@ -51,14 +52,14 @@ class MovieMaker:
             raise ValueError("biography must be a string.")
 
         # Validation of birthday (format YYYY-MM-DD)
-        if not self._is_valid_date(birthday):
+        if not MMS._is_valid_date(birthday):
             raise ValueError("birthday must be in the format YYYY-MM-DD.")
 
         if not isinstance(place_of_birth, str):
             raise ValueError("place_of_birth must be a string.")
 
         # Validation of deathday (empty or in the format YYYY-MM-DD)
-        if deathday and not self._is_valid_date(deathday):  # first part for living person
+        if deathday and not MMS._is_valid_date(deathday):  # first part for living person
             raise ValueError("deathday must be empty or in the format YYYY-MM-DD.")
 
         if not isinstance(known_for_department, str):

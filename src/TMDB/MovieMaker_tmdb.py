@@ -2,8 +2,8 @@
 import os
 import requests
 from dotenv import load_dotenv
-from MovieMaker import MovieMaker
-
+from src.Model.MovieMaker import MovieMaker
+# Problème pour le known_for. Erreur dans le lien avec Movie 
 
 class MovieMakerTMDB:
     def __init__(self):
@@ -31,6 +31,30 @@ class MovieMakerTMDB:
             response.raise_for_status()  # Raises an exception for HTTP error codes.
             data = response.json()
             if 'id' in data:  # check if id is in response
+                known_for_movies = []
+                if 'known_for' in data:
+                    for movie_data in data['known_for']:
+                        # Assuming Movie has an appropriate constructor
+                        movie = Movie(
+                                id_movie=movie_data['id'],
+                                title=movie_data['title'],
+                                belongs_to_collection=movie_data.get('belongs_to_collection', {}),
+                                budget=float(movie_data.get('budget', 0.0)),  # Assuming budget is a float
+                                genre=[Genre(**g) for g in movie_data.get('genre', [])],  # Assuming Genre is defined elsewhere
+                                origine_country=movie_data.get('origine_country', ''),
+                                original_language=movie_data.get('original_language', ''),
+                                original_title=movie_data.get('original_title', ''),
+                                overview=movie_data.get('overview', ''),
+                                popularity=float(movie_data.get('popularity', 0.0)),  # Assuming popularity is a float
+                                release_date=movie_data.get('release_date', ''),
+                                revenue=float(movie_data.get('revenue', 0.0)),  # Assuming revenue is a float
+                                runtime=int(movie_data.get('runtime', 0)),  # Assuming runtime is an int
+                                vote_average=float(movie_data.get('vote_average', 0.0)),  # Assuming vote_average is a float
+                                vote_count=int(movie_data.get('vote_count', 0)),  # Assuming vote_count is an int
+                                adult=movie_data.get('adult', False)  # Assuming adult is a boolean
+                            )
+                        known_for_movies.append(movie.__str__())
+
                 return MovieMaker(
                     id_movie_maker=data['id'],
                     adult=data.get('adult', False),
@@ -42,6 +66,7 @@ class MovieMakerTMDB:
                     deathday=data.get('deathday'),
                     known_for_department=data.get('known_for_department', ''),
                     popularity=data.get('popularity', 0.0),
+                    known_for=known_for_movies
                 )
             else:
                 print(f"No MovieMaker found with TMDB ID : {tmdb_id}.")

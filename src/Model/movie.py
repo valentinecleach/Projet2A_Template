@@ -1,6 +1,7 @@
-from genre import Genre
+from src.Model.Genre import Genre
 from pydantic import BaseModel
-from Rating import Rating
+from src.Service.MovieMakerService import MovieMakerService as MMS
+#from src.Model.Rating import Rating
 
 
 class Movie(BaseModel):
@@ -111,7 +112,7 @@ class Movie(BaseModel):
             raise TypeError("The popularity must be a float")
         self.popularity = popularity
 
-        if not self._is_valid_date(release_date):
+        if not MMS._is_valid_date(release_date):
             raise ValueError("The release_date must be in the format YYYY-MM-DD.")
         self.release_date = release_date
 
@@ -136,3 +137,11 @@ class Movie(BaseModel):
         if adult:
             raise ValueError("The film can't be an adult film.")
         self.adult = adult
+
+    def __str__(self):
+            """
+            Returns a string representation of the Movie object.
+            """
+            return (f"Movie(ID: {self.id_movie}, Title: '{self.title}', "
+                    f"Release Date: {self.release_date}, Popularity: {self.popularity}, "
+                    f"Vote Average: {self.vote_average}, Vote Count: {self.vote_count})")
