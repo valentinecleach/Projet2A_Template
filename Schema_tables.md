@@ -4,81 +4,89 @@
 
 ```mermaid
 ---
-title: Cine & Films
+title: Modèle Conceptuel des données CINEMAGIX
 ---
 classDiagram
 
 namespace Users {
 class User{
-    +id_user : int
-    +name : str
-    +phone_number : str
-    +email_address : str
-    +gender : int
-    +birthday : str
-    +password : str
+    id_user [PK]: int 
+    name : str
+    phone_number : str
+    email_address :UNIQUE NOT NULL :str 
+    gender : int
+    birthday : str
+    password : str
 
  }
   class MovieCollection{
-    id_user
-    id_Movie
+    id_user [FK]
+    id_Movie [FK]
  }
  class Follower{
-    id_user
-    id_user_followed
+    id_user [FK]
+    id_user_followed [FK]
+    date : date
  }
 
 class RatingComment{
-    +id_user : int
-    +id_movie : int
-    +comment : str
-    +rating: int or NA 
+    id_user [FK]: int
+    id_movie [FK]: int
+    comment : str
+    rating: int or NA
+    date: date
  }
 
 }
+namespace film {
 class Movie{
-    +id_movie : int
-    id_genre
-    +title : str
-    +adult : bool = false
-    +belongs_to_collection : dict
-    +budget : float
-    +genre : list[Genre]
-    +origine_country : list
-    +original_language : str
-    +original_title : str
-    +overview : str
-    +popularity : float
-    +release_date : str
-    +revenue : int
-    +runtime : int
-    +vote_average : float
-    +vote_count : int
-    +tagline : str
-    +status : str
+    id_movie [PK]: int
+    title : str
+    adult : bool = false
+    belongs_to_collection : dict
+    budget : float
+    origine_country : list
+    original_language : str
+    original_title : str
+    overview : str
+    popularity : float
+    release_date : str
+    revenue : int
+    runtime : int
+    vote_average : float
+    vote_count : int
+    tagline : str
+    status : str
 
  }
+class MovieGenre{
+     id_movie [FK]
+     id_genre [FK]
+     }
  class Genre{
-    +id_genre : int
-    +genre_name : str
+    id_genre [PK]: int
+    genre_name : str
  }
+}
+namespace maker{
 class MovieMaker{
-    +id_maker : int
-    +imdb_id : str
-    +adult : bool = false
-    +name : str
-    +gender : int
-    +biography : str
-    +birthday : str
-    +place_of_birth : str
-    +deathday : str
-    +known_for_department : str
-    +popularity : float
+    id_maker  [PK]: int
+    imdb_id : str
+    adult : bool = false
+    name : str
+    gender : int
+    biography : str
+    birthday : str
+    place_of_birth : str
+    deathday : str
+    known_for_department : str
+    popularity : float
  }
  class KnownFor{
-    id_maker
-    id_movie
+    id_maker [FK]
+    id_movie [FK]
  }
+}
 
 User --> RatingComment
 User -- Follower
@@ -87,4 +95,5 @@ User --> MovieCollection
 MovieCollection --> Movie
 MovieMaker --> KnownFor
 KnownFor --> Movie
-Movie --> Genre
+Movie --> MovieGenre
+MovieGenre --> Genre
