@@ -43,8 +43,6 @@ nc --> 4
 nc --> 1
 nc --> 14
 
-14 ..> 15
-
 
 c --> 2
 c --> 10
@@ -54,16 +52,25 @@ c --> 10b
 c --> 16
 c --> 17
 
-11 ..> 9
-10b ..> 7
-10b ..> 12
-10 ..> 13
-10b ..> 13b
-16 ..> 16b
 
-4 ..> 8
-'9 ..> 10
+' Non connecté
+14 ..> 15 : extend
+4 ..> 8: extend
 
-11 ..> 11b
-11 ..> 11c
+' Connecté
+'  consulter un film
+10b ..> 7 : extend
+10b ..> 12: extend
+10b ..> 13b: extend
+
+10 ..> 13: extend
+16 ..> 16b: extend
+
+'9 ..> 10: extend
+
+'  rechercher des utilisateurs
+11 ..> 11b: extend
+11 ..> 11c: extend
+11 ..> 9 : extend
+
 @enduml
