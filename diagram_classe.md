@@ -17,7 +17,6 @@ class ConnectedUser{
     +gender : int
     +birthday : str
     +password : str
-
    +log_out()
 
  }
@@ -28,40 +27,17 @@ class NonConnectedUser{
     +find_user(user : str)
  }
 
-%% UserService
-class UserService{
-    +find_user(name : str  )
-    +view_user_collection(id_user : int)
-    +follow(user : User)
-    +unfollow(user : User)
-    +add_movie(film : Movie)
-    +rate(film : Movie, rating : int)
-    +add_comment(film : Movie, comment : str)
-    +sign_up(): ConnectedUser:
-    +log_in(id : str, password : str)
-    +delete_account()
- }
-class UserDao{
-    +find_user(name : str  )
-    +view_user_collection(id_user : int)
-    +follow(user : User)
-    +unfollow(user : User)
-    +add_movie(film : Movie)
-    +rate(film : Movie, rating : int)
-    +add_comment(film : Movie, comment : str)
-    +sign_up(): ConnectedUser:
-    +log_in(id : str, password : str)
-    +delete_account()
- }
+
 class RatingComment{
     +id_user : int
     +id_movie : int
     +comment : str
     +rating: int or NA
+    + date : str
     +check_comment()
  }
 
-}
+
 class Movie{
     +id_movie : int
     +title : str
@@ -99,24 +75,67 @@ class MovieMaker{
     +known_for_department : str
     +popularity : float
  }
-
-
-class TMDBConnector{
+}
+%% TMDB--------------------------------------------------------------------------------------------
+namespace TMDBConnectors{
+class MovieTMDB{
     +find_movie(movie : str  )
     +view_comments(movie : str)
     +filter_by_genre(genre : int)
     +filter_by_popularity()
-
     +find_movie_maker(movie : str  )
  }
+class MovieMakerTMDB{
+    +get_movie_maker_by_id(tmdb_id: int)
+    +get_movie_maker_by_name(name: str)
+ }
 
-%% MovieService
+}
+%% UserService--------------------------------------------------------------------------
+namespace Services {
+class UserService{
+    +find_user(name : str  )
+    +view_user_collection(id_user : int)
+    +follow(user : User)
+    +unfollow(user : User)
+    +add_movie(film : Movie)
+    +rate(film : Movie, rating : int)
+    +add_comment(film : Movie, comment : str)
+    +sign_up(): ConnectedUser:
+    +log_in(id : str, password : str)
+    +update(): ConnectedUser:
+    +delete_account()
+ }
+
 class MovieService{
     +find_movie(movie : str  )
     +view_comments(movie : str)
     +filter_by_genre(genre : int)
     +filter_by_popularity()
     +find_movie_maker(maker : str  )
+ }
+class MovieMakerService{
+    +insert(movie_maker: MovieMaker )
+    +update(movie_maker: MovieMaker)
+    +delete(id_movie_maker: int)
+    +get_by_id(id_movie_maker: int)
+    +get_by_name(name: str)
+ }
+}
+%%DAO------------------------------------------------------------------------------------
+namespace DAO {
+class UserDao{
+    +find_user(name : str  )
+    +view_user_collection(id_user : int)
+    +follow(user : User)
+    +unfollow(user : User)
+    +add_movie(film : Movie)
+    +rate(film : Movie, rating : int)
+    +add_comment(film : Movie, comment : str)
+    +sign_up(): ConnectedUser:
+    +log_in(id : str, password : str)
+    +update(): ConnectedUser
+    +delete_account()
  }
 class MovieDao{
     +find_movie(movie : str  )
@@ -125,13 +144,19 @@ class MovieDao{
     +filter_by_popularity()
     +find_movie_maker(maker : str  )
   }
+class MovieMakerDao{
+    +insert(movie_maker: MovieMaker )
+    +update(movie_maker: MovieMaker)
+    +delete(id_movie_maker: int)
+    +get_by_id(id_movie_maker: int)
+    +get_by_name(name: str)
+ }
+}
 
-
-
-TMDBConnector >.. MovieService
+MovieTMDB >.. MovieService
 ConnectedUser --|> NonConnectedUser : Extends
 ConnectedUser "1" --> "*" RatingComment : Comment or rate
-ConnectedUser --> UserService
+ConnectedUser ..> UserService
 UserService ..> UserDao
 
 Movie "1" <-- "*" RatingComment
@@ -140,5 +165,8 @@ ConnectedUser "*" --> "*" ConnectedUser : follow
 ConnectedUser "*" --> "*" Movie : collect
 Movie "1..*" --* "1..*" Genre
 
-Movie --> MovieService
+Movie ..> MovieService
 MovieService ..> MovieDao
+MovieMaker -->MovieMakerService
+MovieMakerService ..>MovieMakerDao
+MovieMakerService ..>MovieMakerTMDB
