@@ -4,11 +4,11 @@
 
 ```mermaid
 ---
-title: Cine & Films
+title: CINEMAGIX
 ---
 classDiagram
 
-namespace Users {
+namespace Main {
 class ConnectedUser{
     +id_user : int
     +name : str
@@ -77,7 +77,7 @@ class MovieMaker{
  }
 }
 %% TMDB--------------------------------------------------------------------------------------------
-namespace TMDBConnectors{
+%%namespace TMDBConnectors{
 class MovieTMDB{
     +find_movie(movie : str  )
     +view_comments(movie : str)
@@ -90,9 +90,9 @@ class MovieMakerTMDB{
     +get_movie_maker_by_name(name: str)
  }
 
-}
+%%}
 %% UserService--------------------------------------------------------------------------
-namespace Services {
+%%namespace Services {
 class UserService{
     +find_user(name : str  )
     +view_user_collection(id_user : int)
@@ -121,9 +121,9 @@ class MovieMakerService{
     +get_by_id(id_movie_maker: int)
     +get_by_name(name: str)
  }
-}
+%%}
 %%DAO------------------------------------------------------------------------------------
-namespace DAO {
+%%namespace DAO {
 class UserDao{
     +find_user(name : str  )
     +view_user_collection(id_user : int)
@@ -151,7 +151,7 @@ class MovieMakerDao{
     +get_by_id(id_movie_maker: int)
     +get_by_name(name: str)
  }
-}
+%%}
 
 MovieTMDB >.. MovieService
 ConnectedUser --|> NonConnectedUser : Extends
