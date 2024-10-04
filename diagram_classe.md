@@ -68,7 +68,6 @@ class Movie{
     +adult : bool = false
     +belongs_to_collection : dict
     +budget : float
-    +genre : list[Genre]
     +origine_country : list
     +original_language : str
     +original_title : str
@@ -139,7 +138,7 @@ Movie "1" <-- "*" RatingComment
 MovieMaker "1..*" --* "*" Movie
 ConnectedUser "*" --> "*" ConnectedUser : follow
 ConnectedUser "*" --> "*" Movie : collect
-Movie "1..*" --> "1..*" Genre
+Movie "1..*" --* "1..*" Genre
 
 Movie --> MovieService
 MovieService ..> MovieDao
