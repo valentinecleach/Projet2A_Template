@@ -9,7 +9,7 @@ title: CINEMAGIX
 classDiagram
 
 namespace Main {
-class ConnectedUser{
+class User{
     +id_user : int
     +name : str
     +phone_number : str
@@ -19,12 +19,6 @@ class ConnectedUser{
     +password : str
    +log_out()
 
- }
-class NonConnectedUser{
-    +sign_up(): ConnectedUser:
-    +search_movie(movie : str)
-    +log_in(id : str, password : str)
-    +find_user(user : str)
  }
 
 
@@ -101,9 +95,9 @@ class UserService{
     +add_movie(film : Movie)
     +rate(film : Movie, rating : int)
     +add_comment(film : Movie, comment : str)
-    +sign_up(): ConnectedUser:
+    +sign_up(): User:
     +log_in(id : str, password : str)
-    +update(): ConnectedUser:
+    +update(): User:
     +delete_account()
  }
 
@@ -132,9 +126,9 @@ class UserDao{
     +add_movie(film : Movie)
     +rate(film : Movie, rating : int)
     +add_comment(film : Movie, comment : str)
-    +sign_up(): ConnectedUser:
+    +sign_up(): User:
     +log_in(id : str, password : str)
-    +update(): ConnectedUser
+    +update():  User
     +delete_account()
  }
 class MovieDao{
@@ -154,15 +148,14 @@ class MovieMakerDao{
 %%}
 
 MovieTMDB >.. MovieService
-ConnectedUser --|> NonConnectedUser : Extends
-ConnectedUser "1" --> "*" RatingComment : Comment or rate
-ConnectedUser ..> UserService
+User "1" --> "*" RatingComment : Comment or rate
+User ..> UserService
 UserService ..> UserDao
 
 Movie "1" <-- "*" RatingComment
 MovieMaker "1..*" --* "*" Movie
-ConnectedUser "*" --> "*" ConnectedUser : follow
-ConnectedUser "*" --> "*" Movie : collect
+User "*" --> "*" User : follow
+User "*" --> "*" Movie : collect
 Movie "1..*" --* "1..*" Genre
 
 Movie ..> MovieService
