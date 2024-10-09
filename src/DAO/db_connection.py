@@ -3,6 +3,18 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
+class Singleton(type):
+    """
+    A singleton metaclass that ensures a class has only one instance.
+    """
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            instance = super().__call__(*args, **kwargs)
+            cls._instances[cls] = instance
+        return cls._instances[cls]
+
 class DBConnection(metaclass=Singleton):
     """
     Technical class to open only one connection to the DB.
