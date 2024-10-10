@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from src.Model.Genre import Genre
 from src.Service.MovieMakerService import MovieMakerService as MMS
 
-#from src.Model.Rating import Rating
+# from src.Model.Rating import Rating
 
 
 class Movie(BaseModel):

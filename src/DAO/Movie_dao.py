@@ -20,18 +20,29 @@ class Movie_dao:
 
         """
         # if new_movie.id already exists do an error.
-        try:
-            with self.db_connection.connection.cursor() as cursor:
+        # Connexion
+        with DBconnection().connection as connection:
+            # Creation of a cursor for the request
+            with connextion.cursor() as cursor:
+                # SQL resquest
                 cursor.execute("""
                     INSERT INTO movie (
                                )
                     VALUES (
                                )
-                               """)
-            self.db_connection.connection.commit()
-            print("Insersion successful : MovieMaker added.")
+                               """,
+                               valeurs)
+            # Fetching the result
+            res = cursor.fetchone()
+            
+        # if we have a result
+        if res:
+            what_we_returne = 
+            print("Insersion successful : Movie added.")
         except Exception as e:
             print("Insersion error : ", str(e))
+        return what_we_return
+
 
     # structure prise du TP
     def find_Movie_by_id(self, id: int) -> Movie:
