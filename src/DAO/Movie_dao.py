@@ -64,14 +64,28 @@ class Movie_dao:
         except Exception as e:
             print("Update error : ", str(e))
 
-    # structure prise du TP --> mauvaise classe
+
+    def delete(self, id_movie: int):
+        try:
+            with self.db_connection.connection.cursor() as cursor:
+                cursor.execute("""
+                    DELETE FROM Movie
+                    WHERE id_movie = %s;
+                """, (id_movie,))
+
+                self.db_connection.connection.commit()
+                print("Deletion successful : Movie deleted.")
+        except Exception as e:
+            print("Delete error : ", str(e))
+
+    # structure prise du TP
     def find_Movie_by_id(self, id: int) -> Movie:
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
                 try:
                     cursor.execute(
                         "SELECT *                                  "
-                        "  FROM                      "
+                        "  FROM Movie                 "
                         f"  WHERE id_movie = {id}"
                     )
                     res = cursor.fetchone()
@@ -81,6 +95,19 @@ class Movie_dao:
                 return res
 
 
+    def get_by_name(self, name: str) -> list[Movie]:
+            try:
+                with self.db_connection.connection.cursor() as cursor:
+                    cursor.execute("""
+                        SELECT * FROM Movie
+                        WHERE name ILIKE %s;  -- ILIKE for case-insensitive searching
+                    """, (f"%{name}%",))
+                    results = cursor.fetchall()
+                    return [Movie(**row) for row in results] if results else []
+            except Exception as e:
+                print("Error during recovery by name : ", str(e))
+                return []  # empty list to concerve typing : supposed to be a list of Movie
+                
 """
 tout ceci est inclu si on utilisedes with
 conn.commit()
