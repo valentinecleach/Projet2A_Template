@@ -43,9 +43,18 @@ class MovieTMDB:
                     title=data.get["title"],
                     # budget=
 
-                    # genre je ne sais pas si ca passe...
+                    # Plusieurs options pour le Genre. A voir lequel marche...
+                    # Option 1:
                     genre=[Genre(id=data.get('genre_ids')[i]) for i in data.get('genre_ids')],
                     
+                    # Option 2:
+                    if len(data.get('genre_ids'))=1:
+                        genre=Genre(id=data.get('genre_ids'), name = "")
+                        else:
+                            data_genre=data.get('genre_ids')
+                            for i in data_genre:
+                                genre = Genre(id = i, name = "")
+
                     # orginal_country= not filled out with insomnia
                     original_title=data.get['original_title'],
                     overview=data.get['overview'],
@@ -61,3 +70,49 @@ class MovieTMDB:
         except requests.exceptions.RequestException as e:
             print("Error while fetching Movie from TMDB: ", str(e))
             return None
+
+    def get_movie_by_name(self, name: str) -> Movie | None:
+        """Retrieves details of a Movie from TMDB by his name.
+
+            Parameters:
+            -----------
+            name : str
+                The name of the Movie on TMDB.
+
+            Returns:
+            --------
+            Movie | None
+                A Movie object if found, otherwise None.
+        """
+        try:
+            encoded_name = urllib.parse.quote(name)
+            url = f"{self.base_url}search/person?api_key={self.api_key}&language=en-US&query={encoded_name}"
+            response = requests.get(url)
+            response.raise_for_status()  # Raises an exception for HTTP error codes.
+            data = response.json()
+
+            # Si des résultats sont trouvés
+            if 'results' in data and len(data['results']) > 0:
+                first = data['results'][0]  # Prendre le premier résultat, sinon ajuster selon besoin
+                return Movie(
+                    id_movie=first['id'],
+                    adult=first.get('adult', False),
+                    title=first.get('title'),
+                    #belongs_to_collection, budget, country
+                    original_language=first.get('original_language')
+                    original_title=first.get('original_title'),
+                    overview=first.get('overview'),
+                    popularity=first.get('popularity'),
+                    release_date=first.get('release_date'),
+                    # revenue=first.get('overview'),
+                    # runtime=first.get('overview'),
+                    vote_average=first.get('vote_average'),
+                    vote_count=first.get('vote_count')
+                )
+            else:
+                print(f"No Movie found with name : {name}.")
+                return None
+        except requests.exceptions.RequestException as e:
+            print("Error while fetching Movie from TMDB: ", str(e))
+            return None
+
