@@ -64,3 +64,7 @@ class UserService:
 
     def search_user(self, username: str):
         """Permet de chercher le profil d'un autre utilisateur."""
+
+    def dao_function():
+        """ parameters and methods to use DAO/db_connection; """
+

@@ -91,7 +91,7 @@ class Movie(BaseModel):
             raise TypeError("list")
         for i in genre:
             if not isinstance(i, Genre):
-                raise TypeError("genre element of list not ok")
+                raise ValueError("genre element of list not ok")
         self.genre = genre
 
         if not isinstance(origine_country, str):

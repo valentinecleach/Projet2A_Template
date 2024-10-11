@@ -1,6 +1,6 @@
 import pytest
 from src.Model.movie_maker import MovieMaker
-from tests.conftest import james_cameron
+from tests.conftest import james_cameron,avatar
 
 @pytest.mark.parametrize(
     'kwargs, erreur, message_erreur',
@@ -14,8 +14,8 @@ from tests.conftest import james_cameron
         ({'deathday': "invalid-date"}, ValueError, "deathday must be empty or in the format YYYY-MM-DD."),
         ({'known_for_department': 123}, ValueError, "known_for_department must be a string."),
         ({'popularity': -5.0}, ValueError, "popularity must be a positive float."),
-        ({'known_for': "not_a_list"}, TypeError, "known_for must be a list of Movie objects."),
-        ({'known_for': [None]}, TypeError, "known_for must be a list of Movie objects."),
+        ({'known_for': "not_a_list"}, TypeError, "known_for must be a list."),
+        ({'known_for': [avatar,3]}, ValueError, "known_for must be a list of Movie objects."),
     ]
 )
 

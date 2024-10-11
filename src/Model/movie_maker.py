@@ -1,14 +1,8 @@
 # Projet2A_Template\src\Model\MovieMaker.py
 import re
 from datetime import datetime
-<<<<<<< HEAD
 from src.Model.movie import Movie
 from src.Service.movie_maker_service import MovieMakerService as MMS
-=======
-
-from src.Model.Movie import Movie
-from src.Service.MovieMakerService import MovieMakerService as MMS
->>>>>>> 85ffb0ec942350ecc939c724a71d884753f16937
 
 # mettre en anglais
 
@@ -74,6 +68,14 @@ class MovieMaker:
         if not isinstance(popularity, float) or popularity < 0:
             raise ValueError("popularity must be a positive float.")
 
+        if not isinstance(known_for, list):
+            raise TypeError("known_for must be a list.")
+
+        for movie in known_for:
+            if not isinstance(movie, Movie):
+                raise ValueError("known_for must be a list of Movie objects.")
+
+
         self.id_movie_maker = id_movie_maker
         self.adult = adult
         self.name = name
@@ -97,4 +99,4 @@ class MovieMaker:
                 f"Place of Birth: {self.place_of_birth}, "
                 f"Known For Department: {self.known_for_department}, "
                 f"Popularity: {self.popularity})"
-                f"Known for Movie : {self.known_for}")
+                f"Known for : {self.known_for}")
