@@ -1,3 +1,5 @@
+import pytest
+
 # Movie 
 
 @pytest.fixture
@@ -77,7 +79,7 @@ def james_cameron():
         'birthday': "1954-08-16",
         'place_of_birth': "Kapuskasing, Ontario, Canada",
         'deathday': None,
-        'know_for_department': "Directing",
+        'known_for_department': "Directing",
         'popularity': 19.057,
         'known_for': [avatar, titanic]
     }

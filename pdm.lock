@@ -5,7 +5,7 @@
 groups = ["default", "lint", "test", "typing"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:c1cfc6b544a7f36a4ab9a6e880da0b28f70c48ec0a35379747c89d516eeabd5e"
+content_hash = "sha256:5776057afe17da0963a0a50e71f747ec0fd3fff5a3a17ef0f0a5dd2e560a6545"
 
 [[metadata.targets]]
 requires_python = "==3.12.*"
@@ -231,6 +231,18 @@ groups = ["test"]
 files = [
     {file = "pluggy-1.5.0-py3-none-any.whl", hash = "sha256:44e1ad92c8ca002de6377e165f3e0f1be63266ab4d554740532335b9d75ea669"},
     {file = "pluggy-1.5.0.tar.gz", hash = "sha256:2cffa88e94fdc978c4c574f15f9e59b7f4201d439195c3715ca9e2486f1d0cf1"},
+]
+
+[[package]]
+name = "psycopg2"
+version = "2.9.9"
+requires_python = ">=3.7"
+summary = "psycopg2 - Python-PostgreSQL Database Adapter"
+groups = ["default"]
+files = [
+    {file = "psycopg2-2.9.9-cp312-cp312-win32.whl", hash = "sha256:d735786acc7dd25815e89cc4ad529a43af779db2e25aa7c626de864127e5a024"},
+    {file = "psycopg2-2.9.9-cp312-cp312-win_amd64.whl", hash = "sha256:a7653d00b732afb6fc597e29c50ad28087dcb4fbfb28e86092277a559ae4e693"},
+    {file = "psycopg2-2.9.9.tar.gz", hash = "sha256:d1454bde93fb1e224166811694d600e746430c006fbb031ea06ecc2ea41bf156"},
 ]
 
 [[package]]
