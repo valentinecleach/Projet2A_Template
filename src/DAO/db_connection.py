@@ -1,8 +1,5 @@
 # ORM avec framework comme SQLAlchemy fait lesrequêtes pour nous.
-# Mais pas le but du projet info
-import os
 
-import dotenv
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
@@ -61,7 +58,7 @@ class DBConnection(metaclass=Singleton):
         """
         create_table_MovieMaker = """
         CREATE TABLE IF NOT EXISTS MovieMaker (
-            id_movie_maker SERIAL PRIMARY KEY,
+            id_movie_maker INTEGER PRIMARY KEY,
             adult BOOLEAN NOT NULL DEFAULT FALSE,
             name VARCHAR(255) NOT NULL,
             gender INTEGER NOT NULL,
@@ -77,7 +74,7 @@ class DBConnection(metaclass=Singleton):
 
         create_table_users = """
         CREATE TABLE IF NOT EXISTS Users (
-            id_user SERIAL PRIMARY KEY,
+            id_user INTEGER PRIMARY KEY,
             first_name VARCHAR(255) NOT NULL,
             last_name VARCHAR(255) NOT NULL,
             username VARCHAR(255) UNIQUE NOT NULL,
@@ -85,6 +82,86 @@ class DBConnection(metaclass=Singleton):
             email VARCHAR(255) UNIQUE NOT NULL
         );
         """
+
+        create_table_Movie = """
+        CREATE TABLE IF NOT EXISTS Movie (
+            id_movie INTEGER PRIMARY KEY,
+            title VARCHAR(255) NOT NULL,
+            budget FLOAT,
+            adult BOOLEAN NOT NULL DEFAULT FALSE,
+            origine_country LIST,
+            original_language VARCHAR(255),
+            original_title VARCHAR(255),
+            overwiev VARCHAR(255),
+            popularity FLOAT,
+            release_date VARCHAR(255),
+            revenue INTEGER,
+            vote_average FLOAT,
+            vote_count INTEGER,
+            status VARCHAR(255)
+        );
+        """
+
+        create_table_MovieGenre = """
+        CREATE TABLE IF NOT EXISTS MovieGenre (
+            id_movie INTEGER NOT NULL FOREIGN KEY,
+            id_genre INTEGER NOT NULL FOREIGN KEY
+
+            FOREIGN KEY (id_genre) REFERENCES Genre(id_genre)
+            FOREIGN KEY (id_movie) REFERENCES Movie(id_movie)
+        );
+        """
+
+        create_table_Genre = """
+        CREATE TABLE IF NOT EXISTS GENRE (
+            id_genre INTEGER NOT NULL PRIMARY KEY,
+            genre_name VARCHAR(255),
+        );
+        """
+
+        create_table_RatingComment = """
+        CREATE TABLE IF NOT EXISTS RatingComment (
+            id_user INTEGER NOT NULL,
+            id_movie INTEGER NOT NULL,
+            comment TEXT,
+            rating INTEGER,
+            date VARCHAR(255),
+
+            FOREIGN KEY (id_user) REFERENCES Users(id_user),
+            FOREIGN KEY (id_movie) REFERENCES Movies(id_movie)
+        );
+        """
+
+        create_table_Follower = """
+        CREATE TABLE IF NOT EXISTS Follower (
+            id_user INTEGER,
+            id_user_followed INTEGER,
+            date VARCHAR(255),
+
+            FOREIGN KEY (id_user) REFERENCES Users(id_user)
+        );
+        """
+
+        create_table_MovieCollection = """
+        CREATE TABLE IF NOT EXISTS MovieCollection (
+            id_user INTEGER,
+            id_movie INTEGER,
+
+            FOREIGN KEY (id_user) REFERENCES Users(id_user),
+            FOREIGN KEY (id_movie) REFERENCES Movie(id_movie)
+        );
+        """
+
+        create_table_KnownFor = """
+        CREATE TABLE IF NOT EXISTS KnownFor (
+            id_movie_maker INTEGER,
+            id_movie INTEGER,
+
+            FOREIGN KEY (id_maker) REFERENCES MovieMaker(id_movie_maker),
+            FOREIGN KEY (id_movie) REFERENCES Movie(id_movie)
+        );
+        """
+
         # add query for the creation of ither tables
         with self.db_connection.connection.cursor() as cursor:
             cursor.execute(create_table_MovieMaker)
@@ -93,17 +170,14 @@ class DBConnection(metaclass=Singleton):
             self.db_connection.connection.commit()
 
     def insert(self, table_name: str, values: tuple):
-        """
-        Insère des données dans une table spécifiée
-        en récupérant les colonnes dynamiquement.
-        """
+        """Insère des données dans une table spécifiée en récupérant les colonnes dynamiquement."""
         try:
             with self.__connection.cursor() as cursor:
                 # Récupérer la liste des colonnes de la table
                 cursor.execute(
-                    """
-                    SELECT column_name 
-                    FROM information_schema.columns 
+                    f"""
+                    SELECT column_name
+                    FROM information_schema.columns
                     WHERE table_name = %s
                 """,
                     (table_name,),
@@ -111,11 +185,7 @@ class DBConnection(metaclass=Singleton):
                 columns = [row["column_name"] for row in cursor.fetchall()]
 
                 # Crée une chaîne de requête d'insertion avec des placeholders
-                query = query = (
-                    f"INSERT INTO {table_name} ({', '.join(columns)}) "
-                    f"VALUES ({', '.join(['%s'] * len(values))})"
-                )
-
+                query = f"INSERT INTO {table_name} ({', '.join(columns)}) VALUES ({', '.join(['%s'] * len(values))})"
                 cursor.execute(query, values)
                 self.__connection.commit()
         except Exception as e:
