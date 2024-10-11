@@ -1,12 +1,17 @@
-# ORM avec framework comme SQLAlchemy fait lesrequêtes pour nous. Mais pas le but du projet info
+# ORM avec framework comme SQLAlchemy fait lesrequêtes pour nous.
+# Mais pas le but du projet info
+import os
 
+import dotenv
 import psycopg2
 from psycopg2.extras import RealDictCursor
+
 
 class Singleton(type):
     """
     A singleton metaclass that ensures a class has only one instance.
     """
+
     _instances = {}
 
     def __call__(cls, *args, **kwargs):
@@ -15,12 +20,13 @@ class Singleton(type):
             cls._instances[cls] = instance
         return cls._instances[cls]
 
+
 class DBConnection(metaclass=Singleton):
     """
     Technical class to open only one connection to the DB.
     """
 
-    def __init__(self, test : bool):
+    def __init__(self, test: bool):
         dotenv.load_dotenv(override=True)
         self.__connection = psycopg2.connect(
             host=os.environ["host"],
@@ -30,10 +36,12 @@ class DBConnection(metaclass=Singleton):
             password=os.environ["password"],
             cursor_factory=RealDictCursor,
         )
-        if not test :
-            self.__set_search_path(os.environ["pro"]) 
+        if not test:
+            self.__set_search_path(os.environ["pro"])
         else:
-            self.__set_search_path(os.environ["test"])  # change with schema projet_info_test for tests. 
+            self.__set_search_path(
+                os.environ["test"]
+            )  # change with schema projet_info_test for tests.
 
     def __set_search_path(self, schema: str):
         """
@@ -77,7 +85,7 @@ class DBConnection(metaclass=Singleton):
             email VARCHAR(255) UNIQUE NOT NULL
         );
         """
-        # add query for the creation of ither tables 
+        # add query for the creation of ither tables
         with self.db_connection.connection.cursor() as cursor:
             cursor.execute(create_table_MovieMaker)
             cursor.execute(create_table_users)
@@ -85,19 +93,29 @@ class DBConnection(metaclass=Singleton):
             self.db_connection.connection.commit()
 
     def insert(self, table_name: str, values: tuple):
-        """Insère des données dans une table spécifiée en récupérant les colonnes dynamiquement."""
+        """
+        Insère des données dans une table spécifiée
+        en récupérant les colonnes dynamiquement.
+        """
         try:
             with self.__connection.cursor() as cursor:
                 # Récupérer la liste des colonnes de la table
-                cursor.execute(f"""
+                cursor.execute(
+                    """
                     SELECT column_name 
                     FROM information_schema.columns 
                     WHERE table_name = %s
-                """, (table_name,))
-                columns = [row['column_name'] for row in cursor.fetchall()]
+                """,
+                    (table_name,),
+                )
+                columns = [row["column_name"] for row in cursor.fetchall()]
 
                 # Crée une chaîne de requête d'insertion avec des placeholders
-                query = f"INSERT INTO {table_name} ({', '.join(columns)}) VALUES ({', '.join(['%s'] * len(values))})"
+                query = query = (
+                    f"INSERT INTO {table_name} ({', '.join(columns)}) "
+                    f"VALUES ({', '.join(['%s'] * len(values))})"
+                )
+
                 cursor.execute(query, values)
                 self.__connection.commit()
         except Exception as e:
