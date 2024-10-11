@@ -71,73 +71,59 @@ class Movie(BaseModel):
                adult=False
                ):
 
-        if (not isinstance(id_movie, int)) or id_movie < 0:
-            raise TypeError("The id needs to be a positive integer")
-        self.id_movie = id_movie
-
+        if not isinstance(id_movie, int) or id_movie < 0:
+            raise TypeError("The id needs to be a positive integer")        
         if not isinstance(title, str):
-            raise TypeError("The title must be a string")
-        self.title = title
-
+            raise TypeError("The title must be a string")        
         if not isinstance(belongs_to_collection, dict):
-            raise TypeError("belongs_to_collection must be a dictionnary")
-        self.belongs_to_collection = belongs_to_collection
-
+            raise TypeError("belongs_to_collection must be a dictionnary")        
         if (not isinstance(budget, float)) or budget < 0:
-            raise TypeError("The budget must be a float")
-        self.budget = budget
-
+            raise TypeError("The budget must be a float")        
         if not isinstance(genre, list):
             raise TypeError("list")
         for i in genre:
             if not isinstance(i, Genre):
-                raise ValueError("genre element of list not ok")
-        self.genre = genre
-
+                raise ValueError("genre element of list not ok")        
         if not isinstance(origine_country, str):
-            raise TypeError("The origine country must be a string")
-        self.origine_country = origine_country
-
+            raise TypeError("The origine country must be a string")        
         if not isinstance(original_language, str):
-            raise TypeError("The original language must be a string")
-        self.original_language = original_language
-
+            raise TypeError("The original language must be a string")        
         if not isinstance(original_title, str):
-            raise TypeError("The original title must be a string")
-        self.original_title = original_title
-
+            raise TypeError("The original title must be a string")        
         if not isinstance(origine_country, str):
-            raise TypeError("The origine country must be a string")
-        self.overview = overview
-
+            raise TypeError("The origine country must be a string")        
         if not isinstance(popularity, float):
-            raise TypeError("The popularity must be a float")
-        self.popularity = popularity
-
+            raise TypeError("The popularity must be a float")        
         if not MMS._is_valid_date(release_date):
             raise ValueError("The release_date must be in the format YYYY-MM-DD.")
-        self.release_date = release_date
-
         if not isinstance(revenue, float):
             raise TypeError("The revenue must be a float")
-        self.revenue = revenue
-
         if not isinstance(runtime, ):
             raise TypeError("The runtime must be a ")
-        self.runtime = runtime
-
         if not isinstance(vote_average, ):
-            raise TypeError("The vote_average must be a ")
-        self.vote_average = vote_average
-
+            raise TypeError("The vote_average must be a ")       
         if not isinstance(vote_count, int):
             raise TypeError("The vote count must be a integer")
-        self.vote_count = vote_count
-
         if not isinstance(adult, bool):
             raise TypeError("bool")
         if adult:
             raise ValueError("The film can't be an adult film.")
+
+        self.id_movie = id_movie
+        self.title = title
+        self.belongs_to_collection = belongs_to_collection
+        self.budget = budget
+        self.genre = genre
+        self.origine_country = origine_country
+        self.original_language = original_language
+        self.original_title = original_title
+        self.overview = overview
+        self.popularity = popularity
+        self.release_date = release_date
+        self.revenue = revenue
+        self.runtime = runtime
+        self.vote_average = vote_average
+        self.vote_count = vote_count
         self.adult = adult
 
     def __str__(self):
