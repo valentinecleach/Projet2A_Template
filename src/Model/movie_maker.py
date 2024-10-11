@@ -1,8 +1,8 @@
 # Projet2A_Template\src\Model\MovieMaker.py
 import re
 from datetime import datetime
-from src.Model.Movie import Movie
-from src.Service.MovieMakerService import MovieMakerService as MMS
+from src.Model.movie import Movie
+from src.Service.movie_maker_service import MovieMakerService as MMS
 
 # mettre en anglais
 
