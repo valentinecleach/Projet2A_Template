@@ -48,12 +48,13 @@ class MovieTMDB:
                     genre=[Genre(id=data.get('genre_ids')[i]) for i in data.get('genre_ids')],
                     
                     # Option 2:
-                    if len(data.get('genre_ids'))=1:
-                        genre=Genre(id=data.get('genre_ids'), name = "")
-                        else:
-                            data_genre=data.get('genre_ids')
-                            for i in data_genre:
-                                genre = Genre(id = i, name = "")
+                    data_genres=data.get('genre_ids')
+                    if len(data_genres) == 1:
+                        genre=Genre(id=data_genres[0], name = "")
+                    else:
+                        genre=[]
+                        for genre_id in data_genres:
+                            genre.append(Genre(id = genre_id, name = ""))
 
                     # orginal_country= not filled out with insomnia
                     original_title=data.get['original_title'],
