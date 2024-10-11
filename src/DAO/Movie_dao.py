@@ -26,7 +26,7 @@ class Movie_dao:
             with connextion.cursor() as cursor:
                 # SQL resquest
                 cursor.execute("""
-                    INSERT INTO new_movie (adult, genre_ids, id, original_title, overview, 
+                    INSERT INTO Movie (adult, genre_ids, id, original_title, overview, 
                                         popularity, release_date, title, vote_average, 
                                         vote_count)
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
@@ -42,16 +42,16 @@ class Movie_dao:
         if res:
             pass
             # what_we_returne = 
-            print("Insersion successful : Movie added.")
+            print("Insertion successful : Movie added.")
         except Exception as e:
-            print("Insersion error : ", str(e))
+            print("Insertion error : ", str(e))
         return None #what_we_return
 
     def update(self, movie : Movie):
         try:
             with self.db_connection.connection.cursor() as cursor:
                 cursor.execute("""
-                    UPDATE movie
+                    UPDATE Movie
                     SET adult = %s, genre.id = %s , original_title = %s, overview = %s,
                                popularity = %s, release_date = %s, title = %s, vote_average = %s,
                                vote = %s
