@@ -117,3 +117,75 @@ class MovieTMDB:
             print("Error while fetching Movie from TMDB: ", str(e))
             return None
 
+    def view_comments(self, movie : str):
+        """Shows the comments of a Movie
+
+        Parameters
+        ----------
+        movie : str
+            The movies name
+        """
+        pass
+
+    def filter_by_genre(self, genre: int):
+        """Filters a search by the genres id
+        
+        Parameters
+        ----------
+        genre : int
+            The genre's id
+        """
+        pass
+
+    def filter_by_popularity(self) -> Movie:
+        """ Filters by popularity
+
+        Parameters
+        ----------
+        """
+        pass
+
+    def find_movie_maker(self, movie : str) -> MovieMaker:
+        """ Finds the movie makers of a movie
+        
+        Parameters
+        ----------
+        movie : str
+            The movies name
+        
+        Returns
+        -------
+        moviemakers = list[MovieMaker] | None
+        """
+        try:
+            encoded_name = urllib.parse.quote(name)
+            url = f"{self.base_url}search/person?api_key={self.api_key}&language=en-US&query={encoded_name}"
+            response = requests.get(url)
+            response.raise_for_status()  # Raises an exception for HTTP error codes.
+            data = response.json()
+
+            # Si des résultats sont trouvés
+            if 'results' in data and len(data['results']) > 0:
+                moviemakers=[]
+                for moviemaker in  
+                moviemakers.append(MovieMaker( 
+                    id_movie_maker= ,
+                    adult= ,
+                    name= ,
+                    gender= ,
+                    biography= ,
+                    birthday= ,
+                    place_of_birth= ,
+                    deathday= ,
+                    known_for_departement= ,
+                    popularity=
+                 ))
+                return moviemakers
+            else:
+                print(f"No Movie found with name : {name}.")
+                return None
+        except requests.exceptions.RequestException as e:
+            print("Error while fetching the Movie Makers from TMDB: ", str(e))
+            return None
+
+
