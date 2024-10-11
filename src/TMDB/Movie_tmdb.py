@@ -188,4 +188,38 @@ class MovieTMDB:
             print("Error while fetching the Movie Makers from TMDB: ", str(e))
             return None
 
+# https://developer.themoviedb.org/reference/movie-credits
+# get https://api.themoviedb.org/3/movie/{movie_id}/credits
+"""
+{
+  "id": 21661,
+  "cast": [
+    {
+      "adult": false,
+      "gender": 2,
+      "id": 7431,
+      "known_for_department": "Acting",
+      "name": "Kevin Zegers",
+      "original_name": "Kevin Zegers",
+      "popularity": 18.321,
+      "profile_path": "/zRjasG4NXxKbe6e1c4enivAvfcH.jpg",
+      "cast_id": 3,
+      "character": "Josh Framm",
+      "credit_id": "52fe4423c3a368484e0118c3",
+      "order": 0
+    },
 
+
+    import requests
+
+url = "https://api.themoviedb.org/3/movie/21661/credits?language=en-US"
+
+headers = {
+    "accept": "application/json",
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmYjBlNWRlZDNkNzliYzVlNTcxNTM4MDMwZjdlNWFmOCIsIm5iZiI6MTcyODU4OTQ3OC4zODc3NDUsInN1YiI6IjY2ZTBhYmMyOWM3MzUzMmRkYmFhYWY0NyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3XrjUtK_SJmltQGboTpJVLjwTgJ5fdIXtltmVMLX1bQ"
+}
+
+response = requests.get(url, headers=headers)
+
+print(response.text)
+"""
