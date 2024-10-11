@@ -27,7 +27,7 @@ def mock_db_connection(mocker):
 
 
 def test_initialization(mock_db_connection):
-    db_connection, mock_connection = mock_db_connection
+    db_connection, mock_connection = mock_db_connection()
     assert db_connection.connection == mock_connection
 
 

@@ -22,7 +22,7 @@ class MovieService:
         """View the comments of a movie"""
         pass
 
-    def filter_by_genre(self, genre: Genre) -> ...:  
+    def filter_by_genre(self, genre: Genre) -> ...: 
         """Filter movies by their genre"""
         pass
 

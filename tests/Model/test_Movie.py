@@ -1,7 +1,7 @@
 import pytest
 from pydantic_core import ValidationError
 
-from src.Model.Movie import Movie
+from src.Model.movie import Movie
 
 # Des fixtures sont définies dans le fichier conftest
 

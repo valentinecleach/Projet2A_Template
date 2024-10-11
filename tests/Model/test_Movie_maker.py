@@ -1,6 +1,6 @@
 import pytest
-from Model.MovieMaker import MovieMaker
-from test.conftest import james_cameron
+from src.Model.movie_maker import MovieMaker
+from tests.conftest import james_cameron
 
 @pytest.mark.parametrize(
     'kwargs, erreur, message_erreur',
@@ -18,6 +18,7 @@ from test.conftest import james_cameron
         ({'known_for': [None]}, TypeError, "known_for must be a list of Movie objects."),
     ]
 )
+
 def test_movie_maker_init_echec(james_cameron, kwargs, erreur, message_erreur):
     # Mettre à jour james_cameron avec les arguments testés
     test_kwargs = james_cameron.copy()  # Créer une copie pour éviter de modifier la fixture
