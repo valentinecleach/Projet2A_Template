@@ -1,15 +1,17 @@
 # src/TMDB/MovieMaker_tmdb.py
 import os
-import requests
 import urllib.parse
+
+import requests
 from dotenv import load_dotenv
+
 from src.Model.MovieMaker import MovieMaker
 
 
 class MovieMakerTMDB:
     def __init__(self):
         load_dotenv(override=True)
-        self.api_key = os.environ.get("TMDB_API_KEY")  
+        self.api_key = os.environ.get("TMDB_API_KEY")
         self.base_url = "https://api.themoviedb.org/3/"
 
     def get_movie_maker_by_id(self, tmdb_id: int) -> MovieMaker | None:
@@ -44,7 +46,7 @@ class MovieMakerTMDB:
                     deathday=data.get('deathday'),
                     known_for_department=data.get('known_for_department', ''),
                     popularity=data.get('popularity', 0.0),
-                    known_for = "not specified with this request "
+                    known_for="not specified with this request "
                 )
             else:
                 print(f"No MovieMaker found with TMDB ID : {tmdb_id}.")
@@ -68,9 +70,9 @@ class MovieMakerTMDB:
                 MovieMaker | None
                     A MovieMaker object if found, otherwise None.
         """
-        try: 
+        try:
             encoded_name = urllib.parse.quote(name)
-            url = f"{self.base_url}search/person?api_key={self.api_key}&language=en-US&query={encoded_name}"   
+            url = f"{self.base_url}search/person?api_key={self.api_key}&language=en-US&query={encoded_name}"
             response = requests.get(url)
             response.raise_for_status()  # Raises an exception for HTTP error codes.
             data = response.json()
@@ -89,7 +91,7 @@ class MovieMakerTMDB:
                     deathday=first.get('deathday'),
                     known_for_department=first.get('known_for_department', ''),
                     popularity=first.get('popularity', 0.0),
-                    known_for = first.get('known_for', [])
+                    known_for=first.get('known_for', [])
                 )
             else:
                 print(f"No MovieMaker found with name : {name}.")
@@ -97,8 +99,6 @@ class MovieMakerTMDB:
         except requests.exceptions.RequestException as e:
             print("Error while fetching MovieMaker from TMDB: ", str(e))
             return None
-
-
 
 
 # Test with TMDB ID 2710 (James Cameron) works !

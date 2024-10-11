@@ -23,7 +23,7 @@ class MovieTMDB:
 
                 Parameters:
                 -----------
-                tmdb_id : int
+                id : int
                     The ID of the Movie on TMDB.
 
                 Returns:
