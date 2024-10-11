@@ -97,12 +97,22 @@ class MovieTMDB:
                 return Movie(
                     id_movie=first['id'],
                     adult=first.get('adult', False),
-           
+                    title=first.get('title'),
+                    #belongs_to_collection, budget, country
+                    original_language=first.get('original_language')
+                    original_title=first.get('original_title'),
+                    overview=first.get('overview'),
+                    popularity=first.get('popularity'),
+                    release_date=first.get('release_date'),
+                    # revenue=first.get('overview'),
+                    # runtime=first.get('overview'),
+                    vote_average=first.get('vote_average'),
+                    vote_count=first.get('vote_count')
                 )
             else:
                 print(f"No Movie found with name : {name}.")
                 return None
         except requests.exceptions.RequestException as e:
-            print("Error while fetching Movier from TMDB: ", str(e))
+            print("Error while fetching Movie from TMDB: ", str(e))
             return None
 
