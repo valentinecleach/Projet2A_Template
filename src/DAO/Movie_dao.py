@@ -10,68 +10,93 @@ class Movie_dao:
         self.db_connection = db_connection
 
     def insert(self, new_movie: Movie):
-        """
-        Adds a movie into the database.
+        try:
+            """
+            Adds a movie into the database.
 
-        Parameters:
-        -----------
-        new_movie : Movie
-            A new movie to add to the database
+            Parameters:
+            -----------
+            new_movie : Movie
+                A new movie to add to the database
 
-        """
-        # if new_movie.id already exists do an error.
-        # Connexion
-        with DBconnection().connection as connection:
-            # Creation of a cursor for the request
-            with connextion.cursor() as cursor:
-                # SQL resquest
-                cursor.execute("""
-                    INSERT INTO Movie (adult, genre_ids, id, original_title, overview, 
-                                        popularity, release_date, title, vote_average, 
-                                        vote_count)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                    """,
-                               (new.movie.adult, new.movie.genre.id, new.movie.original_title, new.movie.overview,
-                               new.movie.popularity, new.movie.release_date, new.movie.title, new.movie.vote_average,
-                               new.movie.vote))
-                               # tagline? status?)
-            # Fetching the result
-            res = cursor.fetchone()
-            
-        # if we have a result
-        if res:
-            pass
-            # what_we_returne = 
-            print("Insertion successful : Movie added.")
+            """
+            # if new_movie.id already exists do an error.
+            # Connexion
+            with self.db_connection().connection as connection:
+                # Creation of a cursor for the request
+                with connection.cursor() as cursor:
+                    # SQL resquest
+                    cursor.execute(
+                        """
+                        INSERT INTO Movie (adult, genre_ids, id,
+                                            original_title, overview, 
+                                            popularity, release_date, title, 
+                                            vote_average,vote_count)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        """,
+                        (
+                            new_movie.adult,
+                            new_movie.genre.id,
+                            new_movie.original_title,
+                            new_movie.overview,
+                            new_movie.popularity,
+                            new_movie.release_date,
+                            new_movie.title,
+                            new_movie.vote_average,
+                            new_movie.vote,
+                        ),
+                    )
+                    # tagline? status?)
+                # Fetching the result
+                res = cursor.fetchone()
+
+            # if we have a result
+            if res:
+                pass
+                # what_we_returne =
+                print("Insertion successful : Movie added.")
         except Exception as e:
             print("Insertion error : ", str(e))
-        return None #what_we_return
+            # return None #what_we_return
 
-    def update(self, movie : Movie):
+    def update(self, movie: Movie):
         try:
             with self.db_connection.connection.cursor() as cursor:
-                cursor.execute("""
+                cursor.execute(
+                    """
                     UPDATE Movie
                     SET adult = %s, genre.id = %s , original_title = %s, overview = %s,
                                popularity = %s, release_date = %s, title = %s, vote_average = %s,
                                vote = %s
                     WHERE id_movie = %s;
-                """, (movie.adult, movie.genre.id, movie.original_title, movie.overview,
-                               movie.popularity, movie.release_date, movie.title, movie.vote_average,
-                               movie.vote))
+                """,
+                    (
+                        movie.adult,
+                        movie.genre.id,
+                        movie.original_title,
+                        movie.overview,
+                        movie.popularity,
+                        movie.release_date,
+                        movie.title,
+                        movie.vote_average,
+                        movie.vote,
+                    ),
+                )
                 self.db_connection.connection.commit()
                 print("Update successful : movie updated.")
         except Exception as e:
             print("Update error : ", str(e))
 
-
     def delete(self, id_movie: int):
         try:
             with self.db_connection.connection.cursor() as cursor:
-                cursor.execute("""
+                cursor.execute(
+                    """
                     DELETE FROM Movie
                     WHERE id_movie = %s;
-                """, (id_movie,))
+                """,
+                    (id_movie,),
+                )
 
                 self.db_connection.connection.commit()
                 print("Deletion successful : Movie deleted.")
@@ -94,20 +119,23 @@ class Movie_dao:
                     return None
                 return res
 
-
     def get_by_name(self, name: str) -> list[Movie]:
-            try:
-                with self.db_connection.connection.cursor() as cursor:
-                    cursor.execute("""
+        try:
+            with self.db_connection.connection.cursor() as cursor:
+                cursor.execute(
+                    """
                         SELECT * FROM Movie
                         WHERE name ILIKE %s;  -- ILIKE for case-insensitive searching
-                    """, (f"%{name}%",))
-                    results = cursor.fetchall()
-                    return [Movie(**row) for row in results] if results else []
-            except Exception as e:
-                print("Error during recovery by name : ", str(e))
-                return []  # empty list to concerve typing : supposed to be a list of Movie
-                
+                    """,
+                    (f"%{name}%",),
+                )
+                results = cursor.fetchall()
+                return [Movie(**row) for row in results] if results else []
+        except Exception as e:
+            print("Error during recovery by name : ", str(e))
+            return []  # empty list to concerve typing : supposed to be a list of Movie
+
+
 """
 tout ceci est inclu si on utilisedes with
 conn.commit()
