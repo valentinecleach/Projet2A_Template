@@ -1,14 +1,11 @@
-from typing import List, Optional
+from typing import List  # , Optional
 
-from DAO.db_connection import DBConnection
+from DAO.db_connection import DBConnection, Singleton
 from Model.Movie import Movie
 
 
 # A Faire: (valentine)
-class Movie_dao:
-    def __init__(self, db_connection: DBConnection):
-        self.db_connection = db_connection
-
+class Movie_dao(metaclass=Singleton):
     def insert(self, new_movie: Movie):
         try:
             """
@@ -22,7 +19,7 @@ class Movie_dao:
             """
             # if new_movie.id already exists do an error.
             # Connexion
-            with self.db_connection().connection as connection:
+            with DBConnection().connection as connection:
                 # Creation of a cursor for the request
                 with connection.cursor() as cursor:
                     # SQL resquest
@@ -61,13 +58,13 @@ class Movie_dao:
 
     def update(self, movie: Movie):
         try:
-            with self.db_connection.connection.cursor() as cursor:
+            with DBConnection().connection.cursor() as cursor:
                 cursor.execute(
                     """
                     UPDATE Movie
-                    SET adult = %s, genre.id = %s , original_title = %s, overview = %s,
-                               popularity = %s, release_date = %s, title = %s, vote_average = %s,
-                               vote = %s
+                    SET adult = %s, genre.id = %s , original_title = %s
+                    , overview = %s,popularity = %s, release_date = %s,
+                    title = %s, vote_average = %s,vote = %s
                     WHERE id_movie = %s;
                 """,
                     (
@@ -119,21 +116,22 @@ class Movie_dao:
                     return None
                 return res
 
-    def get_by_name(self, name: str) -> list[Movie]:
+    def get_by_name(self, name: str) -> List[Movie]:
         try:
-            with self.db_connection.connection.cursor() as cursor:
+            with DBConnection().connection.cursor() as cursor:
                 cursor.execute(
                     """
                         SELECT * FROM Movie
-                        WHERE name ILIKE %s;  -- ILIKE for case-insensitive searching
+                        WHERE name ILIKE %s;
                     """,
                     (f"%{name}%",),
-                )
+                )  # -- ILIKE for case-insensitive searching
                 results = cursor.fetchall()
                 return [Movie(**row) for row in results] if results else []
         except Exception as e:
             print("Error during recovery by name : ", str(e))
-            return []  # empty list to concerve typing : supposed to be a list of Movie
+            return []  # empty list to concerve typing :
+            # supposed to be a list of Movie
 
 
 """
