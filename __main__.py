@@ -1,6 +1,4 @@
-from src.Interface.API import run_app
-from src.Service.MovieService import MovieService
-
+import uvicorn
+from src.Webservice.api import app  
 if __name__ == "__main__":
-    movie_service = MovieService(None)
-    app = run_app(movie_service=movie_service)
+    uvicorn.run(app, host="localhost", port=8000)
