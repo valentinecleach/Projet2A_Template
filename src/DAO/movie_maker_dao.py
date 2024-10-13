@@ -1,6 +1,6 @@
-# src/DAO/MovieMaker_dao.pys
-from DAO.DBConnection import DBConnection
-from Model.MovieMaker import MovieMaker
+# src/DAO/movie_maker_dao.py
+from DAO.db_connection import DBConnection
+from Model.movie_maker import MovieMaker
 
 
 # to do : Documentation

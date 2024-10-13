@@ -1,6 +1,7 @@
 # Projet2A_Template\src\Model\MovieMaker.py
 import re
 from datetime import datetime
+from typing import Optional, List
 from src.Model.movie import Movie
 from src.Service.movie_maker_service import MovieMakerService as MMS
 
@@ -10,8 +11,8 @@ from src.Service.movie_maker_service import MovieMakerService as MMS
 class MovieMaker:
     def __init__(self, id_movie_maker: int, adult: bool, name: str,
                  gender: int, biography: str, birthday: str,
-                 place_of_birth: str, deathday: str, known_for_department: str,
-                 popularity: float, known_for: list[Movie]):
+                 place_of_birth: str, deathday: Optional[str] = None, known_for_department: str,
+                 popularity: float, known_for: List[Movie]):
         """
         Initializes a new MovieMaker object with the provided information.
 
@@ -31,7 +32,7 @@ class MovieMaker:
             Birthdate (format YYYY-MM-DD).
         place_of_birth : str
             Place of birth.
-        deathday : str
+        deathday : Optional[str] = None
             Date of death (format YYYY-MM-DD) or None.
         known_for_department : str
             The person's main department (e.g., directing, acting).

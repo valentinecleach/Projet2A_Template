@@ -1,17 +1,33 @@
-import uvicorn
+# src/Webservice/API.py
 from fastapi import FastAPI, HTTPException, status
+from src.Model import * 
+from src.Service import *  
 
-from src.Model.Movie import Movie
-from src.Service.MovieService import MovieService
+app = FastAPI()
+
+movie_maker_service = MovieMakerService() 
+
+@app.get("/")
+def read_root():
+    return {"Hello": "World"}
+
+@app.get("/movie_maker/{name}", response_model= list[MovieMaker], status_code=status.HTTP_200_OK)
+def get_movie_maker_by_name(name: str) -> MovieMaker:
+    """ to get a MovieMaker by his name"""
+    try:
+        my_movie_makers = movie_maker_service.get_movie_maker_by_name(name)  
+        if my_movie_makers is None:
+            raise HTTPException(
+                status_code=404,
+                detail=f"MovieMaker with name [{name}] not found"
+            )
+        return my_movie_makers
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Invalid request: {str(e)}")
 
 
-def run_app(movie_service: MovieService):
-    app = FastAPI()
 
-    @app.get("/")
-    def read_root():
-        return {"Hello": "World"}
-
+"""
     @app.get("/movies/{tmdb_id}", status_code=status.HTTP_200_OK)
     def get_movie_by_id(tmdb_id: int) -> Movie:
         try:
@@ -27,9 +43,7 @@ def run_app(movie_service: MovieService):
 
     # @app.post("/login")
     uvicorn.run(app, port=8000, host="localhost")
+"""
 
-# Lancement de l'application sur le le port 80
-if __name__ == "__main__":
-    run_app(None) # prend MovieService en argument normalement
 
 

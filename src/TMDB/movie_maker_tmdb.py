@@ -1,11 +1,9 @@
 # src/TMDB/MovieMaker_tmdb.py
 import os
 import urllib.parse
-
 import requests
 from dotenv import load_dotenv
-
-from src.Model.MovieMaker import MovieMaker
+from src.Model.movie_maker import MovieMaker
 
 
 class MovieMakerTMDB:
@@ -55,7 +53,7 @@ class MovieMakerTMDB:
             print("Error while fetching MovieMaker from TMDB: ", str(e))
             return None
 
-    def get_movie_maker_by_name(self, name: str) -> MovieMaker | None:
+    def get_movie_maker_by_name(self, name: str) -> list[MovieMaker] | None:
         # Reamarque : insomnia does not return the known_for with this request.
         """
                 Retrieves details of a MovieMaker from TMDB by his name.
@@ -79,20 +77,24 @@ class MovieMakerTMDB:
 
             # Si des résultats sont trouvés
             if 'results' in data and len(data['results']) > 0:
-                first = data['results'][0]  # Prendre le premier résultat, sinon ajuster selon besoin
-                return MovieMaker(
-                    id_movie_maker=first['id'],
-                    adult=first.get('adult', False),
-                    name=first['name'],
-                    gender=first.get('gender'),
-                    biography=first.get('biography', ''),
-                    birthday=first.get('birthday'),
-                    place_of_birth=first.get('place_of_birth', ''),
-                    deathday=first.get('deathday'),
-                    known_for_department=first.get('known_for_department', ''),
-                    popularity=first.get('popularity', 0.0),
-                    known_for=first.get('known_for', [])
-                )
+                results = data['results'] 
+                movie_maker_results = []
+                for result in results :
+                    movie_maker_result.append(MovieMaker(
+                        id_movie_maker = result['id'],
+                        adult = result.get('adult', False),
+                        name = result['name'],
+                        gender = result.get('gender'),
+                        biography = result.get('biography', ''),
+                        birthday = result.get('birthday'),
+                        place_of_birth = result.get('place_of_birth', ''),
+                        deathday = result.get('deathday'),
+                        known_for_department = result.get('known_for_department', ''),
+                        popularity = result.get('popularity', 0.0),
+                        known_for = result.get('known_for', [])
+                        )
+                    )
+                return movie_maker_results
             else:
                 print(f"No MovieMaker found with name : {name}.")
                 return None
@@ -101,13 +103,3 @@ class MovieMakerTMDB:
             return None
 
 
-# Test with TMDB ID 2710 (James Cameron) works !
-# test with name "James Cameron" still doesn't work because all the parameters are not given by the request
-# idea: allow to find by name, then find also by id, concatenate results to have a global MovieMaker.
-if __name__ == "__main__":
-    movie_maker_tmdb = MovieMakerTMDB()
-    movie_maker = movie_maker_tmdb.get_movie_maker_by_name("James Cameron")
-    if movie_maker:
-        print("MovieMaker found:", movie_maker)
-    else:
-        print("MovieMaker not found.")
