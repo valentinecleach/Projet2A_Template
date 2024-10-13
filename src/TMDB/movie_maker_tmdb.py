@@ -136,6 +136,7 @@ class MovieMakerTMDB:
             return movie_maker_results
         return None
 
+""""
 # Ajouter ce bloc pour tester la recherche de "James Cameron"
 if __name__ == "__main__":
     tmdb = MovieMakerTMDB()
@@ -145,3 +146,4 @@ if __name__ == "__main__":
             print(f"Found: {maker.name}, ID: {maker.id_movie_maker}")
     else:
         print("No movie makers found.")
+"""
