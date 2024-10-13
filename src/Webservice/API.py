@@ -1,7 +1,8 @@
 # src/Webservice/API.py
+from typing import List
 from fastapi import FastAPI, HTTPException, status
-from src.Model import * 
-from src.Service import *  
+from src.Model.movie_maker import MovieMaker
+from src.Service.movie_maker_service import MovieMakerService
 
 app = FastAPI()
 
@@ -11,11 +12,11 @@ movie_maker_service = MovieMakerService()
 def read_root():
     return {"Hello": "World"}
 
-@app.get("/movie_maker/{name}", response_model= list[MovieMaker], status_code=status.HTTP_200_OK)
+@app.get("/movie_maker/{name}", response_model= List[MovieMaker], status_code=status.HTTP_200_OK)
 def get_movie_maker_by_name(name: str) -> MovieMaker:
     """ to get a MovieMaker by his name"""
     try:
-        my_movie_makers = movie_maker_service.get_movie_maker_by_name(name)  
+        my_movie_makers = movie_maker_service.get_movie_maker_by_name(name , False)  
         if my_movie_makers is None:
             raise HTTPException(
                 status_code=404,

@@ -1,14 +1,14 @@
-from src.Model.genre import Genre
+from src.DAO.movie_dao import MovieDAO
+from src.TMDB.movie_tmdb import MovieTMDB
 from src.Model.movie import Movie
-from src.Model.movie_maker import MovieMaker
 
 
 class MovieService:
-    movie_db: None
-
     def __init__(self, movie_db: None):
-        self.movie_db = movie_db
+        self.movie_dao = MovieDAO()
+        self.movie_tmdb = MovieTMDB()
 
+#################################################################################################
     def find_by_id(self, movie_id: int) -> Movie:
         """Find movie by id"""
         return Movie(id=1, original_title="A Clockwork Orange")
@@ -28,8 +28,4 @@ class MovieService:
 
     def filter_by_popularity(self) -> list[Movie]:
         """Filters the movie by the popularity"""
-        pass
-
-    def find_movie_maker(self, maker: str) -> MovieMaker:
-        """Finds a movie maker"""
         pass

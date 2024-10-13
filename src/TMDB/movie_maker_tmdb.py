@@ -4,28 +4,31 @@ import urllib.parse
 import requests
 from dotenv import load_dotenv
 from src.Model.movie_maker import MovieMaker
+from typing import List
 
 
 class MovieMakerTMDB:
     def __init__(self):
         load_dotenv(override=True)
         self.api_key = os.environ.get("TMDB_API_KEY")
-        self.base_url = "https://api.themoviedb.org/3/"
+        self.base_url = "https://api.themoviedb.org/3"
 
-    def get_movie_maker_by_id(self, tmdb_id: int) -> MovieMaker | None:
+    def get_movie_maker_by_id(self, tmdb_id: int) -> List | None:
         # Reamarque : insomnia does not return the known_for with this request.
         """
-                Retrieves details of a MovieMaker from TMDB by his TMDB ID.
+            Retrieve a MovieMaker by name or ID, combining the information from both sources if necessary.
 
-                Parameters:
-                -----------
-                tmdb_id : int
-                    The ID of the MovieMaker on TMDB.
+            Parameters:
+            -----------
+            name : str | None
+                The name of the MovieMaker.
+            id_movie_maker : int | None
+                The ID of the MovieMaker.
 
-                Returns:
-                --------
-                MovieMaker | None
-                    A MovieMaker object if found, otherwise None.
+            Returns:
+            --------
+            List[MovieMaker] | None
+                A list of MovieMaker objects or None if not found.
         """
         try:
             url = f"{self.base_url}/person{tmdb_id}?api_key={self.api_key}&language=en-US"
@@ -33,19 +36,17 @@ class MovieMakerTMDB:
             response.raise_for_status()  # Raises an exception for HTTP error codes.
             data = response.json()
             if 'id' in data:  # check if id is in response
-                return MovieMaker(
-                    id_movie_maker=data['id'],
-                    adult=data.get('adult', False),
-                    name=data['name'],
-                    gender=data.get('gender'),
-                    biography=data.get('biography', ''),
-                    birthday=data.get('birthday'),
-                    place_of_birth=data.get('place_of_birth', ''),
-                    deathday=data.get('deathday'),
-                    known_for_department=data.get('known_for_department', ''),
-                    popularity=data.get('popularity', 0.0),
-                    known_for="not specified with this request "
-                )
+                return [data['id'],
+                        data.get('adult', False),
+                        data['name'],
+                        data.get('gender'),
+                        data.get('biography', ''),
+                        data.get('birthday'),
+                        data.get('place_of_birth', ''),
+                        data.get('deathday'),
+                        data.get('known_for_department', ''),
+                        data.get('popularity', 0.0)
+                ]
             else:
                 print(f"No MovieMaker found with TMDB ID : {tmdb_id}.")
                 return None
@@ -53,10 +54,10 @@ class MovieMakerTMDB:
             print("Error while fetching MovieMaker from TMDB: ", str(e))
             return None
 
-    def get_movie_maker_by_name(self, name: str) -> list[MovieMaker] | None:
-        # Reamarque : insomnia does not return the known_for with this request.
+    def get_movie_maker_by_name(self, name: str) -> list[List] | None:
+        # Reamarque : insomnia does not return thebiography, birthday, place of birth, deathday with this request.
         """
-                Retrieves details of a MovieMaker from TMDB by his name.
+                Intermediate function that retrieves the information we are interested in for a movie maker on TMDB using its name. 
 
                 Parameters:
                 -----------
@@ -65,8 +66,8 @@ class MovieMakerTMDB:
 
                 Returns:
                 --------
-                MovieMaker | None
-                    A MovieMaker object if found, otherwise None.
+                List[List] | None
+                    List of List with attributs 'id' and 'know for' for each moviemaker with the name of the request. 
         """
         try:
             encoded_name = urllib.parse.quote(name)
@@ -80,19 +81,10 @@ class MovieMakerTMDB:
                 results = data['results'] 
                 movie_maker_results = []
                 for result in results :
-                    movie_maker_result.append(MovieMaker(
-                        id_movie_maker = result['id'],
-                        adult = result.get('adult', False),
-                        name = result['name'],
-                        gender = result.get('gender'),
-                        biography = result.get('biography', ''),
-                        birthday = result.get('birthday'),
-                        place_of_birth = result.get('place_of_birth', ''),
-                        deathday = result.get('deathday'),
-                        known_for_department = result.get('known_for_department', ''),
-                        popularity = result.get('popularity', 0.0),
-                        known_for = result.get('known_for', [])
-                        )
+                    movie_maker_results.append([
+                        result['id'],
+                        result.get('known_for', [])
+                        ]
                     )
                 return movie_maker_results
             else:
@@ -102,4 +94,42 @@ class MovieMakerTMDB:
             print("Error while fetching MovieMaker from TMDB: ", str(e))
             return None
 
+    def get_movie_maker_by_name_or_by_id(self, name: str | None = None, id_movie_maker: int | None = None) -> list[MovieMaker] | None:
+        """
+            function 
+
+            Parameters :
+            ---------------
+
+
+            Returns :
+            --------------
+
+        """
+        if name and id_movie_maker:
+            raise ValueError("You cannot provide both 'name' and 'id_movie_maker'. Please provide only one.")
+
+        movie_maker_results = []
+
+        if name:
+            results = self.get_movie_maker_by_name(name)
+            if results:
+                for data in results:
+                    id_r = data[0]  # get the ID
+                    result2 = self.get_movie_maker_by_id(id_r) 
+                    if result2:
+                        attributes = result2 + [data[1]]  # Concateante result2 with "known_for"
+                        movie_maker_results.append(MovieMaker(*attributes))  
+                return movie_maker_results
+
+        if id_movie_maker:
+            result = self.get_movie_maker_by_id(id_movie_maker)
+            if result:
+                name_r = result[2]  # name is index 2
+                result2 = self.get_movie_maker_by_name(name_r)
+                if result2:
+                    known_for = result2[0][-1]  
+                    movie_maker_results.append(MovieMaker(*(result + [known_for]))) 
+            return movie_maker_results
+        return None
 

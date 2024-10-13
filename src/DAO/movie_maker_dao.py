@@ -1,11 +1,11 @@
 # src/DAO/movie_maker_dao.py
-from DAO.db_connection import DBConnection
-from Model.movie_maker import MovieMaker
-
+from src.DAO.db_connection import DBConnection
+from src.Model.movie_maker import MovieMaker
+from src.DAO.singleton import Singleton
 
 # to do : Documentation
 class MovieMakerDAO(metaclass=Singleton):
-    def insert(self, movie_maker: MovieMaker) -> MovieMaker:
+    def insert(self, movie_maker: MovieMaker,  test : bool) -> MovieMaker:
         """
         Insert a new MovieMaker in the Database.
 
@@ -15,7 +15,7 @@ class MovieMakerDAO(metaclass=Singleton):
             MovieMaker objet to insert.
         """
         try:
-            with DBConnection().connection.cursor() as cursor:
+            with DBConnection(test).connection.cursor() as cursor:
                 cursor.execute(
                     """
                     INSERT INTO movie_makers (id_movie_maker, adult, name, gender, biography,
@@ -43,9 +43,9 @@ class MovieMakerDAO(metaclass=Singleton):
         except Exception as e:
             print("Insersion error : ", str(e))
 
-    def update(self, movie_maker: MovieMaker):
+    def update(self, movie_maker: MovieMaker,  test : bool):
         try:
-            with DBConnection().connection.cursor() as cursor:
+            with DBConnection(test).connection.cursor() as cursor:
                 cursor.execute(
                     """
                     UPDATE MovieMaker
@@ -73,9 +73,9 @@ class MovieMakerDAO(metaclass=Singleton):
         except Exception as e:
             print("Update error : ", str(e))
 
-    def delete(self, id_movie_maker: int):
+    def delete(self, id_movie_maker: int,  test : bool):
         try:
-            with DBConnection().connection.cursor() as cursor:
+            with DBConnection(test).connection.cursor() as cursor:
                 cursor.execute(
                     """
                     DELETE FROM MovieMaker
@@ -89,9 +89,9 @@ class MovieMakerDAO(metaclass=Singleton):
         except Exception as e:
             print("Delete error : ", str(e))
 
-    def get_by_id(self, id_movie_maker: int) -> MovieMaker | None:
+    def get_by_id(self, id_movie_maker: int, test : bool) -> MovieMaker | None:
         try:
-            with DBConnection().connection.cursor() as cursor:
+            with DBConnection(test).connection.cursor() as cursor:
                 cursor.execute(
                     """
                     SELECT * FROM MovieMaker
@@ -109,9 +109,9 @@ class MovieMakerDAO(metaclass=Singleton):
             print("Error during recovery by id : ", str(e))
             return None
 
-    def get_by_name(self, name: str) -> list[MovieMaker]:
+    def get_by_name(self, name: str, test : bool) -> list[MovieMaker]:
         try:
-            with DBConnection().connection.cursor() as cursor:
+            with DBConnection(test).connection.cursor() as cursor:
                 cursor.execute(
                     """
                     SELECT * FROM MovieMaker

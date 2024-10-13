@@ -1,12 +1,12 @@
 from typing import List  # , Optional
 
-from DAO.db_connection import DBConnection, Singleton
-from Model.Movie import Movie
-
+from src.DAO.db_connection import DBConnection, Singleton
+from src.Model.movie import Movie
+from src.DAO.singleton import Singleton
 
 # A Faire: (valentine)
 class Movie_dao(metaclass=Singleton):
-    def insert(self, new_movie: Movie):
+    def insert(self, new_movie: Movie,  test : bool):
         try:
             """
             Adds a movie into the database.
@@ -19,7 +19,7 @@ class Movie_dao(metaclass=Singleton):
             """
             # if new_movie.id already exists do an error.
             # Connexion
-            with DBConnection().connection as connection:
+            with DBConnection(test).connection as connection:
                 # Creation of a cursor for the request
                 with connection.cursor() as cursor:
                     # SQL resquest
@@ -56,9 +56,9 @@ class Movie_dao(metaclass=Singleton):
             print("Insertion error : ", str(e))
             # return None #what_we_return
 
-    def update(self, movie: Movie):
+    def update(self, movie: Movie,  test : bool):
         try:
-            with DBConnection().connection.cursor() as cursor:
+            with DBConnection(test).connection.cursor() as cursor:
                 cursor.execute(
                     """
                     UPDATE Movie
@@ -84,9 +84,9 @@ class Movie_dao(metaclass=Singleton):
         except Exception as e:
             print("Update error : ", str(e))
 
-    def delete(self, id_movie: int):
+    def delete(self, id_movie: int,  test : bool):
         try:
-            with self.db_connection.connection.cursor() as cursor:
+            with DBConnection(test).connection.cursor() as cursor:
                 cursor.execute(
                     """
                     DELETE FROM Movie
@@ -101,8 +101,8 @@ class Movie_dao(metaclass=Singleton):
             print("Delete error : ", str(e))
 
     # structure prise du TP
-    def find_Movie_by_id(self, id: int) -> Movie:
-        with DBConnection().connection as connection:
+    def find_Movie_by_id(self, id: int,  test : bool) -> Movie:
+        with DBConnection(test).connection as connection:
             with connection.cursor() as cursor:
                 try:
                     cursor.execute(
@@ -116,9 +116,9 @@ class Movie_dao(metaclass=Singleton):
                     return None
                 return res
 
-    def get_by_name(self, name: str) -> List[Movie]:
+    def get_by_name(self, name: str,  test : bool) -> List[Movie]:
         try:
-            with DBConnection().connection.cursor() as cursor:
+            with DBConnection(test).connection.cursor() as cursor:
                 cursor.execute(
                     """
                         SELECT * FROM Movie

@@ -15,7 +15,7 @@ class MovieTMDB:
     def __init__(self):
         load_dotenv(override=True)
         self.api_key = os.environ.get("TMDB_API_KEY")  
-        self.base_url = "https://api.themoviedb.org/3/"
+        self.base_url = "https://api.themoviedb.org/3"
 
     def get_movie_by_id(self, id: int) -> Movie | None:
         """
@@ -32,7 +32,7 @@ class MovieTMDB:
                     A Movie object if found, otherwise None.
         """
         try:
-            url = f"{self.base_url}/person{id}?api_key={self.api_key}&language=en-US"
+            url = f"{self.base_url}/movie{id}?api_key={self.api_key}&language=en-US"
             response = requests.get(url)
             response.raise_for_status()  # Raises an exception for HTTP error codes.
             data = response.json()
