@@ -4,6 +4,7 @@ import urllib.parse
 import requests
 from dotenv import load_dotenv
 from src.Model.movie_maker import MovieMaker
+from src.Service.movie_service import MovieService
 from typing import List
 
 
@@ -12,6 +13,7 @@ class MovieMakerTMDB:
         load_dotenv(override=True)
         self.api_key = os.environ.get("TMDB_API_KEY")
         self.base_url = "https://api.themoviedb.org/3"
+        self.movie_service = MovieService(None)
 
     def get_movie_maker_by_id(self, tmdb_id: int) -> List | None:
         # Reamarque : insomnia does not return the known_for with this request.
@@ -31,21 +33,21 @@ class MovieMakerTMDB:
                 A list of MovieMaker objects or None if not found.
         """
         try:
-            url = f"{self.base_url}/person{tmdb_id}?api_key={self.api_key}&language=en-US"
+            url = f"{self.base_url}/person/{tmdb_id}?api_key={self.api_key}&language=en-US"
             response = requests.get(url)
             response.raise_for_status()  # Raises an exception for HTTP error codes.
             data = response.json()
             if 'id' in data:  # check if id is in response
                 return [data['id'],
-                        data.get('adult', False),
+                        data['adult'],
                         data['name'],
-                        data.get('gender'),
-                        data.get('biography', ''),
-                        data.get('birthday'),
-                        data.get('place_of_birth', ''),
-                        data.get('deathday'),
-                        data.get('known_for_department', ''),
-                        data.get('popularity', 0.0)
+                        data['gender'],
+                        data['biography'],
+                        data['birthday'],
+                        data['place_of_birth'],
+                        data['known_for_department'],
+                        data['popularity'],
+                        data['deathday']
                 ]
             else:
                 print(f"No MovieMaker found with TMDB ID : {tmdb_id}.")
@@ -71,7 +73,7 @@ class MovieMakerTMDB:
         """
         try:
             encoded_name = urllib.parse.quote(name)
-            url = f"{self.base_url}search/person?api_key={self.api_key}&language=en-US&query={encoded_name}"
+            url = f"{self.base_url}/search/person?api_key={self.api_key}&language=en-US&query={encoded_name}"
             response = requests.get(url)
             response.raise_for_status()  # Raises an exception for HTTP error codes.
             data = response.json()
@@ -83,7 +85,7 @@ class MovieMakerTMDB:
                 for result in results :
                     movie_maker_results.append([
                         result['id'],
-                        result.get('known_for', [])
+                        self.movie_service.create_movies(result['known_for'])
                         ]
                     )
                 return movie_maker_results
@@ -118,9 +120,10 @@ class MovieMakerTMDB:
                     id_r = data[0]  # get the ID
                     result2 = self.get_movie_maker_by_id(id_r) 
                     if result2:
-                        attributes = result2 + [data[1]]  # Concateante result2 with "known_for"
+                        attributes = result2[:-1] + [data[1]] + result2[-1:]  # Concateante result2 with "known_for"
+                        print(attributes)
                         movie_maker_results.append(MovieMaker(*attributes))  
-                return movie_maker_results
+            return movie_maker_results
 
         if id_movie_maker:
             result = self.get_movie_maker_by_id(id_movie_maker)
@@ -129,7 +132,16 @@ class MovieMakerTMDB:
                 result2 = self.get_movie_maker_by_name(name_r)
                 if result2:
                     known_for = result2[0][-1]  
-                    movie_maker_results.append(MovieMaker(*(result + [known_for]))) 
+                    movie_maker_results.append(MovieMaker(*(result[:-1] + [known_for] + result[-1:]))) 
             return movie_maker_results
         return None
 
+# Ajouter ce bloc pour tester la recherche de "James Cameron"
+if __name__ == "__main__":
+    tmdb = MovieMakerTMDB()
+    movie_makers = tmdb.get_movie_maker_by_name_or_by_id("James Cameron")
+    if movie_makers:
+        for maker in movie_makers:
+            print(f"Found: {maker.name}, ID: {maker.id_movie_maker}")
+    else:
+        print("No movie makers found.")

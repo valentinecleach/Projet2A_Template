@@ -49,7 +49,7 @@ class MovieTMDB:
                     
                     # Option 2:
                     data_genres=data.get('genre_ids')
-                    if len(data_genres) == 1:
+                    if len(data_genres) == 1 :
                         genre=Genre(id=data_genres[0], name = "")
                     else:
                         genre=[]
