@@ -2,6 +2,7 @@
 from src.DAO.db_connection import DBConnection
 from src.Model.movie_maker import MovieMaker
 from src.DAO.singleton import Singleton
+from typing import List
 
 # to do : Documentation
 class MovieMakerDAO(metaclass=Singleton):
@@ -109,7 +110,7 @@ class MovieMakerDAO(metaclass=Singleton):
             print("Error during recovery by id : ", str(e))
             return None
 
-    def get_by_name(self, name: str, test : bool) -> list[MovieMaker]:
+    def get_by_name(self, name: str, test : bool) -> List[MovieMaker] | None:
         try:
             with DBConnection(test).connection.cursor() as cursor:
                 cursor.execute(
@@ -124,6 +125,4 @@ class MovieMakerDAO(metaclass=Singleton):
                 return [MovieMaker(**row) for row in results] if results else []
         except Exception as e:
             print("Error during recovery by name : ", str(e))
-            return (
-                []
-            )  # empty list to concerve typing : supposed to be a list of MovieMaker
+            return None 

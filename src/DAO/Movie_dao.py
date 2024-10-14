@@ -1,6 +1,5 @@
-from typing import List  # , Optional
-
-from src.DAO.db_connection import DBConnection, Singleton
+from typing import List, Optional
+from src.DAO.db_connection import DBConnection
 from src.Model.movie import Movie
 from src.DAO.singleton import Singleton
 
@@ -101,22 +100,27 @@ class Movie_dao(metaclass=Singleton):
             print("Delete error : ", str(e))
 
     # structure prise du TP
-    def find_Movie_by_id(self, id: int,  test : bool) -> Movie:
-        with DBConnection(test).connection as connection:
-            with connection.cursor() as cursor:
-                try:
-                    cursor.execute(
-                        "SELECT *                                  "
-                        "  FROM Movie                 "
-                        f"  WHERE id_movie = {id}"
-                    )
-                    res = cursor.fetchone()
-                except Exception as e:
-                    print(f" Erreur : {e}")
+    def get_by_id(self, id_movie: int,  test : bool) -> Movie:
+        try:
+            with DBConnection(test).connection.cursor() as cursor:
+                cursor.execute(
+                    """
+                    SELECT * FROM Movie
+                    WHERE id_movie = %s;
+                """,
+                    (id_movie,),
+                )
+                result = cursor.fetchone()
+                if result:
+                    return Movie(**result)
+                else:
+                    print("NO Movie with this id.")
                     return None
-                return res
+        except Exception as e:
+            print("Error during recovery by id : ", str(e))
+            return None
 
-    def get_by_name(self, name: str,  test : bool) -> List[Movie]:
+    def get_by_name(self, name: str,  test : bool) -> List[Movie] | None:
         try:
             with DBConnection(test).connection.cursor() as cursor:
                 cursor.execute(
@@ -130,9 +134,7 @@ class Movie_dao(metaclass=Singleton):
                 return [Movie(**row) for row in results] if results else []
         except Exception as e:
             print("Error during recovery by name : ", str(e))
-            return []  # empty list to concerve typing :
-            # supposed to be a list of Movie
-
+            return None  
 
 """
 tout ceci est inclu si on utilisedes with
@@ -149,29 +151,3 @@ Pour modifier
 cursor.execute()
 """
 
-# https://api.themoviedb.org/3/search/movie?query=bullet%20train&include_adult=false&language=en-US&page=1
-"""
-{
-  "page": 1,
-  "results": [
-    {
-      "adult": false,
-      "backdrop_path": "/y2Ca1neKke2mGPMaHzlCNDVZqsK.jpg",
-      "genre_ids": [
-        28,
-        35,
-        53
-      ],
-      "id": 718930,
-      "original_language": "en",
-      "original_title": "Bullet Train",
-      "overview": "Unlucky assassin Ladybug is determined to do his job peacefully after one too many gigs gone off the rails. Fate, however, may have other plans, as Ladybug's latest mission puts him on a collision course with lethal adversaries from around the globe—all with connected, yet conflicting, objectives—on the world's fastest train.",
-      "popularity": 63.204,
-      "poster_path": "/tVxDe01Zy3kZqaZRNiXFGDICdZk.jpg",
-      "release_date": "2022-08-03",
-      "title": "Bullet Train",
-      "video": false,
-      "vote_average": 7.456,
-      "vote_count": 6075
-    }
-"""

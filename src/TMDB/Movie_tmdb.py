@@ -9,6 +9,8 @@ from dotenv import load_dotenv
 
 from src.Model.genre import Genre
 from src.Model.movie import Movie
+from src.Service.collection_service import CollectionService
+from src.Service.genre_service import GenreService
 
 
 class MovieTMDB:
@@ -32,38 +34,27 @@ class MovieTMDB:
                     A Movie object if found, otherwise None.
         """
         try:
-            url = f"{self.base_url}/movie{id}?api_key={self.api_key}&language=en-US"
+            url = f"{self.base_url}/movie/{id}?api_key={self.api_key}&language=en-US"
             response = requests.get(url)
             response.raise_for_status()  # Raises an exception for HTTP error codes.
             data = response.json()
             if 'id' in data:  # check if id is in response
                 return Movie(
-                    id=data.get['id'],
-                    adult=data.get('adult', False),
-                    title=data.get["title"],
-                    # budget=
-
-                    # Plusieurs options pour le Genre. A voir lequel marche...
-                    # Option 1:
-                    genre=[Genre(id=data.get('genre_ids')[i]) for i in data.get('genre_ids')],
-                    
-                    # Option 2:
-                    data_genres=data.get('genre_ids')
-                    if len(data_genres) == 1 :
-                        genre=Genre(id=data_genres[0], name = "")
-                    else:
-                        genre=[]
-                        for genre_id in data_genres:
-                            genre.append(Genre(id = genre_id, name = ""))
-
-                    # orginal_country= not filled out with insomnia
-                    original_title=data.get['original_title'],
-                    overview=data.get['overview'],
-                    popularity=data.get['popularity'],
-                    release_date=data.get['release_date'],
-                    # revenue + runtime not avalible
-                    vote_average=data.get['vote_average'],
-                    vote_count=data.get['vote_count']
+                    id=data['id'],
+                    title=data['title'],
+                    belongs_to_collection = function_service_collection(data['belongs to collection']),
+                    budget = data['budget'],
+                    genre = function_service_genre(data['genre']),
+                    orginal_country= data['origine country'],
+                    original_language=data['original language'],
+                    original_title=data['original_title'],
+                    overview=data['overview'],
+                    popularity=data['popularity'],
+                    release_date=data['release_date'],
+                    revenu = data['revenu'],
+                    vote_average=data['vote_average'],
+                    vote_count=data['vote_count'],
+                    adult=data['adult']
                 )
             else:
                 print(f"No Movie found with the ID : {id}.")
@@ -71,6 +62,9 @@ class MovieTMDB:
         except requests.exceptions.RequestException as e:
             print("Error while fetching Movie from TMDB: ", str(e))
             return None
+
+######### suposed to be correct above 
+
 
     def get_movie_by_name(self, name: str) -> Movie | None:
         """Retrieves details of a Movie from TMDB by his name.
@@ -100,7 +94,7 @@ class MovieTMDB:
                     adult=first.get('adult', False),
                     title=first.get('title'),
                     #belongs_to_collection, budget, country
-                    original_language=first.get('original_language')
+                    original_language=first.get('original_language'),
                     original_title=first.get('original_title'),
                     overview=first.get('overview'),
                     popularity=first.get('popularity'),
@@ -145,49 +139,7 @@ class MovieTMDB:
         """
         pass
 
-    def find_movie_maker(self, movie : str) -> MovieMaker:
-        """ Finds the movie makers of a movie
-        
-        Parameters
-        ----------
-        movie : str
-            The movies name
-        
-        Returns
-        -------
-        moviemakers = list[MovieMaker] | None
-        """
-        try:
-            encoded_name = urllib.parse.quote(name)
-            url = f"{self.base_url}search/person?api_key={self.api_key}&language=en-US&query={encoded_name}"
-            response = requests.get(url)
-            response.raise_for_status()  # Raises an exception for HTTP error codes.
-            data = response.json()
-
-            # Si des résultats sont trouvés
-            if 'results' in data and len(data['results']) > 0:
-                moviemakers=[]
-                for moviemaker in  
-                moviemakers.append(MovieMaker( 
-                    id_movie_maker= ,
-                    adult= ,
-                    name= ,
-                    gender= ,
-                    biography= ,
-                    birthday= ,
-                    place_of_birth= ,
-                    deathday= ,
-                    known_for_departement= ,
-                    popularity=
-                 ))
-                return moviemakers
-            else:
-                print(f"No Movie found with name : {name}.")
-                return None
-        except requests.exceptions.RequestException as e:
-            print("Error while fetching the Movie Makers from TMDB: ", str(e))
-            return None
-
+    
 # https://developer.themoviedb.org/reference/movie-credits
 # get https://api.themoviedb.org/3/movie/{movie_id}/credits
 """
