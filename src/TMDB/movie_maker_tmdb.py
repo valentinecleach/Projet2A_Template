@@ -83,6 +83,7 @@ class MovieMakerTMDB:
                 results = data['results'] 
                 movie_maker_results = []
                 for result in results :
+                    print(result['known_for'])
                     movie_maker_results.append([
                         result['id'],
                         self.movie_service.create_movies(result['known_for'])
@@ -136,7 +137,7 @@ class MovieMakerTMDB:
             return movie_maker_results
         return None
 
-""""
+
 # Ajouter ce bloc pour tester la recherche de "James Cameron"
 if __name__ == "__main__":
     tmdb = MovieMakerTMDB()
@@ -146,4 +147,30 @@ if __name__ == "__main__":
             print(f"Found: {maker.name}, ID: {maker.id_movie_maker}")
     else:
         print("No movie makers found.")
+
+""" known_for after request : look if it is possible to Movie()
+
+{'backdrop_path': '/vL5LR6WdxWPjLPFRLe133jXWsh5.jpg', 
+'id': 19995, Y 
+'title': 'Avatar', Y
+'original_title': 'Avatar', Y
+'overview': Y 'In the 22nd century, a paraplegic Marine is dispatched to the moon Pandora on a unique mission, but becomes torn between following orders and protecting an alien civilization.', 
+'poster_path': '/kyeqWdyUXW608qlYkRqosgbbJyK.jpg',N
+'media_type': 'movie', 
+'adult': False Y, 
+'original_language': 'en', Y
+'genre_ids': [28, 12, 14, 878], Y
+'popularity': 209.787, Y
+'release_date': '2009-12-15', Y
+'video': False, 
+'vote_average': 7.6, Y
+'vote_count': 31356 Y}
+
+missing :
+"belong to collection"
+"budget"
+"origine_country"
+"revenu"
+"runtime"
+
 """
