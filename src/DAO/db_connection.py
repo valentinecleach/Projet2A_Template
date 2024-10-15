@@ -1,8 +1,12 @@
 # ORM avec framework comme SQLAlchemy fait lesrequêtes pour nous.
+import os
 
+import dotenv
 import psycopg2
 from psycopg2.extras import RealDictCursor
+
 from src.DAO.singleton import Singleton
+
 
 class DBConnection(metaclass=Singleton):
     """
@@ -155,6 +159,7 @@ class DBConnection(metaclass=Singleton):
             # add cursor.execute( other tables)
             self.db_connection.connection.commit()
 
+    # create
     def insert(self, table_name: str, values: tuple):
         """Insère des données dans une table spécifiée en récupérant les colonnes dynamiquement."""
         try:
@@ -177,3 +182,57 @@ class DBConnection(metaclass=Singleton):
         except Exception as e:
             print(f"Erreur lors de l'insertion dans {table_name}: {str(e)}")
             self.__connection.rollback()
+            return None
+
+    # READ (Fetch a single row by ID)
+    def read_by_id(self, table, id_column, id_value):
+        try:
+            query = f"SELECT * FROM {table} WHERE {id_column} = %s"
+            with self.connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(query, (id_value,))
+                    result = self.cursor.fetchone()
+            return result
+        except Exception as e:
+            print(f"Error while fetching from {table}: {e}")
+            return None
+    # Read many
+    def read_all(self, table,limit: int = 10, offset: int = 0):
+        try:
+            query = f"SELECT * FROM {table} LIMIT {max(limit, 0)} OFFSET {max(offset, 0)}"
+            with self.connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(query)
+                    results = cursor.fetchall()
+            return results
+        except Exception as e:
+            print(f"Error while fetching all records from {table}: {e}")
+            return None
+
+    # UPDATE
+    def update(self, table, id_column, id_value, update_columns, update_values):
+        try:
+            set_clause = ", ".join([f"{col} = %s" for col in update_columns])
+            query = f"UPDATE {table} SET {set_clause} WHERE {id_column} = %s"
+            values = update_values + [id_value]
+             with self.connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(query, tuple(values))
+                    connection.commit()
+                    print(f"Record updated successfully in {table}.")
+        except Exception as e:
+            print(f"Error while updating {table}: {e}")
+            return None
+
+    # DELETE
+    def delete(self, table, id_column, id_value):
+        try:
+            query = f"DELETE FROM {table} WHERE {id_column} = %s"
+             with self.connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(query, (id_value,))
+                    connection.commit()
+                    print(f"Record deleted successfully from {table}.")
+        except Exception as e:
+            print(f"Error while deleting from {table}: {e}")
+            return None
