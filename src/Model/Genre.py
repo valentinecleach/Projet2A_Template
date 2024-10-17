@@ -37,12 +37,3 @@ genre_action = {
 		}
 print(Genre(genre_data=genre_action))
 
-
-
-"""
-import sys
-
-# Affiche tout ce qui est dans sys.path
-for path in sys.path:
-    print(path)
-"""

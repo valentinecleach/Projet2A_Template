@@ -67,10 +67,11 @@ class MovieTMDB:
             print("Error while fetching Movie from TMDB: ", str(e))
             return None
 
-    ######### suposed to be correct above
+## get_by_id works. Quick test at the end of the file. 
 
     def get_movie_by_name(self, name: str) -> Movie | None:
         """Retrieves details of a Movie from TMDB by his name.
+        Need to call get_by_id because of insomnia API
 
         Parameters:
         -----------
@@ -84,31 +85,15 @@ class MovieTMDB:
         """
         try:
             encoded_name = urllib.parse.quote(name)
-            url = f"{self.base_url}search/person?api_key={self.api_key}&language=en-US&query={encoded_name}"
+            url = f"{self.base_url}/search/movie?api_key={self.api_key}&language=en-US&query={encoded_name}"
             response = requests.get(url)
             response.raise_for_status()  # Raises an exception for HTTP error codes.
             data = response.json()
-
             # Si des résultats sont trouvés
             if "results" in data and len(data["results"]) > 0:
-                first = data["results"][
-                    0
-                ]  # Prendre le premier résultat, sinon ajuster selon besoin
-                return Movie(
-                    id_movie=first["id"],
-                    adult=first.get("adult", False),
-                    title=first.get("title"),
-                    # belongs_to_collection, budget, country
-                    original_language=first.get("original_language"),
-                    original_title=first.get("original_title"),
-                    overview=first.get("overview"),
-                    popularity=first.get("popularity"),
-                    release_date=first.get("release_date"),
-                    # revenue=first.get('overview'),
-                    # runtime=first.get('overview'),
-                    vote_average=first.get("vote_average"),
-                    vote_count=first.get("vote_count"),
-                )
+                first_result = data["results"][0]          
+                id_movie=first_result["id"]
+                return self.get_movie_by_id(id_movie)
             else:
                 print(f"No Movie found with name : {name}.")
                 return None
@@ -183,5 +168,5 @@ class MovieTMDB:
 
 
 data2 = MovieTMDB()
-print(data2.get_movie_by_id(19995))
-
+#print(data2.get_movie_by_id(19995)) works !
+print(data2.get_movie_by_name("Avatar")) # works with avatar. Not with more complex title

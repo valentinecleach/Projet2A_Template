@@ -136,7 +136,7 @@ class Movie():
             """
             return (f"Title : {self.title}', ID: {self.id_movie}, "
                     f"Release Date: {self.release_date}, Popularity: {self.popularity}, "
-                    f"Vote Average: {self.vote_average}, Vote Count: {self.vote_count})")
+                    f"Vote Average: {self.vote_average}, Vote Count: {self.vote_count}")
 
 # rapid test of the class
 
