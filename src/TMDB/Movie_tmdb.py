@@ -59,7 +59,7 @@ class MovieTMDB:
                     'vote_count': data['vote_count'],
                     'adult': data['adult']
                     }
-                return my_movie                     
+                Movie(my_movie)                     
             else:
                 print(f"No Movie found with the ID : {id}.")
                 return None
