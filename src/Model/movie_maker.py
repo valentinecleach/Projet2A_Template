@@ -1,18 +1,19 @@
 # Projet2A_Template\src\Model\MovieMaker.py
 import re
+from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional, List
 from src.Model.movie import Movie
-from src.Service.movie_maker_service import MovieMakerService as MMS
+from src.Service.static import _is_valid_date
 
 # mettre en anglais
 
 
-class MovieMaker:
+class MovieMaker(BaseModel):
     def __init__(self, id_movie_maker: int, adult: bool, name: str,
                  gender: int, biography: str, birthday: str,
-                 place_of_birth: str, deathday: Optional[str] = None, known_for_department: str,
-                 popularity: float, known_for: List[Movie]):
+                 place_of_birth: str, known_for_department: str, 
+                 popularity: float, known_for: List[Movie], deathday: Optional[str] = None):
         """
         Initializes a new MovieMaker object with the provided information.
 
@@ -38,6 +39,8 @@ class MovieMaker:
             The person's main department (e.g., directing, acting).
         popularity : float
             Popularity score.
+        known_for : List[Movie]
+            Movie linked to the MovieMaker
         """
 
         if not isinstance(id_movie_maker, int) or id_movie_maker < 0:  # 2710 for James Cameron
@@ -53,14 +56,14 @@ class MovieMaker:
             raise ValueError("biography must be a string.")
 
         # Validation of birthday (format YYYY-MM-DD)
-        if not MMS._is_valid_date(birthday):
+        if not _is_valid_date(birthday):
             raise ValueError("birthday must be in the format YYYY-MM-DD.")
 
         if not isinstance(place_of_birth, str):
             raise ValueError("place_of_birth must be a string.")
 
         # Validation of deathday (empty or in the format YYYY-MM-DD)
-        if deathday and not MMS._is_valid_date(deathday):  # first part for living person
+        if deathday and not _is_valid_date(deathday):  # first part for living person
             raise ValueError("deathday must be empty or in the format YYYY-MM-DD.")
 
         if not isinstance(known_for_department, str):

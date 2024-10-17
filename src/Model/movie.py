@@ -1,12 +1,11 @@
 from pydantic import BaseModel
-
-from src.Model.Genre import Genre
-from src.Service.movie_maker_service import MovieMakerService as MMS
+from src.Model.genre import Genre
+from src.Service.static import _is_valid_date
 
 # from src.Model.Rating import Rating
 
 
-class Movie(BaseModel):
+class Movie():
     """Movie
 
     A series of moving pictures, usually shown in a cinema or on television and
@@ -94,7 +93,7 @@ class Movie(BaseModel):
             raise TypeError("The origine country must be a string")        
         if not isinstance(popularity, float):
             raise TypeError("The popularity must be a float")        
-        if not MMS._is_valid_date(release_date):
+        if not _is_valid_date(release_date):
             raise ValueError("The release_date must be in the format YYYY-MM-DD.")
         if not isinstance(revenue, float):
             raise TypeError("The revenue must be a float")
