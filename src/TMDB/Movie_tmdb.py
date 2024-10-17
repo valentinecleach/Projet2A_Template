@@ -143,42 +143,48 @@ class MovieTMDB:
         """
         pass
 
-    def find_movie_maker(self, maker: str) -> MovieMaker:
-        """Finds a movie maker in a movie
+    def find_movie_maker(self, id_movie) -> MovieMaker:
+        """Finds the movie makers of a movie
 
         Parameters
         ----------
-        maker : str
-            name of movie maker?
+        id_movie : str
+            id of the movie
 
         Returns
         --------
-        MovieMaker | None
+        list(MovieMaker) | None
         """
         try:
-            url = f"{self.base_url}/movie/{self.id}/credits?api_key={self.api_key}&language=en-US"
+            url = f"{self.base_url}/movie/{id_movie}/credits?api_key={self.api_key}&language=en-US"
             # "https://api.themoviedb.org/3/movie/21661/credits?language=en-US"
-            response = requests.get(url)
+            headers = {"accept": "application/json", "Authorization": self.api_key}
+            response = requests.get(url, headers=headers)
             response.raise_for_status()  # Raises an exception for HTTP error codes.
             data = response.json()
-            if "maker" in data:  # check if id is in response
-                return MovieMaker(
-                    id=data["id"],
-                    adult=data["adult"],
-                    name=data["name"],
-                    gender=data["gender"],
-                    biography=data["biography"],
-                    birthday=data["birthday"],
-                    place_of_birth=data["place_of_birth"],
-                    known_for_department=data["known_for_department"],
-                    popularity=data["popularity"],
-                    deathday=data["deathday"],
-                )
+
+            if "id_movie" == data["id"]:
+                movie_makers = []
+                for moviemakers in data["cast"]:
+                    movie_makers.append(
+                        MovieMaker(
+                            id=moviemakers["id"],
+                            adult=moviemakers["adult"],
+                            name=moviemakers["name"],
+                            gender=moviemakers["gender"],
+                            biography=moviemakers["biography"],
+                            birthday=moviemakers["birthday"],
+                            place_of_birth=moviemakers["place_of_birth"],
+                            known_for_department=moviemakers["known_for_department"],
+                            popularity=moviemakers["popularity"],
+                            deathday=moviemakers["deathday"],
+                        )
+                    )
             else:
-                print(f"No movie maker found with the info given : {maker}.")
+                print(f"No movie makers found with the info given : {id_movie}.")
                 return None
         except requests.exceptions.RequestException as e:
-            print("Error while fetching movie maker from TMDB: ", str(e))
+            print("Error while fetching the movie makers from TMDB: ", str(e))
             return None
 
 
