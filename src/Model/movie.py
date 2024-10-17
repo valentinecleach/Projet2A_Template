@@ -26,7 +26,7 @@ class Movie():
         movies that aren't adult movies.
     belongs_to_collection : MovieCollection
         If there is a series
-    budget : float
+    budget : int
         The budget in $.
     genre : list[Genre]
         A movie can have one or multiple genres. They are kept in a list of
@@ -55,7 +55,7 @@ class Movie():
 
     """
 
-    def __init(self,
+    def __init__(self,
                id_movie : int,
                title : str,
                belongs_to_collection : List[MovieCollection],
@@ -80,7 +80,7 @@ class Movie():
             raise TypeError("The title must be a string")        
         if not isinstance(belongs_to_collection, list):
             raise TypeError("belongs_to_collection must be a list of MovieCollection")        
-        if (not isinstance(budget, float)) or budget < 0:
+        if (not isinstance(budget, int)) or budget < 0:
             raise TypeError("The budget must be a float")        
         if not isinstance(genres, list):
             raise TypeError("genre must be a Genre object.")
@@ -100,12 +100,12 @@ class Movie():
             raise TypeError("The popularity must be a float")        
         if not _is_valid_date(release_date):
             raise ValueError("The release_date must be in the format YYYY-MM-DD.")
-        if not isinstance(revenue, float):
+        if not isinstance(revenue, int):
             raise TypeError("The revenue must be a float")
-        if not isinstance(runtime, ):
-            raise TypeError("The runtime must be a ")
-        if not isinstance(vote_average, ):
-            raise TypeError("The vote_average must be a ")       
+        if not isinstance(runtime, int):
+            raise TypeError("The runtime must be an integer ")
+        if not isinstance(vote_average, float):
+            raise TypeError("The vote_average must be a float")       
         if not isinstance(vote_count, int):
             raise TypeError("The vote count must be a integer")
         if not isinstance(adult, bool):
@@ -132,30 +132,12 @@ class Movie():
 
     def __str__(self):
             """
-            Returns a string representation of the Movie object.
+            Print a string representation of the Movie object.
             """
-            return (f"Title : {self.title}' : ID: {self.id_movie},"
+            return (f"Title : {self.title}', ID: {self.id_movie}, "
                     f"Release Date: {self.release_date}, Popularity: {self.popularity}, "
                     f"Vote Average: {self.vote_average}, Vote Count: {self.vote_count})")
 
-
 # rapid test of the class
 
-my_movie = {'id_movie': 1995, 
-'title': 'Lara Croft: Tomb Raider', 
-'belongs_to_collection': [ 'Movie Collection : Tomb Raider Collection'], 
-'budget': 115000000, 
-'genres': ['Genre : Adventure', 'Genre : Fantasy', 'Genre : Action', 'Genre : Thriller'], 
-'origin_country': ['US'], 
-'original_language': 'en', 
-'original_title': 'Lara Croft: Tomb Raider', 
-'overview': "Orphaned heiress, English aristocrat and intrepid archaeologist, Lara Croft, embarks on a dangerous quest to retrieve the two halves of an ancient artifact which controls time before it falls into the wrong hands. As an extremely rare planetary alignment is about to occur for the first time in 5,000 years, the fearless tomb raider will have to team up with rival adventurers and sworn enemies to collect the pieces, while time is running out. But, in the end, who can harness the archaic talisman's unlimited power?", 
-'popularity': 39.097, 
-'release_date': '2001-06-11', 
-'revenue': 274700000, 
-'runtime': 100, 
-'vote_average': 5.9, 
-'vote_count': 6009, 
-'adult': False}
 
-print(Movie(my_movie))

@@ -14,7 +14,7 @@ from src.Service.genre_service import GenreService
 from src.Service.movie_collection_service import MovieCollectionService
 from src.Service.genre_service import GenreService
 
-
+from typing import List, Dict
 class MovieTMDB:
     def __init__(self):
         load_dotenv(override=True)
@@ -59,7 +59,7 @@ class MovieTMDB:
                     'vote_count': data['vote_count'],
                     'adult': data['adult']
                     }
-                Movie(my_movie)                     
+                return Movie(**my_movie)                     
             else:
                 print(f"No Movie found with the ID : {id}.")
                 return None
@@ -136,7 +136,7 @@ class MovieTMDB:
         """
         pass
 
-    def filter_by_popularity(self) -> list(Movie):
+    def filter_by_popularity(self) -> list:
         """Filters by popularity all movies of the TMDB database and returns
 
         Parameters
@@ -181,88 +181,7 @@ class MovieTMDB:
             print("Error while fetching the movies: ", str(e))
             return None
 
-    def find_movie_maker(self, id_movie) -> MovieMaker:
-        """Finds the movie makers of a movie
 
-        Parameters
-        ----------
-        id_movie : str
-            id of the movie
-
-        Returns
-        --------
-        movie_makers : list(MovieMaker) | None
-        """
-        try:
-            url = f"{self.base_url}/movie/{id_movie}/credits?api_key={self.api_key}&language=en-US"
-            # "https://api.themoviedb.org/3/movie/21661/credits?language=en-US"
-            headers = {"accept": "application/json", "Authorization": self.api_key}
-            response = requests.get(url, headers=headers)
-            response.raise_for_status()  # Raises an exception for HTTP error codes.
-            data = response.json()
-
-            if "id_movie" == data["id"]:
-                movie_makers = []
-                for moviemakers in data["cast"]:
-                    movie_makers.append(
-                        MovieMaker(
-                            id=moviemakers["id"],
-                            adult=moviemakers["adult"],
-                            name=moviemakers["name"],
-                            gender=moviemakers["gender"],
-                            biography=moviemakers["biography"],
-                            birthday=moviemakers["birthday"],
-                            place_of_birth=moviemakers["place_of_birth"],
-                            known_for_department=moviemakers["known_for_department"],
-                            popularity=moviemakers["popularity"],
-                            deathday=moviemakers["deathday"],
-                        )
-                    )
-
-                return movie_makers
-            else:
-                print(f"No movie makers found with the info given : {id_movie}.")
-                return None
-        except requests.exceptions.RequestException as e:
-            print("Error while fetching the movie makers from TMDB: ", str(e))
-            return None
-
-
-# https://developer.themoviedb.org/reference/movie-credits
-# get https://api.themoviedb.org/3/movie/{movie_id}/credits
-"""
-{
-  "id": 21661,
-  "cast": [
-    {
-      "adult": false,
-      "gender": 2,
-      "id": 7431,
-      "known_for_department": "Acting",
-      "name": "Kevin Zegers",
-      "original_name": "Kevin Zegers",
-      "popularity": 18.321,
-      "profile_path": "/zRjasG4NXxKbe6e1c4enivAvfcH.jpg",
-      "cast_id": 3,
-      "character": "Josh Framm",
-      "credit_id": "52fe4423c3a368484e0118c3",
-      "order": 0
-    },
-
-
-    import requests
-
-url = "https://api.themoviedb.org/3/movie/21661/credits?language=en-US"
-
-headers = {
-    "accept": "application/json",
-    "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmYjBlNWRlZDNkNzliYzVlNTcxNTM4MDMwZjdlNWFmOCIsIm5iZiI6MTcyODU4OTQ3OC4zODc3NDUsInN1YiI6IjY2ZTBhYmMyOWM3MzUzMmRkYmFhYWY0NyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3XrjUtK_SJmltQGboTpJVLjwTgJ5fdIXtltmVMLX1bQ"
-}
-
-response = requests.get(url, headers=headers)
-
-print(response.text)
-"""
 data2 = MovieTMDB()
-print(data2.get_movie_by_id(1995))
+print(data2.get_movie_by_id(19995))
 
