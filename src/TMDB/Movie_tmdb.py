@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 
 from src.Model.genre import Genre
 from src.Model.movie import Movie
+from src.Model.movie_maker import MovieMaker
 from src.Service.collection_service import CollectionService
 from src.Service.genre_service import GenreService
 
@@ -16,45 +17,47 @@ from src.Service.genre_service import GenreService
 class MovieTMDB:
     def __init__(self):
         load_dotenv(override=True)
-        self.api_key = os.environ.get("TMDB_API_KEY")  
+        self.api_key = os.environ.get("TMDB_API_KEY")
         self.base_url = "https://api.themoviedb.org/3"
 
     def get_movie_by_id(self, id: int) -> Movie | None:
         """
-                Retrieves details of a Movie from TMDB by his ID given by TMDB.
+        Retrieves details of a Movie from TMDB by his ID given by TMDB.
 
-                Parameters:
-                -----------
-                id : int
-                    The ID of the Movie on TMDB.
+        Parameters:
+        -----------
+        id : int
+            The ID of the Movie on TMDB.
 
-                Returns:
-                --------
-                Movie | None
-                    A Movie object if found, otherwise None.
+        Returns:
+        --------
+        Movie | None
+            A Movie object if found, otherwise None.
         """
         try:
             url = f"{self.base_url}/movie/{id}?api_key={self.api_key}&language=en-US"
             response = requests.get(url)
             response.raise_for_status()  # Raises an exception for HTTP error codes.
             data = response.json()
-            if 'id' in data:  # check if id is in response
+            if "id" in data:  # check if id is in response
                 return Movie(
-                    id=data['id'],
-                    title=data['title'],
-                    belongs_to_collection = function_service_collection(data['belongs to collection']),
-                    budget = data['budget'],
-                    genre = function_service_genre(data['genre']),
-                    orginal_country= data['origine country'],
-                    original_language=data['original language'],
-                    original_title=data['original_title'],
-                    overview=data['overview'],
-                    popularity=data['popularity'],
-                    release_date=data['release_date'],
-                    revenu = data['revenu'],
-                    vote_average=data['vote_average'],
-                    vote_count=data['vote_count'],
-                    adult=data['adult']
+                    id=data["id"],
+                    title=data["title"],
+                    belongs_to_collection=function_service_collection(
+                        data["belongs to collection"]
+                    ),
+                    budget=data["budget"],
+                    genre=function_service_genre(data["genre"]),
+                    orginal_country=data["origine country"],
+                    original_language=data["original language"],
+                    original_title=data["original_title"],
+                    overview=data["overview"],
+                    popularity=data["popularity"],
+                    release_date=data["release_date"],
+                    revenu=data["revenu"],
+                    vote_average=data["vote_average"],
+                    vote_count=data["vote_count"],
+                    adult=data["adult"],
                 )
             else:
                 print(f"No Movie found with the ID : {id}.")
@@ -63,21 +66,20 @@ class MovieTMDB:
             print("Error while fetching Movie from TMDB: ", str(e))
             return None
 
-######### suposed to be correct above 
-
+    ######### suposed to be correct above
 
     def get_movie_by_name(self, name: str) -> Movie | None:
         """Retrieves details of a Movie from TMDB by his name.
 
-            Parameters:
-            -----------
-            name : str
-                The name of the Movie on TMDB.
+        Parameters:
+        -----------
+        name : str
+            The name of the Movie on TMDB.
 
-            Returns:
-            --------
-            Movie | None
-                A Movie object if found, otherwise None.
+        Returns:
+        --------
+        Movie | None
+            A Movie object if found, otherwise None.
         """
         try:
             encoded_name = urllib.parse.quote(name)
@@ -87,22 +89,24 @@ class MovieTMDB:
             data = response.json()
 
             # Si des résultats sont trouvés
-            if 'results' in data and len(data['results']) > 0:
-                first = data['results'][0]  # Prendre le premier résultat, sinon ajuster selon besoin
+            if "results" in data and len(data["results"]) > 0:
+                first = data["results"][
+                    0
+                ]  # Prendre le premier résultat, sinon ajuster selon besoin
                 return Movie(
-                    id_movie=first['id'],
-                    adult=first.get('adult', False),
-                    title=first.get('title'),
-                    #belongs_to_collection, budget, country
-                    original_language=first.get('original_language'),
-                    original_title=first.get('original_title'),
-                    overview=first.get('overview'),
-                    popularity=first.get('popularity'),
-                    release_date=first.get('release_date'),
+                    id_movie=first["id"],
+                    adult=first.get("adult", False),
+                    title=first.get("title"),
+                    # belongs_to_collection, budget, country
+                    original_language=first.get("original_language"),
+                    original_title=first.get("original_title"),
+                    overview=first.get("overview"),
+                    popularity=first.get("popularity"),
+                    release_date=first.get("release_date"),
                     # revenue=first.get('overview'),
                     # runtime=first.get('overview'),
-                    vote_average=first.get('vote_average'),
-                    vote_count=first.get('vote_count')
+                    vote_average=first.get("vote_average"),
+                    vote_count=first.get("vote_count"),
                 )
             else:
                 print(f"No Movie found with name : {name}.")
@@ -111,7 +115,7 @@ class MovieTMDB:
             print("Error while fetching Movie from TMDB: ", str(e))
             return None
 
-    def view_comments(self, movie : str):
+    def view_comments(self, movie: str):
         """Shows the comments of a Movie
 
         Parameters
@@ -123,7 +127,7 @@ class MovieTMDB:
 
     def filter_by_genre(self, genre: int):
         """Filters a search by the genres id
-        
+
         Parameters
         ----------
         genre : int
@@ -132,43 +136,43 @@ class MovieTMDB:
         pass
 
     def filter_by_popularity(self) -> Movie:
-        """ Filters by popularity
+        """Filters by popularity
 
         Parameters
         ----------
         """
         pass
 
-    def find_movie_maker(self, maker : str) -> MovieMaker:
-    """Finds a movie maker in a movie
+    def find_movie_maker(self, maker: str) -> MovieMaker:
+        """Finds a movie maker in a movie
 
-    Parameters
-    ----------
-    maker : str
-        name of movie maker?
+        Parameters
+        ----------
+        maker : str
+            name of movie maker?
 
-    Returns
-    --------
-    MovieMaker | None
-    """
+        Returns
+        --------
+        MovieMaker | None
+        """
         try:
             url = f"{self.base_url}/movie/{self.id}/credits?api_key={self.api_key}&language=en-US"
             # "https://api.themoviedb.org/3/movie/21661/credits?language=en-US"
             response = requests.get(url)
             response.raise_for_status()  # Raises an exception for HTTP error codes.
             data = response.json()
-            if 'maker' in data:  # check if id is in response
+            if "maker" in data:  # check if id is in response
                 return MovieMaker(
-                    id = data['id'],
-                       adult = data['adult'],
-                        name = data['name'],
-                        gender = data['gender'],
-                        biography = data['biography'],
-                        birthday = data['birthday'],
-                        place_of_birth = data['place_of_birth'],
-                        known_for_department = data['known_for_department'],
-                        popularity = data['popularity'],
-                        deathday = data['deathday']
+                    id=data["id"],
+                    adult=data["adult"],
+                    name=data["name"],
+                    gender=data["gender"],
+                    biography=data["biography"],
+                    birthday=data["birthday"],
+                    place_of_birth=data["place_of_birth"],
+                    known_for_department=data["known_for_department"],
+                    popularity=data["popularity"],
+                    deathday=data["deathday"],
                 )
             else:
                 print(f"No movie maker found with the info given : {maker}.")
@@ -176,6 +180,8 @@ class MovieTMDB:
         except requests.exceptions.RequestException as e:
             print("Error while fetching movie maker from TMDB: ", str(e))
             return None
+
+
 # https://developer.themoviedb.org/reference/movie-credits
 # get https://api.themoviedb.org/3/movie/{movie_id}/credits
 """
@@ -202,10 +208,6 @@ class MovieTMDB:
 
 url = "https://api.themoviedb.org/3/movie/21661/credits?language=en-US"
 
-headers = {
-    "accept": "application/json",
-    "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmYjBlNWRlZDNkNzliYzVlNTcxNTM4MDMwZjdlNWFmOCIsIm5iZiI6MTcyODU4OTQ3OC4zODc3NDUsInN1YiI6IjY2ZTBhYmMyOWM3MzUzMmRkYmFhYWY0NyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3XrjUtK_SJmltQGboTpJVLjwTgJ5fdIXtltmVMLX1bQ"
-}
 
 response = requests.get(url, headers=headers)
 
