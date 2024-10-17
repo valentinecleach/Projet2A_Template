@@ -230,7 +230,6 @@ class MovieTMDB:
 
 # https://developer.themoviedb.org/reference/movie-credits
 # get https://api.themoviedb.org/3/movie/{movie_id}/credits
-<<<<<<< HEAD
 """
 {
   "id": 21661,
@@ -267,5 +266,3 @@ print(response.text)
 data2 = MovieTMDB()
 print(data2.get_movie_by_id(1995))
 
-=======
->>>>>>> f03a8cbaf15a63d5e4a64da61101593e81a1c783
