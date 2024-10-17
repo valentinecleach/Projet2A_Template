@@ -179,6 +179,7 @@ class DBConnection(metaclass=Singleton):
                 query = f"INSERT INTO {table_name} ({', '.join(columns)}) VALUES ({', '.join(['%s'] * len(values))})"
                 cursor.execute(query, values)
                 self.__connection.commit()
+                return 1
         except Exception as e:
             print(f"Erreur lors de l'insertion dans {table_name}: {str(e)}")
             self.__connection.rollback()
@@ -195,6 +196,40 @@ class DBConnection(metaclass=Singleton):
             return result
         except Exception as e:
             print(f"Error while fetching from {table}: {e}")
+            return None
+    
+    def read_all_by_id(self, table, id_column, id_value):
+        try:
+            query = f"SELECT * FROM {table} WHERE {id_column} = %s"
+            with self.connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(query, (id_value,))
+                    result = self.cursor.fetchall()
+            return result
+        except Exception as e:
+            print(f"Error while fetching from {table}: {e}")
+            return None
+
+    # READ (Fetch rows by name)
+    def read_by_string(self, table, search_column, search_string, size = 10):
+        """
+        Searches for records in a table based on a string.
+
+        :param table: Name of the table in which to perform the search.
+        :param search_column: The column to search.
+        :param search_string: The string to search for.
+        :return: The corresponding results.
+        """
+        search_string = str(search_string).lower()
+        try:
+            query = f"SELECT * FROM {table} WHERE LOWER({search_column}) LIKE %s"
+            with self.connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(query, ('%' + search_string + '%',))
+                    results = cursor.fetchmany(size)
+            return results
+        except Exception as e:
+            print(f"Error while searching: {e}")
             return None
     # Read many
     def read_all(self, table,limit: int = 10, offset: int = 0):

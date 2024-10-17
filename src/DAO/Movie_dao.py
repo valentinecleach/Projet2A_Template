@@ -1,11 +1,13 @@
 from typing import List, Optional
+
 from src.DAO.db_connection import DBConnection
-from src.Model.movie import Movie
 from src.DAO.singleton import Singleton
+from src.Model.movie import Movie
+
 
 # A Faire: (valentine)
 class Movie_dao(metaclass=Singleton):
-    def insert(self, new_movie: Movie,  test : bool):
+    def insert(self, new_movie: Movie, test: bool):
         try:
             """
             Adds a movie into the database.
@@ -55,7 +57,7 @@ class Movie_dao(metaclass=Singleton):
             print("Insertion error : ", str(e))
             # return None #what_we_return
 
-    def update(self, movie: Movie,  test : bool):
+    def update(self, movie: Movie, test: bool):
         try:
             with DBConnection(test).connection.cursor() as cursor:
                 cursor.execute(
@@ -83,7 +85,7 @@ class Movie_dao(metaclass=Singleton):
         except Exception as e:
             print("Update error : ", str(e))
 
-    def delete(self, id_movie: int,  test : bool):
+    def delete(self, id_movie: int, test: bool):
         try:
             with DBConnection(test).connection.cursor() as cursor:
                 cursor.execute(
@@ -100,7 +102,7 @@ class Movie_dao(metaclass=Singleton):
             print("Delete error : ", str(e))
 
     # structure prise du TP
-    def get_by_id(self, id_movie: int,  test : bool) -> Movie:
+    def get_by_id(self, id_movie: int, test: bool) -> Movie:
         try:
             with DBConnection(test).connection.cursor() as cursor:
                 cursor.execute(
@@ -120,7 +122,7 @@ class Movie_dao(metaclass=Singleton):
             print("Error during recovery by id : ", str(e))
             return None
 
-    def get_by_name(self, name: str,  test : bool) -> List[Movie] | None:
+    def get_by_name(self, name: str, test: bool) -> List[Movie] | None:
         try:
             with DBConnection(test).connection.cursor() as cursor:
                 cursor.execute(
@@ -134,7 +136,8 @@ class Movie_dao(metaclass=Singleton):
                 return [Movie(**row) for row in results] if results else []
         except Exception as e:
             print("Error during recovery by name : ", str(e))
-            return None  
+            return None
+
 
 """
 tout ceci est inclu si on utilisedes with
@@ -150,4 +153,3 @@ cursor.fetchmany(size)
 Pour modifier
 cursor.execute()
 """
-

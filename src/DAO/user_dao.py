@@ -6,48 +6,105 @@ from Model.connected_user import ConnectedUser
 
 class UserDAO(metaclass=Singleton):
     # CREATE
-    def create_user(
+    def insert(
         self,
         id_user: int,
         name: str,
         phone_number: str,
-        email_address: str,
+        email: str,
         gender: int,
-        birthday: str,
+        date_of_birth: str,
         password: str,
-    ):
+        pseudo: str = "",
+    ) -> ConnectedUser:
 
         values = (
             id_user,
             name,
             phone_number,
-            email_address,
+            email,
             gender,
-            birthday,
+            date_of_birth,
             password,
+            pseudo,
         )
 
-        DBConnection().insert(self, user, values)
+        res = DBConnection().insert(user, values)
+        if res:
+            created = ConnectedUser(
+                name=name,
+                pseudo=pseudo,
+                email=email,
+                gender=gender,
+                password=password,  # hacher ce mot de passe
+                date_of_birth=date_of_birth,
+                phone_number=phone_number,
+            )
+        return created
 
     # READ (Fetch a single user by ID)
-    def get_user_by_id(self, id_user):
+    def get_user_by_id(self, id_user) -> ConnectedUser:
 
-        return DBConnection().read_by_id(self, user, "id_user", id)
+        res = DBConnection().read_by_id(user, "id_user", id)
+        if res:
+            user_read = ConnectedUser(
+                name=res["name"],
+                pseudo=res["pseudo"],
+                email=res["email"],
+                password=res["password"],
+                date_of_birth=res["date_of_birth"],
+                phone_number=res["phone_number"],
+            )
+        return user_read
+
+    # READ (Fetch some users by name)
+    def get_user_by_name(self, search_string, size=10) -> List(ConnectedUser):
+
+        results = DBConnection().read_by_string(user, "name", search_string, size)
+        if results:
+            users_read = [
+                ConnectedUser(
+                    name=res["name"],
+                    pseudo=res["pseudo"],
+                    email=res["email"],
+                    gender=res["gender"],
+                    password=res["password"],
+                    date_of_birth=res["date_of_birth"],
+                    phone_number=res["phone_number"],
+                )
+                for res in results
+            ]
+        return users_read
 
     # READ (Fetch all users)
-    def get_all_users(self):
+    def get_all_users(self, limit: int = 10, offset: int = 0) -> List[ConnectedUser]:
 
-        return DBConnection().read_by_id(self, user)
+        results = DBConnection().read_all(user, limit, offset)
+        if results:
+            users_read = [
+                ConnectedUser(
+                    name=res["name"],
+                    pseudo=res["pseudo"],
+                    email=res["email"],
+                    gender=res["gender"],
+                    password=res["password"],
+                    date_of_birth=res["date_of_birth"],
+                    phone_number=res["phone_number"],
+                )
+                for res in results
+            ]
+        return users_read
 
     # UPDATE
     def update_user(
         self,
         id_user: int,
         name=None,
-        email_address=None,
+        email=None,
+        pseudo=None,
         password=None,
         phone_number=None,
-        birthday=None,
+        date_of_birth=None,
         gender=None,
     ):
         try:
@@ -58,26 +115,29 @@ class UserDAO(metaclass=Singleton):
             if name:
                 updates.append("name = %s")
                 values.append(name)
-            if email_address:
-                updates.append("email_address = %s")
-                values.append(email_address)
+            if email:
+                updates.append("email = %s")
+                values.append(email)
             if password:
                 updates.append("password = %s")
                 values.append(password)
             if phone_number:
                 updates.append("phone_number = %s")
                 values.append(phone_number)
-            if birthday:
-                updates.append("birthday = %s")
-                values.append(birthday)
+            if date_of_birth:
+                updates.append("date_of_birth = %s")
+                values.append(date_of_birth)
             if gender:
                 updates.append("gender = %s")
                 values.append(gender)
+            if pseudo:
+                updates.append("pseudo = %s")
+                values.append(pseudo)
 
             # If there are no updates, return
             if not updates:
                 print("No data provided for update.")
-                return
+                return None
 
             query = f"UPDATE user SET {', '.join(updates)} WHERE id_user = %s"
             values.append(id_user)

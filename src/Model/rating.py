@@ -1,4 +1,5 @@
-from src.Model.User import User
+from src.Model.connected_user import ConnectedUser
+from src.Model.movie import Movie
 
 
 class Rating:
@@ -19,9 +20,8 @@ class Rating:
     --------
 
     """
-    def __init__(self):
-        self.overall_rating = 0
-        self.who_rated = []
+    def __init__(self,user : ConnectedUser, movie : Movie,
+                comment : str="",rating: int=None,date : str)
 
     def nb_ratings(self) -> int:
         """
