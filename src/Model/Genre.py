@@ -26,7 +26,7 @@ class Genre:
         self.name = genre_data.get('name')
 
     def __repr__(self):
-        return f"Genre : {self.name}"
+       return f"'Genre : {self.name}'"
 
 # Unrelated code to show sys.path to understand error with classes ipmports.
 

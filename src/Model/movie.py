@@ -5,8 +5,7 @@ from src.Model.genre import Genre
 from src.Model.movie_collection import MovieCollection
 # Service
 from src.Service.static import _is_valid_date
-from src.Service.movie_collection_service import MovieCollectionService
-from src.Service.genre_service import GenreService
+
 # from src.Model.Rating import Rating
 
 
@@ -61,8 +60,8 @@ class Movie():
                title : str,
                belongs_to_collection : List[MovieCollection],
                budget,
-               genre : List[Genre],
-               origine_country,
+               genres : List[Genre],
+               origin_country : List[str],
                original_language,
                original_title,
                overview,
@@ -79,23 +78,24 @@ class Movie():
             raise TypeError("The id needs to be a positive integer")        
         if not isinstance(title, str):
             raise TypeError("The title must be a string")        
-        if not isinstance(belongs_to_collection, List[MovieCollection]):
+        if not isinstance(belongs_to_collection, list):
             raise TypeError("belongs_to_collection must be a list of MovieCollection")        
         if (not isinstance(budget, float)) or budget < 0:
             raise TypeError("The budget must be a float")        
-        if not isinstance(genre, Genre):
+        if not isinstance(genres, list):
             raise TypeError("genre must be a Genre object.")
-        for i in genre:
+        for i in genres:
             if not isinstance(i, Genre):
                 raise ValueError("genre element of list not ok")        
-        if not isinstance(origine_country, str):
-            raise TypeError("The origine country must be a string")        
+        if not isinstance(origin_country, List):
+            raise TypeError("The origine country must be a list")        
+        for data in origin_country:
+            if not isinstance(data,str):
+                raise ValueError("Each origin country must be a string")
         if not isinstance(original_language, str):
             raise TypeError("The original language must be a string")        
         if not isinstance(original_title, str):
-            raise TypeError("The original title must be a string")        
-        if not isinstance(origine_country, str):
-            raise TypeError("The origine country must be a string")        
+            raise TypeError("The original title must be a string")              
         if not isinstance(popularity, float):
             raise TypeError("The popularity must be a float")        
         if not _is_valid_date(release_date):
@@ -117,8 +117,8 @@ class Movie():
         self.title = title
         self.belongs_to_collection = belongs_to_collection
         self.budget = budget
-        self.genre = genre
-        self.origine_country = origine_country
+        self.genres = genres
+        self.origin_country = origin_country
         self.original_language = original_language
         self.original_title = original_title
         self.overview = overview
@@ -139,4 +139,23 @@ class Movie():
                     f"Vote Average: {self.vote_average}, Vote Count: {self.vote_count})")
 
 
-# to check the constructor with insomnia data :
+# rapid test of the class
+
+my_movie = {'id_movie': 1995, 
+'title': 'Lara Croft: Tomb Raider', 
+'belongs_to_collection': [ 'Movie Collection : Tomb Raider Collection'], 
+'budget': 115000000, 
+'genres': ['Genre : Adventure', 'Genre : Fantasy', 'Genre : Action', 'Genre : Thriller'], 
+'origin_country': ['US'], 
+'original_language': 'en', 
+'original_title': 'Lara Croft: Tomb Raider', 
+'overview': "Orphaned heiress, English aristocrat and intrepid archaeologist, Lara Croft, embarks on a dangerous quest to retrieve the two halves of an ancient artifact which controls time before it falls into the wrong hands. As an extremely rare planetary alignment is about to occur for the first time in 5,000 years, the fearless tomb raider will have to team up with rival adventurers and sworn enemies to collect the pieces, while time is running out. But, in the end, who can harness the archaic talisman's unlimited power?", 
+'popularity': 39.097, 
+'release_date': '2001-06-11', 
+'revenue': 274700000, 
+'runtime': 100, 
+'vote_average': 5.9, 
+'vote_count': 6009, 
+'adult': False}
+
+print(Movie(my_movie))

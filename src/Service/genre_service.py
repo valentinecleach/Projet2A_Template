@@ -6,7 +6,7 @@ class GenreService:
         pass
 
     @classmethod 
-    def create_lits_of_genre(cls, genre_data : List[Dict]) -> List[Genre]:
+    def create_list_of_genre(cls, genre_data : List[Dict]) -> List[Genre]:
         """    to create a list of Genre with a list of dictionnary representing genre     """
         list_of_genre = []
         for data in genre_data:

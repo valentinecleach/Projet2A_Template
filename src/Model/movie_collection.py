@@ -27,7 +27,7 @@ class MovieCollection:
         self.name = MovieCollection_data.get("name")
 
     def __repr__(self):
-        return f" Movie Collection : {self.name}"
+       return f" 'Movie Collection : {self.name}' "
 
 
 # Unrelated code to show sys.path to understand error with classes ipmports.

@@ -6,10 +6,12 @@ import urllib.parse
 
 import requests
 from dotenv import load_dotenv
-
+# Model
 from src.Model.genre import Genre
 from src.Model.movie import Movie
-from src.Service.collection_service import CollectionService
+# Service
+from src.Service.genre_service import GenreService
+from src.Service.movie_collection_service import MovieCollectionService
 from src.Service.genre_service import GenreService
 
 
@@ -39,23 +41,25 @@ class MovieTMDB:
             response.raise_for_status()  # Raises an exception for HTTP error codes.
             data = response.json()
             if 'id' in data:  # check if id is in response
-                return Movie(
-                    id=data['id'],
-                    title=data['title'],
-                    belongs_to_collection = function_service_collection(data['belongs to collection']),
-                    budget = data['budget'],
-                    genre = function_service_genre(data['genre']),
-                    orginal_country= data['origine country'],
-                    original_language=data['original language'],
-                    original_title=data['original_title'],
-                    overview=data['overview'],
-                    popularity=data['popularity'],
-                    release_date=data['release_date'],
-                    revenu = data['revenu'],
-                    vote_average=data['vote_average'],
-                    vote_count=data['vote_count'],
-                    adult=data['adult']
-                )
+                my_movie = {
+                    'id_movie': data['id'],
+                    'title': data['title'],
+                    'belongs_to_collection': MovieCollectionService.create_list_of_collection(data['belongs_to_collection']),
+                    'budget': data['budget'],
+                    'genres': GenreService.create_list_of_genre(data['genres']),
+                    'origin_country': data['origin_country'],
+                    'original_language': data['original_language'],
+                    'original_title': data['original_title'],
+                    'overview': data['overview'],
+                    'popularity': data['popularity'],
+                    'release_date': data['release_date'],
+                    'revenue': data['revenue'],
+                    'runtime': data['runtime'],
+                    'vote_average': data['vote_average'],
+                    'vote_count': data['vote_count'],
+                    'adult': data['adult']
+                    }
+                return my_movie                     
             else:
                 print(f"No Movie found with the ID : {id}.")
                 return None
@@ -175,3 +179,6 @@ response = requests.get(url, headers=headers)
 
 print(response.text)
 """
+data2 = MovieTMDB()
+print(data2.get_movie_by_id(1995))
+
