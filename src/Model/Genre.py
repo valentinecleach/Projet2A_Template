@@ -26,12 +26,16 @@ class Genre:
         self.name = genre_data.get('name')
 
     def __repr__(self):
-        return f"Genre(id={self.id}, name='{self.name}')"
+        return f"Genre : {self.name}"
 
 # Unrelated code to show sys.path to understand error with classes ipmports.
 
 # code to prepare the doctests
-print(Genre(genre_data={'id': 123, 'name': "Musical Comedy"}))
+genre_action = {
+			"id": 28,
+			"name": "Action"
+		}
+print(Genre(genre_data=genre_action))
 
 
 

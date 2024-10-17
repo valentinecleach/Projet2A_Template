@@ -1,7 +1,12 @@
 from pydantic import BaseModel
+from typing import List, Dict
+# Model
 from src.Model.genre import Genre
+from src.Model.movie_collection import MovieCollection
+# Service
 from src.Service.static import _is_valid_date
-
+from src.Service.movie_collection_service import MovieCollectionService
+from src.Service.genre_service import GenreService
 # from src.Model.Rating import Rating
 
 
@@ -20,7 +25,7 @@ class Movie():
     adult : bool
         If the movie is an adult movie, adult = True. Here we wil only have
         movies that aren't adult movies.
-    belongs_to_collection : dict
+    belongs_to_collection : MovieCollection
         If there is a series
     budget : float
         The budget in $.
@@ -52,11 +57,11 @@ class Movie():
     """
 
     def __init(self,
-               id_movie,
-               title,
-               belongs_to_collection,
+               id_movie : int,
+               title : str,
+               belongs_to_collection : List[MovieCollection],
                budget,
-               genre,
+               genre : List[Genre],
                origine_country,
                original_language,
                original_title,
@@ -74,12 +79,12 @@ class Movie():
             raise TypeError("The id needs to be a positive integer")        
         if not isinstance(title, str):
             raise TypeError("The title must be a string")        
-        if not isinstance(belongs_to_collection, dict):
-            raise TypeError("belongs_to_collection must be a dictionnary")        
+        if not isinstance(belongs_to_collection, List[MovieCollection]):
+            raise TypeError("belongs_to_collection must be a list of MovieCollection")        
         if (not isinstance(budget, float)) or budget < 0:
             raise TypeError("The budget must be a float")        
-        if not isinstance(genre, list):
-            raise TypeError("list")
+        if not isinstance(genre, Genre):
+            raise TypeError("genre must be a Genre object.")
         for i in genre:
             if not isinstance(i, Genre):
                 raise ValueError("genre element of list not ok")        
@@ -129,6 +134,9 @@ class Movie():
             """
             Returns a string representation of the Movie object.
             """
-            return (f"Movie(ID: {self.id_movie}, Title: '{self.title}', "
+            return (f"Title : {self.title}' : ID: {self.id_movie},"
                     f"Release Date: {self.release_date}, Popularity: {self.popularity}, "
                     f"Vote Average: {self.vote_average}, Vote Count: {self.vote_count})")
+
+
+# to check the constructor with insomnia data :

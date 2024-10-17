@@ -4,14 +4,14 @@ class MovieCollection:
 
     Parameters
     ----------
-    id_user : int
-        An id that allows easy recognition of the User
-    id_Movie : int
-        An id that allows easy recognition of the Movie
+    id : int
+        The id of the collection
+    name : str
+        The name of the collection
 
     Examples
     --------
-    print(MovieCollection(MovieCollection_data={'id_user': 123, 'id_Movie': "001"}))
+    
 
     """
 
@@ -23,14 +23,22 @@ class MovieCollection:
         MovieCollection_data : dict
             A dictionary containing the collection of the movie data (id_user and id_Movie).
         """
-        self.id_user = MovieCollection_data.get("id_user")
-        self.id_Movie = MovieCollection_data.get("id_Movie")
+        self.id = MovieCollection_data.get("id")
+        self.name = MovieCollection_data.get("name")
 
     def __repr__(self):
-        return f"MovieCollection(id_user={self.id_user}, id_Movie='{self.id_Movie}')"
+        return f" Movie Collection : {self.name}"
 
 
 # Unrelated code to show sys.path to understand error with classes ipmports.
 
+
 # code to prepare the doctests
-print(MovieCollection(MovieCollection={"id_user": 123, "is_Movie": "Avegers"}))
+avatar_collection = {
+		"id": 87096,
+		"name": "Avatar Collection",
+		"poster_path": "/uO2yU3QiGHvVp0L5e5IatTVRkYk.jpg",
+		"backdrop_path": "/gxnvX9kF7RRUQYvB52dMLPgeJkt.jpg"
+	}
+
+print(MovieCollection(avatar_collection))
