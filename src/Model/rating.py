@@ -15,13 +15,24 @@ class Rating:
 
     who_rated : list[Users]
         The list of people who have rated the movie
-
     Examples:
     --------
 
     """
-    def __init__(self,user : ConnectedUser, movie : Movie,
-                comment : str="",rating: int=None,date : str)
+
+    def __init__(
+        self,
+        user: ConnectedUser,
+        movie: Movie,
+        date: str,
+        comment: str = "",
+        rating: int = None,
+    ):
+        self.user = ConnectedUser
+        self.movie = movie
+        self.date = date
+        self.comment = comment
+        self.rating = rating
 
     def nb_ratings(self) -> int:
         """
@@ -33,7 +44,7 @@ class Rating:
         """
         return len(self.who_rated)
 
-    def update_rating(self, user: User, new_rating : Rating):
+    def update_rating(self, user: User, new_rating: Rating):
         if User in self.who_rated:
             raise ValueError("You cannot rate the movie twice")
         # pb one cannot change their rating
