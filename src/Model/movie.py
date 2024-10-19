@@ -9,7 +9,7 @@ from src.Service.static import _is_valid_date
 # from src.Model.Rating import Rating
 
 
-class Movie():
+class Movie(BaseModel):
     """Movie
 
     A series of moving pictures, usually shown in a cinema or on television and
@@ -74,7 +74,7 @@ class Movie():
                adult=False
                ):
 
-        if not isinstance(id_movie, int) or id_movie < 0:
+        if not isinstance(id, int) or id < 0:
             raise TypeError("The id needs to be a positive integer")        
         if not isinstance(title, str):
             raise TypeError("The title must be a string")        
@@ -113,7 +113,7 @@ class Movie():
         if adult:
             raise ValueError("The film can't be an adult film.")
 
-        self.id_movie = id_movie
+        self.id = id
         self.title = title
         self.belongs_to_collection = belongs_to_collection
         self.budget = budget
@@ -134,7 +134,7 @@ class Movie():
             """
             Print a string representation of the Movie object.
             """
-            return (f"Title : {self.title}', ID: {self.id_movie}, "
+            return (f"Title : {self.title}', ID: {self.id}, "
                     f"Release Date: {self.release_date}, Popularity: {self.popularity}, "
                     f"Vote Average: {self.vote_average}, Vote Count: {self.vote_count}")
 

@@ -42,7 +42,7 @@ class MovieTMDB:
             data = response.json()
             if 'id' in data:  # check if id is in response
                 my_movie = {
-                    'id_movie': data['id'],
+                    'id': data['id'],
                     'title': data['title'],
                     'belongs_to_collection': MovieCollectionService.create_list_of_collection(data['belongs_to_collection']),
                     'budget': data['budget'],

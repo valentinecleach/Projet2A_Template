@@ -250,7 +250,7 @@ class DBConnection(metaclass=Singleton):
             set_clause = ", ".join([f"{col} = %s" for col in update_columns])
             query = f"UPDATE {table} SET {set_clause} WHERE {id_column} = %s"
             values = update_values + [id_value]
-             with self.connection as connection:
+            with self.connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(query, tuple(values))
                     connection.commit()
@@ -263,7 +263,7 @@ class DBConnection(metaclass=Singleton):
     def delete(self, table, id_column, id_value):
         try:
             query = f"DELETE FROM {table} WHERE {id_column} = %s"
-             with self.connection as connection:
+            with self.connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(query, (id_value,))
                     connection.commit()

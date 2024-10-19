@@ -8,6 +8,20 @@ class MovieService:
         self.movie_dao = Movie_dao()
         self.movie_tmdb = MovieTMDB()
 
+    def get_movie_by_id(self, movie_id : int, test) -> Movie | None:
+        """find movie by id """
+        movie = self.movie_dao.get_by_id(movie_id, test)
+        if movie :
+            return movie
+        else :
+            movie_from_tmdb = self.movie_tmdb.get_movie_by_id(id)
+            if movie_from_tmdb:
+                self.movie_dao.insert(movie_from_tmdb, test)
+                return movie_from_tmdb
+            else :
+                print(f"No Movie found with id :{movie_id}.")
+                return None
+
     def create_movies(self, known_for_data : List[Dict]) -> List[Movie]:
         """
         Transforms a list of dictionaries into a list of Movie objects.
@@ -25,21 +39,10 @@ class MovieService:
             list_movies.append(movie)
         return list_movies
 
-    def get_movie_by_id(self, movie_id : int, test) -> Movie | None:
-        """find movie by id """
-        movie = self.movie_dao.get_by_id(movie_id, test)
-        if movie :
-            return movie
-        else :
-            movie_from_tmdb = self.movie_tmdb.get_movie_by_id(id)
-            if movie_from_tmdb:
-                self.movie_dao.insert(movie_from_tmdb, test)
-                return movie_from_tmdb
-            else :
-                print(f"No Movie found with id :{movie_id}.")
-                return None
+
 
 #################################################################################################
+
     def find_by_id(self, movie_id: int) -> Movie:
         """Find movie by id"""
         return Movie(id=1, original_title="A Clockwork Orange")
