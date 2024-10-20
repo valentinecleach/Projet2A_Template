@@ -9,6 +9,7 @@ from src.Service.movie_service import MovieService
 app = FastAPI()
 
 movie_maker_service = MovieMakerService() 
+movie_service = MovieService(None)
 
 @app.get("/")
 def read_root():
@@ -47,7 +48,7 @@ def get_movie_maker_by_id(id : int) -> MovieMaker:
 @app.get("/movies/by_id/{id}",response_model= Movie, status_code=status.HTTP_200_OK)
 def get_movie_by_id(id: int) -> Movie:
     try:
-        my_movie = movie_service.get_by_id(id)
+        my_movie = movie_service.get_movie_by_id(id, False)
         return my_movie
     except FileNotFoundError:
         raise HTTPException(

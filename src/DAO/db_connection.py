@@ -192,26 +192,26 @@ class DBConnection(metaclass=Singleton):
             with self.connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(query, (id_value,))
-                    result = self.cursor.fetchone()
+                    result = cursor.fetchone()
             return result
         except Exception as e:
             print(f"Error while fetching from {table}: {e}")
             return None
-    
+
     def read_all_by_id(self, table, id_column, id_value):
         try:
             query = f"SELECT * FROM {table} WHERE {id_column} = %s"
             with self.connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(query, (id_value,))
-                    result = self.cursor.fetchall()
+                    result = cursor.fetchall()
             return result
         except Exception as e:
             print(f"Error while fetching from {table}: {e}")
             return None
 
     # READ (Fetch rows by name)
-    def read_by_string(self, table, search_column, search_string, size = 10):
+    def read_by_string(self, table, search_column, search_string, size=10):
         """
         Searches for records in a table based on a string.
 
@@ -225,16 +225,19 @@ class DBConnection(metaclass=Singleton):
             query = f"SELECT * FROM {table} WHERE LOWER({search_column}) LIKE %s"
             with self.connection as connection:
                 with connection.cursor() as cursor:
-                    cursor.execute(query, ('%' + search_string + '%',))
+                    cursor.execute(query, ("%" + search_string + "%",))
                     results = cursor.fetchmany(size)
             return results
         except Exception as e:
             print(f"Error while searching: {e}")
             return None
+
     # Read many
-    def read_all(self, table,limit: int = 10, offset: int = 0):
+    def read_all(self, table, limit: int = 10, offset: int = 0):
         try:
-            query = f"SELECT * FROM {table} LIMIT {max(limit, 0)} OFFSET {max(offset, 0)}"
+            query = (
+                f"SELECT * FROM {table} LIMIT {max(limit, 0)} OFFSET {max(offset, 0)}"
+            )
             with self.connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(query)
@@ -250,7 +253,7 @@ class DBConnection(metaclass=Singleton):
             set_clause = ", ".join([f"{col} = %s" for col in update_columns])
             query = f"UPDATE {table} SET {set_clause} WHERE {id_column} = %s"
             values = update_values + [id_value]
-             with self.connection as connection:
+            with self.connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(query, tuple(values))
                     connection.commit()
@@ -263,7 +266,7 @@ class DBConnection(metaclass=Singleton):
     def delete(self, table, id_column, id_value):
         try:
             query = f"DELETE FROM {table} WHERE {id_column} = %s"
-             with self.connection as connection:
+            with self.connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(query, (id_value,))
                     connection.commit()

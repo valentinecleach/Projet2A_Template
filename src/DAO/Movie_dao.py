@@ -1,4 +1,5 @@
-from typing import List, Optional
+from typing import List, Optional, Dict
+from psycopg2.extras import DictCursor
 
 from src.DAO.db_connection import DBConnection
 from src.DAO.singleton import Singleton
@@ -25,23 +26,43 @@ class MovieDAO(metaclass=Singleton):
                 with connection.cursor() as cursor:
                     # SQL resquest
                     cursor.execute(
+                        
                         """
-                        INSERT INTO Movie (adult, genre_ids, id,
-                                            original_title, overview, 
-                                            popularity, release_date, title, 
-                                            vote_average,vote_count)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        INSERT INTO Movie (id ,
+                                            title ,
+                                            belongs_to_collection ,
+                                            budget,
+                                            genres ,
+                                            origin_country ,
+                                            original_language,
+                                            original_title,
+                                            overview,
+                                            popularity,
+                                            release_date,
+                                            revenue,
+                                            runtime,
+                                            vote_average,
+                                            vote_count,
+                                            adult)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                         """,
                         (
-                            new_movie.adult,
-                            new_movie.genre.id,
+                            new_movie.id ,
+                            new_movie.title ,
+                            new_movie.belongs_to_collection ,
+                            new_movie.budget,
+                            new_movie.genres ,
+                            new_movie.origin_country ,
+                            new_movie.original_language,
                             new_movie.original_title,
                             new_movie.overview,
                             new_movie.popularity,
                             new_movie.release_date,
-                            new_movie.title,
+                            new_movie.revenue,
+                            new_movie.runtime,
                             new_movie.vote_average,
-                            new_movie.vote,
+                            new_movie.vote_count,
+                            new_movie.adult
                         ),
                     )
                     # tagline? status?)
@@ -102,17 +123,23 @@ class MovieDAO(metaclass=Singleton):
             print("Delete error : ", str(e))
 
     # structure prise du TP
+<<<<<<< HEAD
     def get_by_id(self, id_movie: int, test: bool = True) -> Movie:
+=======
+    def get_by_id(self, id: int, test: bool) -> Movie:
+>>>>>>> 85fa5582e3c8fa712475a204701f287ebd41e0a8
         try:
-            with DBConnection(test).connection.cursor() as cursor:
-                cursor.execute(
-                    """
-                    SELECT * FROM Movie
-                    WHERE id_movie = %s;
-                """,
-                    (id_movie,),
-                )
-                result = cursor.fetchone()
+            with DBConnection(test).connection as connection:
+                # Creation of a cursor for the request
+                with connection.cursor(cursor_factory=DictCursor) as cursor:
+                    cursor.execute(
+                        """
+                        SELECT * FROM Movie
+                        WHERE id = %s;
+                        """,
+                        (id,),
+                    )
+                    result = cursor.fetchone()
                 if result:
                     return Movie(**result)
                 else:
@@ -137,6 +164,7 @@ class MovieDAO(metaclass=Singleton):
         except Exception as e:
             print("Error during recovery by name : ", str(e))
             return None
+
 
 
 """
