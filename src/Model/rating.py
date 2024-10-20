@@ -25,13 +25,11 @@ class Rating:
         user: ConnectedUser,
         movie: Movie,
         date: str,
-        comment: str = "",
-        rating: int = None,
+        rating: int,
     ):
         self.user = ConnectedUser
         self.movie = movie
         self.date = date
-        self.comment = comment
         self.rating = rating
 
     def nb_ratings(self) -> int:

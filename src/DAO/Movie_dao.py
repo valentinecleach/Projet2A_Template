@@ -6,7 +6,7 @@ from src.Model.movie import Movie
 
 
 # A Faire: (valentine)
-class Movie_dao(metaclass=Singleton):
+class MovieDAO(metaclass=Singleton):
     def insert(self, new_movie: Movie, test: bool):
         try:
             """
@@ -102,7 +102,7 @@ class Movie_dao(metaclass=Singleton):
             print("Delete error : ", str(e))
 
     # structure prise du TP
-    def get_by_id(self, id_movie: int, test: bool) -> Movie:
+    def get_by_id(self, id_movie: int, test: bool = True) -> Movie:
         try:
             with DBConnection(test).connection.cursor() as cursor:
                 cursor.execute(

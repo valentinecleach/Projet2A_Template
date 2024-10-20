@@ -1,0 +1,83 @@
+from datetime import datetime
+from typing import List  # , Optional
+
+from DAO.db_connection import DBConnection, Singleton
+from DAO.movie_dao import MovieDao
+from DAO.user_dao import UserDao
+from Model.connected_user import ConnectedUser
+from Model.rating import Rating
+
+
+class RatingDao(metaclass=Singleton):
+    # CREATE
+    def insert(self, id_user: int, id_movie: int, rating: int):
+        date = datetime.now()
+        if rating >= 0 and rating <= 10:
+            values = (id_user, id_movie, rating, date)
+            res = DBConnection().insert(cine.rating, values)
+        if res:
+            user = UserDao().get_user_by_id(id_user)
+            movie = MovieDao().get_user_by_id(id_movie)
+            rate = Rating(user=user, movie=movie, date=date, rating=rating)
+
+        return rate
+
+    # READ (Fetch all follower)
+    def get_rating(
+        self,
+        id_user: int,
+        id_movie: int,
+    ) -> Rating:
+
+        try:
+            query = "SELECT * FROM cine.rating WHERE id_user = %s and id_movie = %s"
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(query, (id_user, id_movie))
+                    res = cursor.fetchone()
+            if res:
+                user = UserDao().get_user_by_id(id_user)
+                movie = MovieDao().get_user_by_id(id_movie)
+                rate = Rating(
+                    user=user, movie=movie, date=res["date"], rating=res["rating"]
+                )
+                return rate
+            else:
+                return None
+        except Exception:
+            return None
+
+    # DELETE
+    def delete(self, id_user: int, id_movie: int):
+        try:
+            query = "DELETE FROM cine.rating WHERE id_user = %s and id_movie = %s"
+            with DBConnection().connectionas connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        query,
+                        (
+                            id_user,
+                            id_movie,
+                        ),
+                    )
+                    connection.commit()
+                    print("Record deleted successfully from ratings.")
+        except Exception as e:
+            print(f"Error while deleting from ratings: {e}")
+            return None
+
+    def get_overall(movie: Movie):
+        id_movie = movie.id_movie
+        try:
+            query = "SELECT AVG(rating) FROM cine.rating WHERE id_movie = %s"
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        query,
+                        (id_movie,),
+                    )
+                    connection.commit()
+                    print("Record deleted successfully from ratings.")
+        except Exception as e:
+            print(f"Error while deleting from ratings: {e}")
+            return None

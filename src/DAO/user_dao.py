@@ -4,7 +4,7 @@ from DAO.db_connection import DBConnection, Singleton
 from Model.connected_user import ConnectedUser
 
 
-class UserDAO(metaclass=Singleton):
+class UserDao(metaclass=Singleton):
     # CREATE
     def insert(
         self,
@@ -29,7 +29,7 @@ class UserDAO(metaclass=Singleton):
             pseudo,
         )
 
-        res = DBConnection().insert(user, values)
+        res = DBConnection().insert(cine.user, values)
         if res:
             created = ConnectedUser(
                 name=name,
@@ -45,7 +45,7 @@ class UserDAO(metaclass=Singleton):
     # READ (Fetch a single user by ID)
     def get_user_by_id(self, id_user) -> ConnectedUser:
 
-        res = DBConnection().read_by_id(user, "id_user", id)
+        res = DBConnection().read_by_id(cine.user, "id_user", id)
         if res:
             user_read = ConnectedUser(
                 name=res["name"],
@@ -60,7 +60,7 @@ class UserDAO(metaclass=Singleton):
     # READ (Fetch some users by name)
     def get_user_by_name(self, search_string, size=10) -> List(ConnectedUser):
 
-        results = DBConnection().read_by_string(user, "name", search_string, size)
+        results = DBConnection().read_by_string(cine.user, "name", search_string, size)
         if results:
             users_read = [
                 ConnectedUser(
@@ -79,7 +79,7 @@ class UserDAO(metaclass=Singleton):
     # READ (Fetch all users)
     def get_all_users(self, limit: int = 10, offset: int = 0) -> List[ConnectedUser]:
 
-        results = DBConnection().read_all(user, limit, offset)
+        results = DBConnection().read_all(cine.user, limit, offset)
         if results:
             users_read = [
                 ConnectedUser(
@@ -139,7 +139,7 @@ class UserDAO(metaclass=Singleton):
                 print("No data provided for update.")
                 return None
 
-            query = f"UPDATE user SET {', '.join(updates)} WHERE id_user = %s"
+            query = f"UPDATE cine.user SET {', '.join(updates)} WHERE id_user = %s"
             values.append(id_user)
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
@@ -152,4 +152,4 @@ class UserDAO(metaclass=Singleton):
 
     # DELETE
     def delete_user(self, id_user):
-        DBConnection().delete(user, "id_user", id_user)
+        DBConnection().delete(cine.user, "id_user", id_user)
