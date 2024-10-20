@@ -1,11 +1,12 @@
 from datetime import datetime
-from typing import List  # , Optional
 
 from DAO.db_connection import DBConnection, Singleton
 from DAO.movie_dao import MovieDao
 from DAO.user_dao import UserDao
-from Model.connected_user import ConnectedUser
+from Model.movie import Movie
 from Model.rating import Rating
+
+# from typing import List  # , Optional
 
 
 class RatingDao(metaclass=Singleton):
@@ -15,12 +16,13 @@ class RatingDao(metaclass=Singleton):
         if rating >= 0 and rating <= 10:
             values = (id_user, id_movie, rating, date)
             res = DBConnection().insert(cine.rating, values)
+        else:
+            return None
         if res:
             user = UserDao().get_user_by_id(id_user)
             movie = MovieDao().get_user_by_id(id_movie)
             rate = Rating(user=user, movie=movie, date=date, rating=rating)
-
-        return rate
+            return rate
 
     # READ (Fetch all follower)
     def get_rating(
@@ -51,7 +53,7 @@ class RatingDao(metaclass=Singleton):
     def delete(self, id_user: int, id_movie: int):
         try:
             query = "DELETE FROM cine.rating WHERE id_user = %s and id_movie = %s"
-            with DBConnection().connectionas connection:
+            with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
                         query,
@@ -66,18 +68,19 @@ class RatingDao(metaclass=Singleton):
             print(f"Error while deleting from ratings: {e}")
             return None
 
-    def get_overall(movie: Movie):
+    def get_overall_rating(movie: Movie):
         id_movie = movie.id_movie
         try:
-            query = "SELECT AVG(rating) FROM cine.rating WHERE id_movie = %s"
+            query = "SELECT AVG(rating) as mean  FROM cine.rating WHERE id_movie = %s"
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
                         query,
                         (id_movie,),
                     )
-                    connection.commit()
-                    print("Record deleted successfully from ratings.")
+                    res = cursor.fetchone()
         except Exception as e:
-            print(f"Error while deleting from ratings: {e}")
+            print(f"Error while averaging ratings of movie {id_movie}: {e}")
             return None
+        if res:
+            return res["mean"]
