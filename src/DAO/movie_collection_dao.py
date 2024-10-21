@@ -53,7 +53,7 @@ class MovieCollectionDao(metaclass=Singleton):
         except Exception:
             return None
 
-    # DELETE
+    # DELETE / SUPPRIME
     def delete(self, id):
         try:
             query = "DELETE FROM cine.movie_collection WHERE id = %s"
