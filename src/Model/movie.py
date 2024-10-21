@@ -5,11 +5,11 @@ from pydantic import BaseModel
 # Model
 from src.Model.genre import Genre
 from src.Model.movie_collection import MovieCollection
+# from src.Model.Rating import Rating
+
 
 # Utils
 from src.Utils.utils import _is_valid_date
-
-# from src.Model.Rating import Rating
 
 
 class Movie(BaseModel):
@@ -59,6 +59,7 @@ class Movie(BaseModel):
     """
     id_movie: int
     title: str
+    # attention la ligne suivante ne marche pas car pydantic ne connait pas MovieCollection je crois
     belongs_to_collection: List[MovieCollection]
     budget: float
     genres: List[Genre]
@@ -85,5 +86,6 @@ class Movie(BaseModel):
             f"Vote Average: {self.vote_average}, Vote Count: {self.vote_count}"
         )
 
+    # def __get_pydantic_core_schema__# ?,
 
 # rapid test of the class
