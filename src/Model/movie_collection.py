@@ -21,10 +21,6 @@ class MovieCollection:
     """
 
     def __init__(self, movie_collection_data: Dict):
-        self.name = movie_collection_data.get("name")
-        self.id = movie_collection_data.get("id")
-
-    def __init__(self, name: str, id: int):
         """Constructor
 
         Parameters:
@@ -32,8 +28,8 @@ class MovieCollection:
         MovieCollection_data : dict
             A dictionary containing the collection of the movie data.
         """
-        self.name = name
-        self.id = id
+        self.name = movie_collection_data.get("name")
+        self.id = movie_collection_data.get("id")
 
     def __repr__(self):
         return f" 'Movie Collection : {self.name}' "
