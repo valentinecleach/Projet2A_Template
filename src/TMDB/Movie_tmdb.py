@@ -21,7 +21,7 @@ class MovieTMDB:
         self.api_key = os.environ.get("TMDB_API_KEY")
         self.base_url = "https://api.themoviedb.org/3"
 
-    def get_movie_by_id(self, id: int) -> Movie | None:
+    def get_movie_by_id(self, id_movie: int) -> Movie | None:
         """
         Retrieves details of a Movie from TMDB by his ID given by TMDB.
 
@@ -36,13 +36,14 @@ class MovieTMDB:
             A Movie object if found, otherwise None.
         """
         try:
-            url = f"{self.base_url}/movie/{id}?api_key={self.api_key}&language=en-US"
+            url = f"{self.base_url}/movie/{id_movie}?api_key={self.api_key}&language=en-US"
             response = requests.get(url)
             response.raise_for_status()  # Raises an exception for HTTP error codes.
             data = response.json()
             if 'id' in data:  # check if id is in response
+                print(data['belongs_to_collection'])
                 my_movie = {
-                    'id': data['id'],
+                    'id_movie': data['id'],
                     'title': data['title'],
                     'belongs_to_collection': MovieCollectionService.create_list_of_collection(data['belongs_to_collection']),
                     'budget': data['budget'],
@@ -168,5 +169,5 @@ class MovieTMDB:
 
 
 data2 = MovieTMDB()
-#print(data2.get_movie_by_id(19995)) works !
-print(data2.get_movie_by_name("Avatar")) # works with avatar. Not with more complex title
+print(data2.get_movie_by_id(19995)) 
+# print(data2.get_movie_by_name("Avatar")) # works with avatar. Not with more complex title

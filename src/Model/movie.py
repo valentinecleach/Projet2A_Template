@@ -117,7 +117,7 @@ class Movie(BaseModel):
         if adult:
             raise ValueError("The film can't be an adult film.")
 
-        self.id = id
+        self.id = id_movie
         self.title = title
         self.belongs_to_collection = belongs_to_collection
         self.budget = budget
