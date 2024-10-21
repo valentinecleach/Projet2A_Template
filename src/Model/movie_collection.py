@@ -19,8 +19,6 @@ class MovieCollection:
     """
 
     def __init__(self, movie_collection_data: Dict):
-        self.name = movie_collection_data.get("name")
-        self.id = movie_collection_data.get("id")
         """Constructor
 
         Parameters:
