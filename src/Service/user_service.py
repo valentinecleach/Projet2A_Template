@@ -65,6 +65,24 @@ class UserService:
     def search_user(self, username: str):
         """Permet de chercher le profil d'un autre utilisateur."""
 
-    def dao_function():
-        """ parameters and methods to use DAO/db_connection; """
+    def add_film(self, film: Movie):
+        """Ajoute un film à la collection de l'utilisateur."""
+        self.film_collection.append(film)
 
+    def follow(self, utilisateur):
+        """Ajoute un utilisateur à la liste des éclaireurs."""
+
+    def unfollow(self, utilisateur):
+        """Supprime un utilisateur de la liste des éclaireurs."""
+
+    def rate_film(self, film, rating: int):
+        """Attribue une note à un film."""
+
+    def add_comment(self, film, comment: str):
+        """Ajoute un commentaire à un film."""
+
+    def log_out(self):
+        """Déconnexion de l'utilisateur."""
+
+    def delete_account(self):
+        """Suppression du compte de l'utilisateur."""
