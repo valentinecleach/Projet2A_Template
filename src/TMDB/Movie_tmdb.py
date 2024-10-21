@@ -64,7 +64,6 @@ class MovieTMDB:
                     "vote_count": data["vote_count"],
                     "adult": data["adult"],
                 }
-                print(my_movie["overview"])
                 return Movie(**my_movie)
             else:
                 print(f"No Movie found with the ID : {id_movie}.")
@@ -175,5 +174,6 @@ class MovieTMDB:
 
 
 data2 = MovieTMDB()
-print(data2.get_movie_by_id(19995))
+data2.get_movie_by_id(19995)
+print(data2)
 # print(data2.get_movie_by_name("Avatar")) # works with avatar. Not with more complex title

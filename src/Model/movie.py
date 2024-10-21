@@ -57,83 +57,24 @@ class Movie(BaseModel):
     --------
 
     """
-
-    def __init__(
-        self,
-        id_movie: int,
-        title: str,
-        belongs_to_collection: List[MovieCollection],
-        budget,
-        genres: List[Genre],
-        origin_country: List[str],
-        original_language,
-        original_title,
-        overview,
-        popularity,
-        release_date,
-        revenue,
-        runtime,
-        vote_average,
-        vote_count,
-        adult=False,
-    ):
-
-        if not isinstance(id_movie, int) or id_movie < 0:
-            raise TypeError("The id needs to be a positive integer")
-        if not isinstance(title, str):
-            raise TypeError("The title must be a string")
-        if not isinstance(belongs_to_collection, list):
-            raise TypeError("belongs_to_collection must be a list of MovieCollection")
-        if (not isinstance(budget, int)) or budget < 0:
-            raise TypeError("The budget must be a float")
-        if not isinstance(genres, list):
-            raise TypeError("genre must be a Genre object.")
-        for i in genres:
-            if not isinstance(i, Genre):
-                raise ValueError("genre element of list not ok")
-        if not isinstance(origin_country, List):
-            raise TypeError("The origine country must be a list")
-        for data in origin_country:
-            if not isinstance(data, str):
-                raise ValueError("Each origin country must be a string")
-        if not isinstance(original_language, str):
-            raise TypeError("The original language must be a string")
-        if not isinstance(original_title, str):
-            raise TypeError("The original title must be a string")
-        if not isinstance(popularity, float):
-            raise TypeError("The popularity must be a float")
-        if not _is_valid_date(release_date):
-            raise ValueError("The release_date must be in the format YYYY-MM-DD.")
-        if not isinstance(revenue, int):
-            raise TypeError("The revenue must be a float")
-        if not isinstance(runtime, int):
-            raise TypeError("The runtime must be an integer ")
-        if not isinstance(vote_average, float):
-            raise TypeError("The vote_average must be a float")
-        if not isinstance(vote_count, int):
-            raise TypeError("The vote count must be a integer")
-        if not isinstance(adult, bool):
-            raise TypeError("bool")
-        if adult:
-            raise ValueError("The film can't be an adult film.")
-
-        self.id_movie = id_movie
-        self.title = title
-        self.belongs_to_collection = belongs_to_collection
-        self.budget = budget
-        self.genres = genres
-        self.origin_country = origin_country
-        self.original_language = original_language
-        self.original_title = original_title
-        self.overview = overview
-        self.popularity = popularity
-        self.release_date = release_date
-        self.revenue = revenue
-        self.runtime = runtime
-        self.vote_average = vote_average
-        self.vote_count = vote_count
-        self.adult = adult
-
+    id_movie: int
+    title: str
+    belongs_to_collection: List[MovieCollection]
+    budget: float
+    genres: List[Genre]
+    origin_country: List[str]
+    original_language: str
+    original_title: str
+    overview: str
+    popularity: float
+    release_date: str
+    revenue: float
+    runtime: str
+    vote_average: float
+    vote_count : int
+    adult: bool = False
+   
+   
     def __str__(self):
         """
         Print a string representation of the Movie object.
