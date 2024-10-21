@@ -1,10 +1,10 @@
 from datetime import datetime
 
-from DAO.db_connection import DBConnection, Singleton
-from DAO.movie_dao import MovieDao
-from DAO.user_dao import UserDao
-from Model.movie import Movie
-from Model.rating import Rating
+from src.DAO.db_connection import DBConnection, Singleton
+from src.DAO.movie_dao import MovieDao
+from src.DAO.user_dao import UserDao
+from src.Model.movie import Movie
+from src.Model.rating import Rating
 
 # from typing import List  # , Optional
 

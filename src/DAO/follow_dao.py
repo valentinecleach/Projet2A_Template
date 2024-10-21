@@ -1,9 +1,9 @@
 from datetime import datetime
 from typing import List  # , Optional
 
-from DAO.db_connection import DBConnection, Singleton
-from DAO.user_dao import UserDao
-from Model.connected_user import ConnectedUser
+from src.DAO.db_connection import DBConnection, Singleton
+from src.DAO.user_dao import UserDao
+from src.Model.connected_user import ConnectedUser
 
 
 class FollowDao(metaclass=Singleton):

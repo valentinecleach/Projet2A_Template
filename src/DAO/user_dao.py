@@ -1,7 +1,7 @@
 from typing import List  # , Optional
 
-from DAO.db_connection import DBConnection, Singleton
-from Model.connected_user import ConnectedUser
+from src.DAO.db_connection import DBConnection, Singleton
+from src.sModel.connected_user import ConnectedUser
 
 
 class UserDao(metaclass=Singleton):
