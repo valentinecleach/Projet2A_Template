@@ -1,10 +1,13 @@
+from typing import Dict, List
+
 from pydantic import BaseModel
-from typing import List, Dict
+
 # Model
 from src.Model.genre import Genre
 from src.Model.movie_collection import MovieCollection
-# Service
-from src.Service.static import _is_valid_date
+
+# Utils
+from src.Utils.utils import _is_valid_date
 
 # from src.Model.Rating import Rating
 
@@ -55,49 +58,50 @@ class Movie(BaseModel):
 
     """
 
-    def __init__(self,
-               id_movie : int,
-               title : str,
-               belongs_to_collection : List[MovieCollection],
-               budget,
-               genres : List[Genre],
-               origin_country : List[str],
-               original_language,
-               original_title,
-               overview,
-               popularity,
-               release_date,
-               revenue,
-               runtime,
-               vote_average,
-               vote_count,
-               adult=False
-               ):
+    def __init__(
+        self,
+        id_movie: int,
+        title: str,
+        belongs_to_collection: List[MovieCollection],
+        budget,
+        genres: List[Genre],
+        origin_country: List[str],
+        original_language,
+        original_title,
+        overview,
+        popularity,
+        release_date,
+        revenue,
+        runtime,
+        vote_average,
+        vote_count,
+        adult=False,
+    ):
 
         if not isinstance(id, int) or id < 0:
-            raise TypeError("The id needs to be a positive integer")        
+            raise TypeError("The id needs to be a positive integer")
         if not isinstance(title, str):
-            raise TypeError("The title must be a string")        
+            raise TypeError("The title must be a string")
         if not isinstance(belongs_to_collection, list):
-            raise TypeError("belongs_to_collection must be a list of MovieCollection")        
+            raise TypeError("belongs_to_collection must be a list of MovieCollection")
         if (not isinstance(budget, int)) or budget < 0:
-            raise TypeError("The budget must be a float")        
+            raise TypeError("The budget must be a float")
         if not isinstance(genres, list):
             raise TypeError("genre must be a Genre object.")
         for i in genres:
             if not isinstance(i, Genre):
-                raise ValueError("genre element of list not ok")        
+                raise ValueError("genre element of list not ok")
         if not isinstance(origin_country, List):
-            raise TypeError("The origine country must be a list")        
+            raise TypeError("The origine country must be a list")
         for data in origin_country:
-            if not isinstance(data,str):
+            if not isinstance(data, str):
                 raise ValueError("Each origin country must be a string")
         if not isinstance(original_language, str):
-            raise TypeError("The original language must be a string")        
+            raise TypeError("The original language must be a string")
         if not isinstance(original_title, str):
-            raise TypeError("The original title must be a string")              
+            raise TypeError("The original title must be a string")
         if not isinstance(popularity, float):
-            raise TypeError("The popularity must be a float")        
+            raise TypeError("The popularity must be a float")
         if not _is_valid_date(release_date):
             raise ValueError("The release_date must be in the format YYYY-MM-DD.")
         if not isinstance(revenue, int):
@@ -105,7 +109,7 @@ class Movie(BaseModel):
         if not isinstance(runtime, int):
             raise TypeError("The runtime must be an integer ")
         if not isinstance(vote_average, float):
-            raise TypeError("The vote_average must be a float")       
+            raise TypeError("The vote_average must be a float")
         if not isinstance(vote_count, int):
             raise TypeError("The vote count must be a integer")
         if not isinstance(adult, bool):
@@ -113,7 +117,7 @@ class Movie(BaseModel):
         if adult:
             raise ValueError("The film can't be an adult film.")
 
-        self.id = id
+        self.id = id_movie
         self.title = title
         self.belongs_to_collection = belongs_to_collection
         self.budget = budget
@@ -131,13 +135,14 @@ class Movie(BaseModel):
         self.adult = adult
 
     def __str__(self):
-            """
-            Print a string representation of the Movie object.
-            """
-            return (f"Title : {self.title}', ID: {self.id}, "
-                    f"Release Date: {self.release_date}, Popularity: {self.popularity}, "
-                    f"Vote Average: {self.vote_average}, Vote Count: {self.vote_count}")
+        """
+        Print a string representation of the Movie object.
+        """
+        return (
+            f"Title : {self.title}', ID: {self.id}, "
+            f"Release Date: {self.release_date}, Popularity: {self.popularity}, "
+            f"Vote Average: {self.vote_average}, Vote Count: {self.vote_count}"
+        )
+
 
 # rapid test of the class
-
-

@@ -44,10 +44,10 @@ class DBConnection(metaclass=Singleton):
 
     def create_tables(self):
         """
-        Creates the MovieMaker table in the database if it does not exist.
+        Creates the movie_maker table in the database if it does not exist.
         """
-        create_table_MovieMaker = """
-        CREATE TABLE IF NOT EXISTS MovieMaker (
+        create_table_movie_maker = """
+        CREATE TABLE IF NOT EXISTS movie_maker (
             id_movie_maker INTEGER PRIMARY KEY,
             adult BOOLEAN NOT NULL DEFAULT FALSE,
             name VARCHAR(255) NOT NULL,
@@ -62,8 +62,8 @@ class DBConnection(metaclass=Singleton):
         );
         """
 
-        create_table_users = """
-        CREATE TABLE IF NOT EXISTS Users (
+        create_table_user = """
+        CREATE TABLE IF NOT EXISTS user (
             id_user INTEGER PRIMARY KEY,
             first_name VARCHAR(255) NOT NULL,
             last_name VARCHAR(255) NOT NULL,
@@ -73,8 +73,8 @@ class DBConnection(metaclass=Singleton):
         );
         """
 
-        create_table_Movie = """
-        CREATE TABLE IF NOT EXISTS Movie (
+        create_table_movie = """
+        CREATE TABLE IF NOT EXISTS movie (
             id_movie INTEGER PRIMARY KEY,
             title VARCHAR(255) NOT NULL,
             budget FLOAT,
@@ -92,13 +92,13 @@ class DBConnection(metaclass=Singleton):
         );
         """
 
-        create_table_MovieGenre = """
-        CREATE TABLE IF NOT EXISTS MovieGenre (
+        create_table_movie_genre = """
+        CREATE TABLE IF NOT EXISTS movie_Genre (
             id_movie INTEGER NOT NULL FOREIGN KEY,
             id_genre INTEGER NOT NULL FOREIGN KEY
 
             FOREIGN KEY (id_genre) REFERENCES Genre(id_genre)
-            FOREIGN KEY (id_movie) REFERENCES Movie(id_movie)
+            FOREIGN KEY (id_movie) REFERENCES movie(id_movie)
         );
         """
 
@@ -109,16 +109,27 @@ class DBConnection(metaclass=Singleton):
         );
         """
 
-        create_table_RatingComment = """
-        CREATE TABLE IF NOT EXISTS RatingComment (
+        create_table_rating = """
+        CREATE TABLE IF NOT EXISTS rating (
             id_user INTEGER NOT NULL,
             id_movie INTEGER NOT NULL,
-            comment TEXT,
             rating INTEGER,
             date VARCHAR(255),
 
-            FOREIGN KEY (id_user) REFERENCES Users(id_user),
-            FOREIGN KEY (id_movie) REFERENCES Movies(id_movie)
+            FOREIGN KEY (id_user) REFERENCES user(id_user),
+            FOREIGN KEY (id_movie) REFERENCES movie(id_movie)
+        );
+        """
+
+        create_table_comment = """
+        CREATE TABLE IF NOT EXISTS comment (
+            id_user INTEGER NOT NULL,
+            id_movie INTEGER NOT NULL,
+            comment TEXT,
+            date VARCHAR(255),
+
+            FOREIGN KEY (id_user) REFERENCES user(id_user),
+            FOREIGN KEY (id_movie) REFERENCES movie(id_movie)
         );
         """
 
@@ -128,17 +139,28 @@ class DBConnection(metaclass=Singleton):
             id_user_followed INTEGER,
             date VARCHAR(255),
 
-            FOREIGN KEY (id_user) REFERENCES Users(id_user)
+            FOREIGN KEY (id_user) REFERENCES user(id_user)
         );
         """
 
-        create_table_MovieCollection = """
-        CREATE TABLE IF NOT EXISTS MovieCollection (
+        create_table_user_collection = """
+        CREATE TABLE IF NOT EXISTS user_collection(
+            id_user INTEGER NOT NULL,
+            id_collection INTEGER NOT NULL,
+            date VARCHAR(255),
+
+            FOREIGN KEY (id_user) REFERENCES user_collection(id_user),
+            FOREIGN KEY (id_collection) REFERENCES movie(id_collection)
+        );
+        """
+
+        create_table_movie_collection = """
+        CREATE TABLE IF NOT EXISTS movie_collection (
             id_user INTEGER,
             id_movie INTEGER,
 
-            FOREIGN KEY (id_user) REFERENCES Users(id_user),
-            FOREIGN KEY (id_movie) REFERENCES Movie(id_movie)
+            FOREIGN KEY (id_user) REFERENCES user(id_user),
+            FOREIGN KEY (id_movie) REFERENCES movie(id_movie)
         );
         """
 
@@ -147,15 +169,15 @@ class DBConnection(metaclass=Singleton):
             id_movie_maker INTEGER,
             id_movie INTEGER,
 
-            FOREIGN KEY (id_maker) REFERENCES MovieMaker(id_movie_maker),
-            FOREIGN KEY (id_movie) REFERENCES Movie(id_movie)
+            FOREIGN KEY (id_maker) REFERENCES movie_maker(id_movie_maker),
+            FOREIGN KEY (id_movie) REFERENCES movie(id_movie)
         );
         """
 
         # add query for the creation of ither tables
         with self.db_connection.connection.cursor() as cursor:
-            cursor.execute(create_table_MovieMaker)
-            cursor.execute(create_table_users)
+            cursor.execute(create_table_movie_maker)
+            cursor.execute(create_table_user)
             # add cursor.execute( other tables)
             self.db_connection.connection.commit()
 

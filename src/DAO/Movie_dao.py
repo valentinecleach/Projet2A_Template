@@ -123,11 +123,7 @@ class MovieDAO(metaclass=Singleton):
             print("Delete error : ", str(e))
 
     # structure prise du TP
-<<<<<<< HEAD
-    def get_by_id(self, id_movie: int, test: bool = True) -> Movie:
-=======
-    def get_by_id(self, id: int, test: bool) -> Movie:
->>>>>>> 85fa5582e3c8fa712475a204701f287ebd41e0a8
+    def get_by_id(self, id_movie: int, test: bool) -> Movie:
         try:
             with DBConnection(test).connection as connection:
                 # Creation of a cursor for the request

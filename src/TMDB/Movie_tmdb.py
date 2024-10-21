@@ -3,25 +3,27 @@
 # src/TMDB/MovieMaker_tmdb.py
 import os
 import urllib.parse
+from typing import Dict, List
 
 import requests
 from dotenv import load_dotenv
+
 # Model
 from src.Model.genre import Genre
 from src.Model.movie import Movie
+
 # Service
 from src.Service.genre_service import GenreService
 from src.Service.movie_collection_service import MovieCollectionService
-from src.Service.genre_service import GenreService
 
-from typing import List, Dict
+
 class MovieTMDB:
     def __init__(self):
         load_dotenv(override=True)
         self.api_key = os.environ.get("TMDB_API_KEY")
         self.base_url = "https://api.themoviedb.org/3"
 
-    def get_movie_by_id(self, id: int) -> Movie | None:
+    def get_movie_by_id(self, id_movie: int) -> Movie | None:
         """
         Retrieves details of a Movie from TMDB by his ID given by TMDB.
 
@@ -36,30 +38,33 @@ class MovieTMDB:
             A Movie object if found, otherwise None.
         """
         try:
-            url = f"{self.base_url}/movie/{id}?api_key={self.api_key}&language=en-US"
+            url = f"{self.base_url}/movie/{id_movie}?api_key={self.api_key}&language=en-US"
             response = requests.get(url)
             response.raise_for_status()  # Raises an exception for HTTP error codes.
             data = response.json()
-            if 'id' in data:  # check if id is in response
+            if "id" in data:  # check if id is in response
+                print(data["belongs_to_collection"])
                 my_movie = {
-                    'id': data['id'],
-                    'title': data['title'],
-                    'belongs_to_collection': MovieCollectionService.create_list_of_collection(data['belongs_to_collection']),
-                    'budget': data['budget'],
-                    'genres': GenreService.create_list_of_genre(data['genres']),
-                    'origin_country': data['origin_country'],
-                    'original_language': data['original_language'],
-                    'original_title': data['original_title'],
-                    'overview': data['overview'],
-                    'popularity': data['popularity'],
-                    'release_date': data['release_date'],
-                    'revenue': data['revenue'],
-                    'runtime': data['runtime'],
-                    'vote_average': data['vote_average'],
-                    'vote_count': data['vote_count'],
-                    'adult': data['adult']
-                    }
-                return Movie(**my_movie)                     
+                    "id_movie": data["id"],
+                    "title": data["title"],
+                    "belongs_to_collection": MovieCollectionService.create_list_of_collection(
+                        data["belongs_to_collection"]
+                    ),
+                    "budget": data["budget"],
+                    "genres": GenreService.create_list_of_genre(data["genres"]),
+                    "origin_country": data["origin_country"],
+                    "original_language": data["original_language"],
+                    "original_title": data["original_title"],
+                    "overview": data["overview"],
+                    "popularity": data["popularity"],
+                    "release_date": data["release_date"],
+                    "revenue": data["revenue"],
+                    "runtime": data["runtime"],
+                    "vote_average": data["vote_average"],
+                    "vote_count": data["vote_count"],
+                    "adult": data["adult"],
+                }
+                return Movie(**my_movie)
             else:
                 print(f"No Movie found with the ID : {id}.")
                 return None
@@ -67,7 +72,7 @@ class MovieTMDB:
             print("Error while fetching Movie from TMDB: ", str(e))
             return None
 
-## get_by_id works. Quick test at the end of the file. 
+    ## get_by_id works. Quick test at the end of the file.
 
     def get_movie_by_name(self, name: str) -> Movie | None:
         """Retrieves details of a Movie from TMDB by his name.
@@ -91,8 +96,8 @@ class MovieTMDB:
             data = response.json()
             # Si des résultats sont trouvés
             if "results" in data and len(data["results"]) > 0:
-                first_result = data["results"][0]          
-                id_movie=first_result["id"]
+                first_result = data["results"][0]
+                id_movie = first_result["id"]
                 return self.get_movie_by_id(id_movie)
             else:
                 print(f"No Movie found with name : {name}.")
@@ -121,6 +126,7 @@ class MovieTMDB:
         """
         pass
 
+    # Pas nécéssaire ici (+ jai pas sauvegardé)
     def filter_by_popularity(self) -> list:
         """Filters by popularity all movies of the TMDB database and returns
 
@@ -168,5 +174,5 @@ class MovieTMDB:
 
 
 data2 = MovieTMDB()
-#print(data2.get_movie_by_id(19995)) works !
-print(data2.get_movie_by_name("Avatar")) # works with avatar. Not with more complex title
+print(data2.get_movie_by_id(19995))
+# print(data2.get_movie_by_name("Avatar")) # works with avatar. Not with more complex title

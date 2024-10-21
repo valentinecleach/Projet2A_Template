@@ -1,6 +1,5 @@
 from datetime import datetime
-    
-@staticmethod
+
 def _is_valid_date(date_str: str) -> bool:
     """Helper method to validate the date format (YYYY-MM-DD)."""
     if not isinstance(date_str, str):
