@@ -23,19 +23,11 @@ class MovieCollection:
     """
 
     def __init__(
-        self, name: str, user: ConnectedUser, date: str, movie_list: List[Movie] = []
+        self, name: str, id: int
     ):
-        """Constructor
-
-        Parameters:
-        -----------
-        MovieCollection_data : dict
-            A dictionary containing the collection of the movie data (id_user and id_Movie).
-        """
+        
         self.name = name
-        self.movie_list = movie_list
-        self.user = user
-        self.date = date
+        self.id = id
 
     def __repr__(self):
         return f" 'Movie Collection : {self.name}' "
