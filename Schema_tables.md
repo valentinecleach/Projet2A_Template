@@ -19,9 +19,18 @@ class User{
     password : str
 
  }
-  class MovieCollection{
+  class UserCollection{
     id_user [FK]
-    id_Movie [FK]
+    id_collection [FK]
+    date: str
+ }
+ class MovieCollection{
+    id_collection [PK]
+    id_movie [FK]
+    date : str
+    name : str
+    
+    
  }
  class Follower{
     id_user [FK]
@@ -29,11 +38,16 @@ class User{
     date : date
  }
 
-class RatingComment{
+class Comment{
     id_user [FK]: int
     id_movie [FK]: int
     comment : str
-    rating: int or NA
+    date: date
+ }
+class Rating{
+    id_user [FK]: int
+    id_movie [FK]: int
+    rating: int
     date: date
  }
 
@@ -88,10 +102,13 @@ class MovieMaker{
  }
 }
 
-User --> RatingComment
+User --> Rating
+User --> Comment
 User -- Follower
-RatingComment --> Movie
-User --> MovieCollection
+Comment --> Movie
+Rating--> Movie
+User --> UserCollection
+UserCollection-->MovieCollection
 MovieCollection --> Movie
 MovieMaker --> KnownFor
 KnownFor --> Movie
