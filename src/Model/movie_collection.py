@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List  # , Optional
+from typing import List, Dict
 
 
 class MovieCollection:
@@ -20,10 +20,10 @@ class MovieCollection:
     """
 
     def __init__(
-        self, name: str, id: int
+        self, movie_collection_data : Dict
     ):
-        self.name = name
-        self.id = id
+        self.name = movie_collection_data.get('name')
+        self.id = movie_collection_data.get('id')
 
     def __repr__(self):
         return f" 'Movie Collection : {self.name}' "

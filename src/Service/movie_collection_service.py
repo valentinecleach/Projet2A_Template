@@ -11,4 +11,4 @@ class MovieCollectionService:
         return [MovieCollection(movie_collection_data)]
 
 movie_collection_service = MovieCollectionService()
-movie_collection_service.create_list_of_collection({'id': 87096, 'name': 'Avatar Collection', 'poster_path': '/uO2yU3QiGHvVp0L5e5IatTVRkYk.jpg', 'backdrop_path': '/gxnvX9kF7RRUQYvB52dMLPgeJkt.jpg'})
+print(movie_collection_service.create_list_of_collection({'id': 87096, 'name': 'Avatar Collection', 'poster_path': '/uO2yU3QiGHvVp0L5e5IatTVRkYk.jpg', 'backdrop_path': '/gxnvX9kF7RRUQYvB52dMLPgeJkt.jpg'}))
