@@ -23,7 +23,7 @@ class CommentDao(metaclass=Singleton):
             return Comment(user=user, movie=movie, date=date, comment=comments)
 
     # READ (Fetch a specific user's comment)
-    def get_user(
+    def get_user_comment(
         self,
         id_user: int,
         id_movie: int,
