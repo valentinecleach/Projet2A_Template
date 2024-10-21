@@ -1,8 +1,8 @@
 from datetime import datetime
 from typing import List  # , Optional
 
-from Model.connected_user import ConnectedUser
-from Model.movie import Movie
+from src.Model.connected_user import ConnectedUser
+from src.Model.movie import Movie
 
 
 class MovieCollection:
@@ -42,14 +42,3 @@ class MovieCollection:
 
 
 # Unrelated code to show sys.path to understand error with classes ipmports.
-
-
-# code to prepare the doctests
-avatar_collection = {
-    "id": 87096,
-    "name": "Avatar Collection",
-    "poster_path": "/uO2yU3QiGHvVp0L5e5IatTVRkYk.jpg",
-    "backdrop_path": "/gxnvX9kF7RRUQYvB52dMLPgeJkt.jpg",
-}
-
-print(MovieCollection(avatar_collection))

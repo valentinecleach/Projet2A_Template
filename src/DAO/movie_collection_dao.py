@@ -1,11 +1,11 @@
 from datetime import datetime
 from typing import List  # , Optional
 
-from DAO.db_connection import DBConnection, Singleton
-from DAO.user_dao import UserDao
-from Model.connected_user import ConnectedUser
-from Model.movie import Movie
-from Model.movie_collection import MovieCollection
+from src.DAO.db_connection import DBConnection, Singleton
+from src.DAO.user_dao import UserDao
+from src.Model.connected_user import ConnectedUser
+from src.Model.movie import Movie
+from src.Model.movie_collection import MovieCollection
 
 
 class MovieCollectionDao(metaclass=Singleton):
@@ -25,6 +25,8 @@ class MovieCollectionDao(metaclass=Singleton):
         res = DBConnection().insert(cine.movie_collection, values)
         if res:
             user = UserDao().get_user_by_id(id_user)
+            collection = self.get_collection_by_id(id_collection)
+            collection.
             return MovieCollection(user=user, date=date, name = name)
 
     # READ (Fetch a specific user's comment)
