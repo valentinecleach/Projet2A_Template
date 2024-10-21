@@ -1,9 +1,6 @@
 from datetime import datetime
 from typing import List  # , Optional
 
-from src.Model.connected_user import ConnectedUser
-from src.Model.movie import Movie
-
 
 class MovieCollection:
     """
@@ -25,7 +22,6 @@ class MovieCollection:
     def __init__(
         self, name: str, id: int
     ):
-        
         self.name = name
         self.id = id
 
