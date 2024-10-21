@@ -17,7 +17,6 @@ class MovieCollection:
     Examples
     --------
 
-
     """
 
     def __init__(self, movie_collection_data: Dict):
