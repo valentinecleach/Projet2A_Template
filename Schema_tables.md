@@ -19,19 +19,7 @@ class User{
     password : str
 
  }
-  class UserCollection{
-    id_user [FK]
-    id_collection [FK]
-    date: str
- }
- class MovieCollection{
-    id_collection [PK]
-    id_movie [FK]
-    date : str
-    name : str
-    
-    
- }
+ 
  class Follower{
     id_user [FK]
     id_user_followed [FK]
@@ -77,10 +65,19 @@ class MovieGenre{
      id_movie [FK]
      id_genre [FK]
      }
+
  class Genre{
     id_genre [PK]: int
     genre_name : str
  }
+class MovieCollection{
+    id_collection [PK]
+    name : str 
+ }
+class Collection{
+      id_movie[FK]
+      id_collection[FK]
+}
 }
 namespace maker{
 class MovieMaker{
@@ -107,9 +104,8 @@ User --> Comment
 User -- Follower
 Comment --> Movie
 Rating--> Movie
-User --> UserCollection
-UserCollection-->MovieCollection
-MovieCollection --> Movie
+Movie --> Collection
+Collection-->MovieCollection
 MovieMaker --> KnownFor
 KnownFor --> Movie
 Movie --> MovieGenre
