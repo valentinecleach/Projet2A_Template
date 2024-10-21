@@ -29,7 +29,7 @@ class MovieTMDB:
 
         Parameters:
         -----------
-        id : int
+        id_movie : int
             The ID of the Movie on TMDB.
 
         Returns:
@@ -43,7 +43,7 @@ class MovieTMDB:
             response.raise_for_status()  # Raises an exception for HTTP error codes.
             data = response.json()
             if "id" in data:  # check if id is in response
-                print(data["belongs_to_collection"])
+                print(data["id"])
                 my_movie = {
                     "id_movie": data["id"],
                     "title": data["title"],
@@ -64,9 +64,10 @@ class MovieTMDB:
                     "vote_count": data["vote_count"],
                     "adult": data["adult"],
                 }
+                print(my_movie["overview"])
                 return Movie(**my_movie)
             else:
-                print(f"No Movie found with the ID : {id}.")
+                print(f"No Movie found with the ID : {id_movie}.")
                 return None
         except requests.exceptions.RequestException as e:
             print("Error while fetching Movie from TMDB: ", str(e))

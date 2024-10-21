@@ -78,7 +78,7 @@ class Movie(BaseModel):
         adult=False,
     ):
 
-        if not isinstance(id, int) or id < 0:
+        if not isinstance(id_movie, int) or id_movie < 0:
             raise TypeError("The id needs to be a positive integer")
         if not isinstance(title, str):
             raise TypeError("The title must be a string")
@@ -117,7 +117,7 @@ class Movie(BaseModel):
         if adult:
             raise ValueError("The film can't be an adult film.")
 
-        self.id = id_movie
+        self.id_movie = id_movie
         self.title = title
         self.belongs_to_collection = belongs_to_collection
         self.budget = budget
@@ -139,7 +139,7 @@ class Movie(BaseModel):
         Print a string representation of the Movie object.
         """
         return (
-            f"Title : {self.title}', ID: {self.id}, "
+            f"Title : {self.title}', ID: {self.id_movie}, "
             f"Release Date: {self.release_date}, Popularity: {self.popularity}, "
             f"Vote Average: {self.vote_average}, Vote Count: {self.vote_count}"
         )
