@@ -24,13 +24,16 @@ class Rating:
         self,
         user: ConnectedUser,
         movie: Movie,
-        date: str,
+        date: str,  # import datetime
         rating: int,
     ):
         self.user = user
         self.movie = movie
         self.date = date
         self.rating = rating
+
+    def __str__(self):
+        return f"{self.id}"
 
     def nb_ratings(self) -> int:
         """
@@ -41,8 +44,3 @@ class Rating:
         int
         """
         return len(self.who_rated)
-
-    def update_rating(self, user: User, new_rating: Rating):
-        if User in self.who_rated:
-            raise ValueError("You cannot rate the movie twice")
-        # pb one cannot change their rating

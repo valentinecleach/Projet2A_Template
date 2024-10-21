@@ -23,8 +23,11 @@ class ConnectedUser(User):
         self.date_of_birth = date_of_birth
         self.phone_number = phone_number
         self.gender = gender
-        self.film_collection = []  # Liste des films ajoutés par l'utilisateur
+        self.own_film_collection = []  # Liste des films ajoutés par l'utilisateur
         self.follow_list = []  # Liste des utilisateurs suivis
+
+    def __str__(self):
+        return f"id : {self.id}, pseudo : {self.pseudo}"
 
     def add_film(self, film: Movie):
         """Ajoute un film à la collection de l'utilisateur."""

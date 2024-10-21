@@ -1,11 +1,10 @@
 from datetime import datetime
 from typing import List  # , Optional
 
-from DAO.db_connection import DBConnection, Singleton
-from DAO.movie_dao import MovieDao
-from DAO.user_dao import UserDao
-from Model.comment import Comment
-from Model.movie import Movie
+from src.DAO.db_connection import DBConnection, Singleton
+from src.DAO.movie_dao import MovieDao
+from src.DAO.user_dao import UserDao
+from src.Model.comment import Comment
 
 
 class CommentDao(metaclass=Singleton):
@@ -35,7 +34,7 @@ class CommentDao(metaclass=Singleton):
                 with connection.cursor() as cursor:
                     cursor.execute(query, (id_user, id_movie))
                     results = cursor.fetchall()
-            if res:
+            if results:
                 user = UserDao().get_user_by_id(id_user)
                 movie = MovieDao().get_user_by_id(id_movie)
                 com = [
@@ -51,7 +50,7 @@ class CommentDao(metaclass=Singleton):
             return None
 
     # READ (Fetch all comments of a specific movie)
-    def get_recent(
+    def get_recent_comments(
         self,
         id_movie: int,
         limit: int = 10,
@@ -63,12 +62,14 @@ class CommentDao(metaclass=Singleton):
                 with connection.cursor() as cursor:
                     cursor.execute(query, (id_movie))
                     results = cursor.fetchall()
-            if res:
-                user = UserDao().get_user_by_id(id_user)
+            if results:
                 movie = MovieDao().get_user_by_id(id_movie)
                 com = [
                     Comment(
-                        user=user, movie=movie, date=res["date"], comment=res["comment"]
+                        user=UserDao().get_user_by_id(res["id_user"]),
+                        movie=movie,
+                        date=res["date"],
+                        comment=res["comment"],
                     )
                     for res in results
                 ]
@@ -101,8 +102,7 @@ class CommentDao(metaclass=Singleton):
             print(f"Error while deleting from comments: {e}")
             return None
 
-    def get_overall(movie: Movie):
-        id_movie = movie.id_movie
+    def get_overall(id_movie: int):
         try:
             query = "SELECT COUNT(*) as number FROM cine.comment WHERE id_movie = %s"
             with DBConnection().connection as connection:

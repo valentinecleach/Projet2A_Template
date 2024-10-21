@@ -3,7 +3,6 @@ from datetime import datetime
 from src.DAO.db_connection import DBConnection, Singleton
 from src.DAO.movie_dao import MovieDao
 from src.DAO.user_dao import UserDao
-from src.Model.movie import Movie
 from src.Model.rating import Rating
 
 # from typing import List  # , Optional
@@ -68,8 +67,7 @@ class RatingDao(metaclass=Singleton):
             print(f"Error while deleting from ratings: {e}")
             return None
 
-    def get_overall_rating(movie: Movie):
-        id_movie = movie.id_movie
+    def get_overall_rating(id_movie: int):
         try:
             query = "SELECT AVG(rating) as mean  FROM cine.rating WHERE id_movie = %s"
             with DBConnection().connection as connection:
