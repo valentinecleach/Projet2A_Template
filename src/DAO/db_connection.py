@@ -62,7 +62,7 @@ class DBConnection(metaclass=Singleton):
         );
         """
 
-        create_table_users = """
+        create_table_user= """
         CREATE TABLE IF NOT EXISTS Users (
             id_user INTEGER PRIMARY KEY,
             first_name VARCHAR(255) NOT NULL,
@@ -109,12 +109,23 @@ class DBConnection(metaclass=Singleton):
         );
         """
 
-        create_table_RatingComment = """
-        CREATE TABLE IF NOT EXISTS RatingComment (
+        create_table_rating = """
+        CREATE TABLE IF NOT EXISTS rating (
+            id_user INTEGER NOT NULL,
+            id_movie INTEGER NOT NULL,
+            rating INTEGER,
+            date VARCHAR(255),
+
+            FOREIGN KEY (id_user) REFERENCES Users(id_user),
+            FOREIGN KEY (id_movie) REFERENCES Movies(id_movie)
+        );
+        """
+
+        create_table_comment = """
+        CREATE TABLE IF NOT EXISTS comment (
             id_user INTEGER NOT NULL,
             id_movie INTEGER NOT NULL,
             comment TEXT,
-            rating INTEGER,
             date VARCHAR(255),
 
             FOREIGN KEY (id_user) REFERENCES Users(id_user),
@@ -132,7 +143,7 @@ class DBConnection(metaclass=Singleton):
         );
         """
 
-        create_table_MovieCollection = """
+        create_table_movie_collection = """
         CREATE TABLE IF NOT EXISTS MovieCollection (
             id_user INTEGER,
             id_movie INTEGER,
@@ -151,6 +162,11 @@ class DBConnection(metaclass=Singleton):
             FOREIGN KEY (id_movie) REFERENCES Movie(id_movie)
         );
         """
+
+        create_table_collection= """
+
+
+
 
         # add query for the creation of ither tables
         with self.db_connection.connection.cursor() as cursor:
