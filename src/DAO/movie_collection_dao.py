@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import List  # , Optional
 
 from src.DAO.db_connection import DBConnection, Singleton
@@ -7,26 +6,26 @@ from src.Model.movie_collection import MovieCollection
 
 class MovieCollectionDao(metaclass=Singleton):
     # CREATE collection
-    def insert(id_collection: int, name: str):
-        values = (id_collection, name)
+    def insert(id: int, name: str):
+        values = (id, name)
         res = DBConnection().insert(cine.movie_collection, values)
         if res:
-            return MovieCollection(id=id_collection, name=name)
+            return MovieCollection({"id": id, "name": name})
 
     # READ (Fetch a specific user's comment)
     def get_movie_collection_by_id(
         self,
-        id_collection: int,
+        id: int,
     ) -> MovieCollection:
 
         try:
-            query = "SELECT * FROM cine.movie _collection WHERE id_collection = %s"
+            query = "SELECT * FROM cine.movie _collection WHERE id = %s"
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
-                    cursor.execute(query, (id_collection))
+                    cursor.execute(query, (id))
                     res = cursor.fetchone()
             if res:
-                return MovieCollection(id=id_collection, name=res["name"])
+                return MovieCollection(res)
             else:
                 return None
         except Exception:
@@ -47,25 +46,22 @@ class MovieCollectionDao(metaclass=Singleton):
                     )
                     results = cursor.fetchall()
             if results:
-                coll = [
-                    MovieCollection(name=res["name"], id=res["id_collection"])
-                    for res in results
-                ]
+                coll = [MovieCollection(res) for res in results]
                 return coll
             else:
                 return None
         except Exception:
             return None
 
-    # DELETE
-    def delete(self, id_collection):
+    # DELETE / SUPPRIME
+    def delete(self, id):
         try:
-            query = "DELETE FROM cine.movie_collection WHERE id_collection = %s"
+            query = "DELETE FROM cine.movie_collection WHERE id = %s"
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
                         query,
-                        (id_collection),
+                        (id),
                     )
                     connection.commit()
                     print("Record deleted successfully from movie collection.")

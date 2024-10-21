@@ -71,12 +71,12 @@ class MovieGenre{
     genre_name : str
  }
 class MovieCollection{
-    id_collection [PK]
+    id [PK]
     name : str 
  }
 class Collection{
       id_movie[FK]
-      id_collection[FK]
+      id[FK]
 }
 }
 namespace maker{
