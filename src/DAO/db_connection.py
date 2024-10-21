@@ -62,8 +62,8 @@ class DBConnection(metaclass=Singleton):
         );
         """
 
-        create_table_user= """
-        CREATE TABLE IF NOT EXISTS Users (
+        create_table_user = """
+        CREATE TABLE IF NOT EXISTS user (
             id_user INTEGER PRIMARY KEY,
             first_name VARCHAR(255) NOT NULL,
             last_name VARCHAR(255) NOT NULL,
@@ -116,7 +116,7 @@ class DBConnection(metaclass=Singleton):
             rating INTEGER,
             date VARCHAR(255),
 
-            FOREIGN KEY (id_user) REFERENCES Users(id_user),
+            FOREIGN KEY (id_user) REFERENCES user(id_user),
             FOREIGN KEY (id_movie) REFERENCES Movies(id_movie)
         );
         """
@@ -128,7 +128,7 @@ class DBConnection(metaclass=Singleton):
             comment TEXT,
             date VARCHAR(255),
 
-            FOREIGN KEY (id_user) REFERENCES Users(id_user),
+            FOREIGN KEY (id_user) REFERENCES user(id_user),
             FOREIGN KEY (id_movie) REFERENCES Movies(id_movie)
         );
         """
@@ -139,7 +139,18 @@ class DBConnection(metaclass=Singleton):
             id_user_followed INTEGER,
             date VARCHAR(255),
 
-            FOREIGN KEY (id_user) REFERENCES Users(id_user)
+            FOREIGN KEY (id_user) REFERENCES user(id_user)
+        );
+        """
+
+        create_table_user_collection = """
+        CREATE TABLE IF NOT EXISTS user_collection(
+            id_user INTEGER NOT NULL,
+            id_collection INTEGER NOT NULL,
+            date VARCHAR(255),
+
+            FOREIGN KEY (id_user) REFERENCES user_collection(id_user),
+            FOREIGN KEY (id_collection) REFERENCES Movies(id_collection)
         );
         """
 
@@ -148,7 +159,7 @@ class DBConnection(metaclass=Singleton):
             id_user INTEGER,
             id_movie INTEGER,
 
-            FOREIGN KEY (id_user) REFERENCES Users(id_user),
+            FOREIGN KEY (id_user) REFERENCES user(id_user),
             FOREIGN KEY (id_movie) REFERENCES Movie(id_movie)
         );
         """
@@ -163,15 +174,10 @@ class DBConnection(metaclass=Singleton):
         );
         """
 
-        create_table_collection= """
-
-
-
-
         # add query for the creation of ither tables
         with self.db_connection.connection.cursor() as cursor:
             cursor.execute(create_table_MovieMaker)
-            cursor.execute(create_table_users)
+            cursor.execute(create_table_user)
             # add cursor.execute( other tables)
             self.db_connection.connection.commit()
 
