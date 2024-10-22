@@ -8,7 +8,7 @@ from src.Model.movie import Movie
 
 
 # A Faire: (valentine)
-class MovieDAO(metaclass=Singleton):
+class Movie_dao(metaclass=Singleton):
     def insert(self, new_movie: Movie, test: bool):
         try:
             """
