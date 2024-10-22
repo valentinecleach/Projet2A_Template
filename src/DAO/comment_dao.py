@@ -29,7 +29,7 @@ class CommentDao(metaclass=Singleton):
     ) -> List[Comment]:
 
         try:
-            query = "SELECT * FROM cine.comment" "WHERE id_user = %s and id_movie = %s"
+            query = "SELECT * FROM cine.comment WHERE id_user = %s and id_movie = %s"
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(query, (id_user, id_movie))
@@ -45,9 +45,10 @@ class CommentDao(metaclass=Singleton):
                 ]
                 return com
             else:
-                return None
-        except Exception:
-            return None
+                return []  # Liste vide si aucun commentaire n'est trouvé
+        except Exception as e:
+            print(f"Error while fetching user comment: {e}")
+            return []
 
     # READ (Fetch all comments of a specific movie)
     def get_recent_comments(
