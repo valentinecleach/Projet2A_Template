@@ -28,8 +28,16 @@ class UserDao(metaclass=Singleton):
             password,
             pseudo,
         )
-
-        res = DBConnection().insert(cine.user, values)
+        try:
+            with DBConnection().connection.cursor() as cursor:
+                query = f"INSERT INTO user(id_user,name,phone_number,email,gender,date_of_birth, password,
+        pseudo) VALUES ({', '.join(['%s'] * len(values))})"
+                res = cursor.execute(query, values)
+                DBConnection().connection.commit()
+        except Exception as e:
+                print(f"Erreur lors de l'insertion dans user: {str(e)}")
+                DBConnection().connection.rollback()
+                return None    
         if res:
             created = ConnectedUser(
                 name=name,
@@ -40,12 +48,20 @@ class UserDao(metaclass=Singleton):
                 date_of_birth=date_of_birth,
                 phone_number=phone_number,
             )
-        return created
+            return created
 
     # READ (Fetch a single user by ID)
     def get_user_by_id(self, id_user) -> ConnectedUser:
 
-        res = DBConnection().read_by_id(cine.user, "id_user", id)
+        try:
+            query = "SELECT * FROM user WHERE id_user = %s"
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(query, (id_user,))
+                    result = cursor.fetchone()
+        except Exception as e:
+            print(f"Error while fetching from user: {e}")
+            return None
         if res:
             user_read = ConnectedUser(
                 name=res["name"],
@@ -59,8 +75,17 @@ class UserDao(metaclass=Singleton):
 
     # READ (Fetch some users by name)
     def get_user_by_name(self, search_string, size=10) -> List[ConnectedUser]:
-
-        results = DBConnection().read_by_string(cine.user, "name", search_string, size)
+        
+        search_string = str(search_string).lower()
+        try:
+            query = f"SELECT * FROM user WHERE LOWER(name) LIKE %s or LOWER(pseudo) LIKE %s "
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(query, ("%" + search_string + "%","%" + search_string + "%"))
+                    results = cursor.fetchmany(size)
+        except Exception as e:
+            print(f"Error while searching: {e}")
+            return None
         if results:
             users_read = [
                 ConnectedUser(
@@ -79,7 +104,7 @@ class UserDao(metaclass=Singleton):
     # READ (Fetch all users)
     def get_all_users(self, limit: int = 10, offset: int = 0) -> List[ConnectedUser]:
 
-        results = DBConnection().read_all(cine.user, limit, offset)
+        results = DBConnection().read_all( user, limit, offset)
         if results:
             users_read = [
                 ConnectedUser(
