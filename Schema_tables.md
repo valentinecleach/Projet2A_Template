@@ -35,7 +35,7 @@ class Comment{
 class Rating{
     id_user [FK]: int
     id_movie [FK]: int
-    rating: int
+    rate: int
     date: date
  }
 
