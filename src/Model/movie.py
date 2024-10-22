@@ -7,8 +7,7 @@ from pydantic import BaseModel, Field, validator
 from src.Model.genre import Genre
 from src.Model.movie_collection import MovieCollection
 from src.Model.rating import Rating
-# Utils
-from src.Utils.utils import _is_valid_date
+
 
 
 class Movie(BaseModel):

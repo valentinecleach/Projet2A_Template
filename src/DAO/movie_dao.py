@@ -108,39 +108,37 @@ class MovieDAO(metaclass=Singleton):
                         (id_movie,),
                     )
                     result = cursor.fetchone()
-                if result:
-                    movie_data = dict(result)
-                    print(movie_data.keys())
-                    cursor.execute(
-                        """
-                        SELECT g.id_genre, g.name_genre
-                        FROM link_movie_genre l
-                        JOIN Genre g ON l.id_genre = g.id_genre
-                        WHERE l.id_movie = %s;
-                        """,
-                        (id_movie,)
+                    if result:
+                        movie_data = dict(result)
+                        cursor.execute(
+                            """
+                            SELECT g.id_genre, g.name_genre
+                            FROM link_movie_genre l
+                            JOIN Genre g ON l.id_genre = g.id_genre
+                            WHERE l.id_movie = %s;
+                            """,
+                            (id_movie,)
+                            )
+                        genres_result = cursor.fetchall()
+                        # Récupérer les collections associées
+                        cursor.execute(
+                            """
+                            SELECT mc.id_movie_collection, mc.name_movie_collection
+                            FROM link_movie_movie_collection lm
+                            JOIN Movie_Collection mc ON lm.id_movie_collection = mc.id_movie_collection
+                            WHERE lm.id_movie = %s;
+                            """,
+                            (id_movie,)
                         )
-                    genres = cursor.fetchall()
+                        collections_result = cursor.fetchall()     
 
-                    # Récupérer les collections associées
-                    cursor.execute(
-                        """
-                        SELECT mc.id_movie_collection, mc.name_collection
-                        FROM link_movie_movie_collection lm
-                        JOIN Movie_Collection mc ON lm.id_movie_collection = mc.id_movie_collection
-                        WHERE lm.id_movie = %s;
-                        """,
-                        (id_movie,)
-                    )
-                    collections = cursor.fetchall()     
+                        movie_data['genres'] = [{'id': genre['id_genre'], 'name': genre['name_genre']} for genre in genres_result]
+                        movie_data['belongs_to_collection'] = [{'id': collection['id_movie_collection'], 'name': collection['name_movie_collection']} for collection in collections_result]
 
-                    movie_data['genres'] = [dict(genre) for genre in genres] 
-                    movie_data['belongs_to_collection'] = [dict(collection) for collection in collections] 
-
-                    return(Movie(**movie_data))
-                else:
-                    print("No movie with this ID.")
-                    return None           
+                        return(Movie(**movie_data))
+                    else:
+                        print("No movie with this ID.")
+                        return None           
         except Exception as e:
             print("Error during recovery by id : ", str(e))
             return None
