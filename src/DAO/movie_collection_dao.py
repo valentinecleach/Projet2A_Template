@@ -1,17 +1,54 @@
-from typing import List  # , Optional
+from typing import Dict, List, Optional
 
-from src.DAO.db_connection import DBConnection, Singleton
+from psycopg2.extras import DictCursor
+
+from src.DAO.db_connection import DBConnection
+from src.DAO.singleton import Singleton
 from src.Model.movie_collection import MovieCollection
 
 
 class MovieCollectionDao(metaclass=Singleton):
-    # CREATE collection
-    def insert(id: int, name: str):
-        values = (id, name)
-        res = DBConnection().insert( movie_collection, values)
-        if res:
-            return MovieCollection({"id": id, "name": name})
+    def __init__(self):
+        # create a DB connection object
+        self.db_connection = DBConnection()
+        # Create tables if don't exist
+        self.db_connection.create_tables()
+    
+    def insert(self, new_movie_collection):
+        try:
+            """
+            Adds a Genre into the database.
 
+            Parameters:
+            -----------
+            new_genre : Genre
+                The Genre to add in the schema
+
+            """
+            # Connexion
+            with self.db_connection.connection as connection:
+                # Creation of a cursor for the request
+                with connection.cursor() as cursor:
+                    # SQL resquest
+                    cursor.execute(
+                        """
+                        INSERT INTO movie_collection (id_movie_collection ,
+                                            name_movie_collection)
+                        VALUES (%s, %s)
+                        """,
+                        (
+                            new_movie_collection.id,
+                            new_movie_collection.name
+                        ),
+                    )
+                connection.commit()
+
+            print("Insertion successful : Movie Colelction added.")
+        except Exception as e:
+            print("Insertion error : ", str(e))
+
+
+#######################################################################################
     # READ (Fetch a specific user's comment)
     def get_movie_collection_by_id(
         self,
@@ -30,6 +67,7 @@ class MovieCollectionDao(metaclass=Singleton):
                 return None
         except Exception:
             return None
+
 
     # READ (Fetch all comments of a specific movie)
     def get_all(
@@ -68,3 +106,7 @@ class MovieCollectionDao(metaclass=Singleton):
         except Exception as e:
             print(f"Error while deleting from movie collection: {e}")
             return None
+
+# works : add a new Movie Collecction in the schema 
+mon_objet = MovieCollectionDao()
+mon_objet.insert(MovieCollection(id = 87096, name = 'Avatar Collection'))

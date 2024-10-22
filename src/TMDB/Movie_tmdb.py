@@ -171,6 +171,6 @@ class MovieTMDB:
             return None
 
 
-data2 = MovieTMDB()
-print(data2.get_movie_by_id(19995))
-print(data2.get_movie_by_name("The Matrix"))
+#data2 = MovieTMDB()
+#print(data2.get_movie_by_id(19995))
+#print(data2.get_movie_by_name("The Matrix"))

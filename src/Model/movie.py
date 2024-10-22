@@ -59,9 +59,7 @@ class Movie(BaseModel):
 
     id_movie: int
     title: str
-    belongs_to_collection: Optional[List[MovieCollection]] = (
-        None  # peut ne pas avoir de MovieCollection.
-    )
+    belongs_to_collection: Optional[List[MovieCollection]] = None  # peut ne pas avoir de MovieCollection.
     budget: Optional[int]
     genres: List[Genre]
     origin_country: Optional[List[str]]
