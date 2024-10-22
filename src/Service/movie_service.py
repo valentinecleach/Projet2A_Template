@@ -12,7 +12,7 @@ class MovieService:
 
     def get_movie_by_id(self, movie_id: int) -> Movie | None:
         """find movie by id"""
-        movie = None #self.movie_dao.get_by_id(movie_id)
+        movie = self.movie_dao.get_by_id(movie_id)
         if movie:
             return movie
         else:
