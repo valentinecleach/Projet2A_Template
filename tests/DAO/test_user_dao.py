@@ -32,7 +32,7 @@ def test_insert_user(mock_db, user_dao):
         'email': 'john@example.com',
         'gender': 1,
         'date_of_birth': '1990-01-01',
-        'password': 'password123',
+        'hashed_password': 'password123',
         'pseudo': 'johnny'
     }
 
@@ -52,7 +52,7 @@ def test_get_user_by_id(mock_db, user_dao):
         'name': 'John Doe',
         'pseudo': 'johnny',
         'email': 'john@example.com',
-        'password': 'password123',
+        'hashed_password': 'password123',
         'date_of_birth': '1990-01-01',
         'phone_number': '123456789',
         'gender': 1
@@ -75,7 +75,7 @@ def test_get_user_by_name(mock_db, user_dao):
             'name': 'John Doe',
             'pseudo': 'johnny',
             'email': 'john@example.com',
-            'password': 'password123',
+            'hashed_password': 'password123',
             'date_of_birth': '1990-01-01',
             'phone_number': '123456789',
             'gender': 1
@@ -99,7 +99,7 @@ def test_get_all_users(mock_db, user_dao):
             'name': 'John Doe',
             'pseudo': 'johnny',
             'email': 'john@example.com',
-            'password': 'password123',
+            'hashed_password': 'password123',
             'date_of_birth': '1990-01-01',
             'phone_number': '123456789',
             'gender': 1
@@ -109,7 +109,7 @@ def test_get_all_users(mock_db, user_dao):
             'name': 'Jane Doe',
             'pseudo': 'jane',
             'email': 'jane@example.com',
-            'password': 'password456',
+            'hashed_password': 'password456',
             'date_of_birth': '1992-02-02',
             'phone_number': '987654321',
             'gender': 2
