@@ -41,7 +41,7 @@ class FollowDao(metaclass=Singleton):
                         ),
                     )
                     connection.commit()
-                    print(f"Record deleted successfully from follower.")
+                    print("Record deleted successfully from follower.")
         except Exception as e:
             print(f"Error while deleting from follower: {e}")
             return None

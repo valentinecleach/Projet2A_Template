@@ -102,7 +102,7 @@ class DBConnection(metaclass=Singleton):
         );
         """
 
-        create_table_Genre = """
+        create_table_genre = """
         CREATE TABLE IF NOT EXISTS GENRE (
             id_genre INTEGER NOT NULL PRIMARY KEY,
             genre_name VARCHAR(255),
@@ -188,7 +188,7 @@ class DBConnection(metaclass=Singleton):
             with self.__connection.cursor() as cursor:
                 # Récupérer la liste des colonnes de la table
                 cursor.execute(
-                    f"""
+                    """
                     SELECT column_name
                     FROM information_schema.columns
                     WHERE table_name = %s
