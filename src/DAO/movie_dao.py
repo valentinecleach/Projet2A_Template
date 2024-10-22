@@ -26,7 +26,7 @@ class MovieDAO(metaclass=Singleton):
             # Connexion
             with self.db_connection.connection as connection:
                 with connection.cursor() as cursor:
-                    
+                    print(f"Inserting movie: {new_movie.title}")
                     cursor.execute(
                         """
                         INSERT INTO movie (id_movie, title, budget, origin_country, 
@@ -53,6 +53,7 @@ class MovieDAO(metaclass=Singleton):
                             new_movie.adult,
                         ),
                     )
+                    print(f"Insertion movie successful: {new_movie.title}")
 
                     # Insertion des genres
                     if new_movie.genres:

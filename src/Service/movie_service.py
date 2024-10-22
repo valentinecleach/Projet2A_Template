@@ -6,19 +6,19 @@ from src.TMDB.movie_tmdb import MovieTMDB
 
 
 class MovieService:
-    def __init__(self, movie_db: None):
+    def __init__(self):
         self.movie_dao = MovieDAO()
         self.movie_tmdb = MovieTMDB()
 
-    def get_movie_by_id(self, movie_id: int, test) -> Movie | None:
+    def get_movie_by_id(self, movie_id: int) -> Movie | None:
         """find movie by id"""
-        movie = self.movie_dao.get_by_id(movie_id, test)
+        movie = None #self.movie_dao.get_by_id(movie_id)
         if movie:
             return movie
         else:
-            movie_from_tmdb = self.movie_tmdb.get_movie_by_id(id)
+            movie_from_tmdb = self.movie_tmdb.get_movie_by_id(movie_id)
             if movie_from_tmdb:
-                self.movie_dao.insert(movie_from_tmdb, test)
+                self.movie_dao.insert(movie_from_tmdb)
                 return movie_from_tmdb
             else:
                 print(f"No Movie found with id :{movie_id}.")
@@ -63,3 +63,7 @@ class MovieService:
     def filter_by_popularity(self) -> list[Movie]:
         """Filters the movie by the popularity"""
         pass
+
+
+my_object = MovieService()
+my_object.get_movie_by_id(19995)
