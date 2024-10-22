@@ -27,9 +27,11 @@ class LinkMovieGenreDAO(metaclass=Singleton):
                         """,
                         (id_movie, id_genre)
                     )
-                    link_exists = cursor.fetchone()[0] > 0
+                    result = cursor.fetchone()
+                    link_exists = result['count'] > 0
+                    print(link_exists)
 
-                    if link_exists is None:
+                    if not link_exists:
                         cursor.execute(
                         """
                         INSERT INTO link_movie_genre (id_movie, id_genre)
