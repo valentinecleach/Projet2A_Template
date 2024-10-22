@@ -29,7 +29,7 @@ class User{
 class Comment{
     id_user [FK]: int
     id_movie [FK]: int
-    comment : str
+    comments : str
     date: date
  }
 class Rating{
