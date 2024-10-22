@@ -172,6 +172,5 @@ class MovieTMDB:
 
 
 data2 = MovieTMDB()
-data2.get_movie_by_id(19995)
-print(data2)
-# print(data2.get_movie_by_name("Avatar")) # works with avatar. Not with more complex title
+print(data2.get_movie_by_id(19995))
+print(data2.get_movie_by_name("The Matrix"))
