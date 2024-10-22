@@ -4,16 +4,12 @@ from typing import Dict, List, Optional
 from pydantic import BaseModel, Field, validator
 
 # Model
-from src.Model.Genre import Genre
+from src.Model.genre import Genre
 from src.Model.movie_collection import MovieCollection
+from src.Model.rating import Rating
 
 # Utils
 from src.Utils.utils import _is_valid_date
-
-# from src.Model.Rating import Rating
-
-
-# from src.Model.Rating import Rating
 
 
 class Movie(BaseModel):
@@ -86,7 +82,7 @@ class Movie(BaseModel):
         Print a string representation of the Movie object.
         """
         return (
-            f"Title : {self.title} ( ID: {self.id_movie} ), "
+            f"Title : {self.title}, ( ID: {self.id_movie} ), "
             f"Release Date: {self.release_date}, Popularity: {self.popularity}, "
             f"Vote Average: {self.vote_average}, Vote Count: {self.vote_count}"
         )
