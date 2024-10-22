@@ -1,5 +1,4 @@
 from typing import Dict, List, Optional
-
 from psycopg2.extras import DictCursor
 
 from src.DAO.db_connection import DBConnection
@@ -8,8 +7,8 @@ from src.Model.movie import Movie
 
 
 # A Faire: (valentine)
-class Movie_dao(metaclass=Singleton):
-    def insert(self, new_movie: Movie, test: bool):
+class MovieDAO(metaclass=Singleton):
+    def insert(self, new_movie: Movie):
         try:
             """
             Adds a movie into the database.
@@ -22,7 +21,7 @@ class Movie_dao(metaclass=Singleton):
             """
             # if new_movie.id already exists do an error.
             # Connexion
-            with DBConnection(test).connection as connection:
+            with DBConnection().connection as connection:
                 # Creation of a cursor for the request
                 with connection.cursor() as cursor:
                     # SQL resquest
