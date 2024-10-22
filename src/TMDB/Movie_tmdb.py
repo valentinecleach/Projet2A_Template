@@ -1,6 +1,5 @@
 # interagir avec tmdb
 
-# src/TMDB/MovieMaker_tmdb.py
 import os
 import urllib.parse
 from typing import Dict, List
@@ -9,7 +8,6 @@ import requests
 from dotenv import load_dotenv
 
 # Model
-from src.Model.genre import Genre
 from src.Model.movie import Movie
 
 # Service
