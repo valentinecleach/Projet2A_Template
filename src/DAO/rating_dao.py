@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from src.DAO.db_connection import DBConnection, Singleton
-from src.DAO.movie_dao import MovieDao
+from src.DAO.Movie_dao import MovieDAO
 from src.DAO.user_dao import UserDao
 from src.Model.rating import Rating
 
