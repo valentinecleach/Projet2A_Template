@@ -5,7 +5,7 @@ from src.DAO.db_connection import DBConnection
 from src.DAO.singleton import Singleton
 from src.Model.genre import Genre
 
-class GenreDAO(metaclass=Singleton):
+class GenreDao(metaclass=Singleton):
     def __init__(self):
         # create a DB connection object
         self.db_connection = DBConnection()
@@ -46,5 +46,5 @@ class GenreDAO(metaclass=Singleton):
             print("Insertion error : ", str(e))
 
 # works : add a new genre in the schema 
-#mon_objet = GenreDAO()
+#mon_objet = GenreDao()
 #mon_objet.insert(Genre(id =  28, name = "Action"))
