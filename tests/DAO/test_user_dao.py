@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
+from src.DAO.db_connection import DBConnection
 from src.DAO.user_dao import UserDao
 from src.Model.connected_user import ConnectedUser
 
@@ -12,7 +13,7 @@ class TestUserDao(unittest.TestCase):
         self.user_dao = UserDao()
 
     # Test for the insert method
-    @patch('src.DAO.db_connection.DBConnection.insert')
+    @patch('DBConnection.insert')
     def test_insert_user(self, mock_insert):
         mock_insert.return_value = True
         
@@ -33,7 +34,7 @@ class TestUserDao(unittest.TestCase):
         self.assertEqual(user.gender, 1)
 
     # Test for the get_user_by_id method
-    @patch('src.DAO.db_connection.DBConnection.read_by_id')
+    @patch('DBConnection.read_by_id')
     def test_get_user_by_id(self, mock_read_by_id):
         mock_read_by_id.return_value = {
             "name": "John Doe",
@@ -51,7 +52,7 @@ class TestUserDao(unittest.TestCase):
         self.assertEqual(user.email, "johndoe@example.com")
 
     # Test for the get_user_by_name method
-    @patch('src.DAO.db_connection.DBConnection.read_by_string')
+    @patch('DBConnection.read_by_string')
     def test_get_user_by_name(self, mock_read_by_string):
         mock_read_by_string.return_value = [
             {
@@ -72,7 +73,7 @@ class TestUserDao(unittest.TestCase):
         self.assertEqual(users[0].name, "John Doe")
 
     # Test for the get_all_users method
-    @patch('src.DAO.db_connection.DBConnection.read_all')
+    @patch('DBConnection.read_all')
     def test_get_all_users(self, mock_read_all):
         mock_read_all.return_value = [
             {
@@ -102,7 +103,7 @@ class TestUserDao(unittest.TestCase):
         self.assertEqual(users[1].name, "Jane Smith")
 
     # Test for the update_user method
-    @patch('src.DAO.db_connection.DBConnection.connection')
+    @patch('DBConnection.connection')
     def test_update_user(self, mock_db_conn):
         mock_cursor = MagicMock()
         mock_db_conn.cursor.return_value.__enter__.return_value = mock_cursor
@@ -117,7 +118,7 @@ class TestUserDao(unittest.TestCase):
         self.assertTrue(mock_cursor.execute.called)
 
     # Test for the delete_user method
-    @patch('src.DAO.db_connection.DBConnection.delete')
+    @patch('DBConnection.delete')
     def test_delete_user(self, mock_delete):
         mock_delete.return_value = True
 

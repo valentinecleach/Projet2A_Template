@@ -11,15 +11,31 @@ class FollowDao(metaclass=Singleton):
     def insert(self, id_user: int, id_user_followed: int):
         date = datetime.now()
         values = (id_user, id_user_followed, date)
-
-        res = DBConnection().insert(cine.follower, values)
-
-        return res
+        try:
+            with DBConnection().connection.cursor() as cursor:
+                query = f"INSERT INTO follower(id_user, id_user_followed,date) VALUES ({', '.join(['%s'] * len(values))})"
+                res = cursor.execute(query, values)
+                DBConnection().connection.commit()
+                
+        except Exception as e:
+            print(f"Erreur lors de l'insertion dans follower: {str(e)}")
+            DBConnection().connection.rollback()
+            return None 
+        if res:
+            return res
 
     # READ (Fetch all follower)
     def get_follow_list(self, id_user: int) -> List[ConnectedUser]:
 
-        results = DBConnection().read_all_by_id(cine.follower, "id_user", id_user)
+        try:
+            query = "SELECT * FROM follower WHERE id_user = %s"
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(query, (id_user,))
+                    results = cursor.fetchall()
+        except Exception as e:
+            print(f"Error while fetching from {table}: {e}")
+            return None
         if results:
             id_read = [res["id_followed"] for res in results]
             users = [UserDao().get_user_by_id(id) for id in id_read]
@@ -29,9 +45,9 @@ class FollowDao(metaclass=Singleton):
     def delete_followed(self, id_user: int, id_user_followed: int):
         try:
             query = (
-                "DELETE FROM cine.follower WHERE id_user = %s and id_user_followed = %s"
+                "DELETE FROM  follower WHERE id_user = %s and id_user_followed = %s"
             )
-            with self.connection as connection:
+            with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
                         query,

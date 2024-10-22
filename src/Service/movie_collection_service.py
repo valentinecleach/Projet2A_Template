@@ -19,8 +19,8 @@ class MovieCollectionService:
         """
         return [MovieCollection(id=data['id'], name=data['name'])]
 
-movie_collection_service = MovieCollectionService()
-# print(movie_collection_service.create_list_of_collection({'id': 87096, 'name': 'Avatar Collection', 'poster_path': '/uO2yU3QiGHvVp0L5e5IatTVRkYk.jpg', 'backdrop_path': '/gxnvX9kF7RRUQYvB52dMLPgeJkt.jpg'}))
-x = movie_collection_service.create_list_of_collection({'id': 87096, 'name': 'Avatar Collection', 'poster_path': '/uO2yU3QiGHvVp0L5e5IatTVRkYk.jpg'})
-for k in x :
-    print(k)
+#movie_collection_service = MovieCollectionService()
+
+#x = movie_collection_service.create_list_of_collection({'id': 87096, 'name': 'Avatar Collection', 'poster_path': '/uO2yU3QiGHvVp0L5e5IatTVRkYk.jpg'})
+#for k in x :
+#    print(k)

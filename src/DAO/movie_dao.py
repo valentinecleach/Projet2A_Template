@@ -8,74 +8,97 @@ from src.Model.movie import Movie
 
 # A Faire: (valentine)
 class MovieDAO(metaclass=Singleton):
+    def __init__(self):
+        # create a DB connection object
+        self.db_connection = DBConnection()
+        # Create tables if don't exist
+        self.db_connection.create_tables()
     def insert(self, new_movie: Movie):
         try:
             """
-            Adds a movie into the database.
+            Adds a movie into the database along with its genres and collections.
 
             Parameters:
             -----------
             new_movie : Movie
                 A new movie to add to the database
-
             """
-            # if new_movie.id already exists do an error.
             # Connexion
-            with DBConnection().connection as connection:
-                # Creation of a cursor for the request
+            with self.db_connection.connection as connection:
                 with connection.cursor() as cursor:
-                    # SQL resquest
+                    print(f"Inserting movie: {new_movie.title}")
                     cursor.execute(
                         """
-                        INSERT INTO Movie (id ,
-                                            title ,
-                                            belongs_to_collection ,
-                                            budget,
-                                            genres ,
-                                            origin_country ,
-                                            original_language,
-                                            original_title,
-                                            overview,
-                                            popularity,
-                                            release_date,
-                                            revenue,
-                                            runtime,
-                                            vote_average,
-                                            vote_count,
-                                            adult)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        INSERT INTO movie (id_movie, title, budget, origin_country, 
+                                        original_language, original_title, overview, 
+                                        popularity, release_date, revenue, runtime, 
+                                        vote_average, vote_count, adult)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
+                                %s, %s, %s, %s)
                         """,
                         (
-                            new_movie.id,
+                            new_movie.id_movie,
                             new_movie.title,
-                            new_movie.belongs_to_collection,
-                            new_movie.budget,
-                            new_movie.genres,
-                            new_movie.origin_country,
+                            new_movie.budget if new_movie.budget is not None else None,
+                            new_movie.origin_country if new_movie.origin_country is not None else None,
                             new_movie.original_language,
                             new_movie.original_title,
                             new_movie.overview,
                             new_movie.popularity,
                             new_movie.release_date,
-                            new_movie.revenue,
-                            new_movie.runtime,
+                            new_movie.revenue if new_movie.revenue is not None else None,
+                            new_movie.runtime if new_movie.runtime is not None else None,  # Gérer runtime
                             new_movie.vote_average,
                             new_movie.vote_count,
                             new_movie.adult,
                         ),
                     )
-                    # tagline? status?)
-                # Fetching the result
-                res = cursor.fetchone()
+                    print(f"Insertion movie successful: {new_movie.title}")
 
-            # if we have a result
-            if res:
-                pass
-                # what_we_returne =
-                print("Insertion successful : Movie added.")
+                    # Insertion des genres
+                    if new_movie.genres:
+                        for genre in new_movie.genres:
+                            cursor.execute(
+                                """
+                                INSERT INTO genre (id_genre, name_genre)
+                                VALUES (%s, %s)
+                                """,
+                                (genre.id, genre.name)  # Assurez-vous que genre.id_genre existe
+                            )
+                            cursor.execute(
+                                """
+                                INSERT INTO link_movie_genre (id_movie, id_genre)
+                                VALUES (%s, %s)
+                                """,
+                                (new_movie.id_movie, genre.id)  # Assurez-vous que genre.id_genre existe
+                            )
+
+                    # Insertion de la collection si elle existe
+                    if new_movie.belongs_to_collection:
+                        collection = new_movie.belongs_to_collection
+                        cursor.execute(
+                            """
+                            INSERT INTO movie_collection (id_movie_collection, name_movie_collection)
+                            VALUES (%s, %s)
+                            """,
+                            (collection.id, collection.name)
+                        )
+
+                        # Lien entre Movie et Movie Collection
+                        cursor.execute(
+                            """
+                            INSERT INTO link_movie_movie_collection (id_movie, id_movie_collection)
+                            VALUES (%s, %s)
+                            """,
+                            (new_movie.id_movie, collection.id)
+                        )
+
+                # Commit des changements
+                connection.commit()
+                print("Insertion successful: Movie added.")
         except Exception as e:
-            print("Insertion error : ", str(e))
-            # return None #what_we_return
+            print("Insertion error: ", str(e))
+
 
     def update(self, movie: Movie, test: bool):
         try:

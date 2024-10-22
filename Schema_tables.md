@@ -29,13 +29,13 @@ class User{
 class Comment{
     id_user [FK]: int
     id_movie [FK]: int
-    comment : str
+    comments : str
     date: date
  }
 class Rating{
     id_user [FK]: int
     id_movie [FK]: int
-    rating: int
+    rate: int
     date: date
  }
 
@@ -71,12 +71,12 @@ class MovieGenre{
     genre_name : str
  }
 class MovieCollection{
-    id [PK]
+    id_movie_collection [PK]
     name : str 
  }
 class Collection{
       id_movie[FK]
-      id[FK]
+      id_movie_collection[FK]
 }
 }
 namespace maker{

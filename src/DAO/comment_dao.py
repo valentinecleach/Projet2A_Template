@@ -9,17 +9,23 @@ from src.Model.comment import Comment
 
 class CommentDao(metaclass=Singleton):
     # CREATE
-    def insert(self, id_user: int, id_movie: int, comments: str):
+    def insert(self, id_user: int, id_movie: int, comment: str):
         date = datetime.now()
-        if comments:
-            values = (id_user, id_movie, comments, date)
-            res = DBConnection().insert(cine.comment, values)
-        else:
-            return None
+        if comment:
+            values = (id_user, id_movie, comment, date)
+            try:
+                with DBConnection().connection.cursor() as cursor:
+                    query = f"INSERT INTO comment(id_user, id_movie, comments, date) VALUES ({', '.join(['%s'] * len(values))})"
+                    res = cursor.execute(query, values)
+                    DBConnection().connection.commit()
+            except Exception as e:
+                print(f"Erreur lors de l'insertion dans comment: {str(e)}")
+                DBConnection().connection.rollback()
+                return None
         if res:
             user = UserDao().get_user_by_id(id_user)
             movie = MovieDAO().get_user_by_id(id_movie)
-            return Comment(user=user, movie=movie, date=date, comment=comments)
+            return Comment(user=user, movie=movie, date=date, comment=comment)
 
     # READ (Fetch a specific user's comment)
     def get_user_comment(
@@ -29,7 +35,7 @@ class CommentDao(metaclass=Singleton):
     ) -> List[Comment]:
 
         try:
-            query = "SELECT * FROM cine.comment WHERE id_user = %s and id_movie = %s"
+            query = "SELECT * FROM  comment" "WHERE id_user = %s and id_movie = %s"
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(query, (id_user, id_movie))
@@ -58,7 +64,7 @@ class CommentDao(metaclass=Singleton):
     ) -> List[Comment]:
 
         try:
-            query = f"SELECT * FROM cine.comment WHERE id_movie = %s ORDER BY date DESC LIMIT {max(limit, 0)}"
+            query = f"SELECT * FROM  comment WHERE id_movie = %s ORDER BY date DESC LIMIT {max(limit, 0)}"
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(query, (id_movie))
@@ -86,7 +92,7 @@ class CommentDao(metaclass=Singleton):
         id_movie = com.id_movie
         date = com.date
         try:
-            query = "DELETE FROM cine.comment WHERE id_user = %s and id_movie = %s and date = %s"
+            query = "DELETE FROM  comment WHERE id_user = %s and id_movie = %s and date = %s"
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
@@ -105,7 +111,7 @@ class CommentDao(metaclass=Singleton):
 
     def get_overall(id_movie: int):
         try:
-            query = "SELECT COUNT(*) as number FROM cine.comment WHERE id_movie = %s"
+            query = "SELECT COUNT(*) as number FROM  comment WHERE id_movie = %s"
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(

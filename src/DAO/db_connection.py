@@ -40,6 +40,61 @@ class DBConnection(metaclass=Singleton):
         """
         Creates the movie_maker table in the database if it does not exist.
         """
+
+        create_table_Movie = """
+        CREATE TABLE IF NOT EXISTS movie (
+            id_movie INTEGER PRIMARY KEY,
+            title VARCHAR(255) NOT NULL,
+            budget FLOAT,
+            origin_country VARCHAR(255)[],
+            original_language VARCHAR(255),
+            original_title VARCHAR(255),
+            overview VARCHAR(255),
+            popularity FLOAT,
+            release_date VARCHAR(255),
+            revenue INTEGER,
+            runtime INTEGER,
+            vote_average FLOAT,
+            vote_count INTEGER,
+            adult BOOLEAN NOT NULL DEFAULT FALSE
+        );
+        """
+
+        create_table_Genre = """
+        CREATE TABLE IF NOT EXISTS genre (
+            id_genre INTEGER PRIMARY KEY,
+            name_genre VARCHAR(255) NOT NULL
+        );
+        """
+        create_table_Movie_Collection ="""
+        CREATE TABLE IF NOT EXISTS movie_collection (
+            id_movie_collection INTEGER PRIMARY KEY,
+            name_movie_collection VARCHAR(255) NOT NULL
+        );
+        """
+
+        create_table_Link_Movie_MovieCollection = """
+        CREATE TABLE IF NOT EXISTS link_movie_movie_collection (
+            id_movie INTEGER,
+            id_movie_collection INTEGER,
+
+            PRIMARY KEY (id_movie, id_movie_collection), 
+            FOREIGN KEY (id_movie) REFERENCES movie(id_movie),
+            FOREIGN KEY (id_movie_collection) REFERENCES movie_collection(id_movie_collection)
+        );
+        """
+
+        create_table_Link_Movie_Genre = """
+        CREATE TABLE IF NOT EXISTS link_movie_genre (
+            id_movie INTEGER,
+            id_genre INTEGER,
+
+            PRIMARY KEY (id_movie, id_genre), 
+            FOREIGN KEY (id_movie) REFERENCES movie(id_movie),
+            FOREIGN KEY (id_genre) REFERENCES genre(id_genre)
+        );
+        """
+    
         create_table_movie_maker = """
         CREATE TABLE IF NOT EXISTS movie_maker (
             id_movie_maker INTEGER PRIMARY KEY,
@@ -67,31 +122,7 @@ class DBConnection(metaclass=Singleton):
         );
         """
 
-        create_table_movie = """
-        CREATE TABLE IF NOT EXISTS movie (
-            id_movie INTEGER PRIMARY KEY,
-            title VARCHAR(255) NOT NULL,
-            budget FLOAT,
-            adult BOOLEAN NOT NULL DEFAULT FALSE,
-            origine_country LIST,
-            original_language VARCHAR(255),
-            original_title VARCHAR(255),
-            overwiev VARCHAR(255),
-            popularity FLOAT,
-            release_date VARCHAR(255),
-            revenue INTEGER,
-            vote_average FLOAT,
-            vote_count INTEGER,
-            status VARCHAR(255)
-        );
-        """
 
-        create_table_Genre = """
-        CREATE TABLE IF NOT EXISTS Genre (
-            id INTEGER PRIMARY KEY,
-            name VARCHAR(255) NOT NULL
-        );
-        """
 
         create_table_rating = """
         CREATE TABLE IF NOT EXISTS rating (
@@ -138,16 +169,6 @@ class DBConnection(metaclass=Singleton):
         );
         """
 
-        create_table_movie_collection = """
-        CREATE TABLE IF NOT EXISTS movie_collection (
-            id_user INTEGER,
-            id_movie INTEGER,
-
-            FOREIGN KEY (id_user) REFERENCES user(id_user),
-            FOREIGN KEY (id_movie) REFERENCES movie(id_movie)
-        );
-        """
-
         create_table_KnownFor = """
         CREATE TABLE IF NOT EXISTS KnownFor (
             id_movie_maker INTEGER,
@@ -162,8 +183,10 @@ class DBConnection(metaclass=Singleton):
         with self.connection as connection:
                 # Creation of a cursor for the request
                 with connection.cursor() as cursor:
-                    #cursor.execute(create_table_movie_maker)
-                    #cursor.execute(create_table_user)
                     cursor.execute(create_table_Genre)
+                    cursor.execute(create_table_Movie)
+                    cursor.execute(create_table_Movie_Collection)          
+                    cursor.execute(create_table_Link_Movie_MovieCollection)
+                    cursor.execute(create_table_Link_Movie_Genre)
                 connection.commit()
 
