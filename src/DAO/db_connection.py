@@ -54,7 +54,7 @@ class DBConnection(metaclass=Singleton):
             original_title VARCHAR(255),
             overview VARCHAR(255),
             popularity FLOAT,
-            release_date VARCHAR(255),
+            release_date DATE,
             revenue BIGINT,
             runtime INTEGER,
             vote_average FLOAT,
