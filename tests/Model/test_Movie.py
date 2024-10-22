@@ -10,8 +10,8 @@ from tests.conftest import avatar, titanic
 @pytest.mark.parametrize(
     "kwargs, erreur, message_erreur",
     [
-        ({"id_movie": -1}, ValueError, "The id needs to be a positive integer")(
-            {"title": 123}, TypeError, "The title must be a string"
+        ({"id_movie": -1}, ValueError, "The id needs to be a positive integer"),
+        ({"title": 123}, TypeError, "The title must be a string"
         ),
         (
             {"belongs_to_collection": "not_a_dict"},
