@@ -36,7 +36,7 @@ from tests.conftest import avatar, titanic
     ],
 )
 def test_movie_init_echec(titanic, kwargs, erreur, message_erreur):
-    # Mettre à jour james_cameron avec les arguments testés
+    # Mettre à jour titanic avec les arguments testés
     test_kwargs = titanic.copy()  # Créer une copie pour éviter de modifier la fixture
     test_kwargs.update(kwargs)  # Mettre à jour avec les arguments invalides
     with pytest.raises(erreur, match=message_erreur):
