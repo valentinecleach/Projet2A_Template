@@ -20,6 +20,6 @@ class GenreService:
         return [Genre(id=item['id'], name=item['name']) for item in data]
 
 # code to prepare the doctests
-genre_service = GenreService()
-genre_action = [{"id": 28, "name": "Action"}]
-print(genre_service.create_list_of_genre(genre_action))
+#genre_service = GenreService()
+#genre_action = [{"id": 28, "name": "Action"}]
+# print(genre_service.create_list_of_genre(genre_action))

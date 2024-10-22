@@ -51,8 +51,8 @@ class DBConnection(metaclass=Singleton):
             original_title VARCHAR(255),
             overview VARCHAR(255),
             popularity FLOAT,
-            release_date VARCHAR(255),
-            revenue INTEGER,
+            release_date DATE,
+            revenue BIGINT,
             runtime INTEGER,
             vote_average FLOAT,
             vote_count INTEGER,
@@ -111,18 +111,19 @@ class DBConnection(metaclass=Singleton):
         );
         """
 
-        create_table_user = """
-        CREATE TABLE IF NOT EXISTS user (
+        create_table_users = """
+        CREATE TABLE IF NOT EXISTS users (
             id_user INTEGER PRIMARY KEY,
-            first_name VARCHAR(255) NOT NULL,
-            last_name VARCHAR(255) NOT NULL,
+            name VARCHAR(255) NOT NULL,
+            pseudo VARCHAR(255) NOT NULL,
             username VARCHAR(255) UNIQUE NOT NULL,
             hashed_password VARCHAR(255) NOT NULL,
-            email VARCHAR(255) UNIQUE NOT NULL
+            email VARCHAR(255) UNIQUE NOT NULL,
+            date_of_birth DATE, 
+            phone_number VARCHAR(255) UNIQUE NOT NULL,
+            gender INTEGER
         );
         """
-
-
 
         create_table_rating = """
         CREATE TABLE IF NOT EXISTS rating (
@@ -188,5 +189,6 @@ class DBConnection(metaclass=Singleton):
                     cursor.execute(create_table_Movie_Collection)          
                     cursor.execute(create_table_Link_Movie_MovieCollection)
                     cursor.execute(create_table_Link_Movie_Genre)
+                    cursor.execute(create_table_users)
                 connection.commit()
 

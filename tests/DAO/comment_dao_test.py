@@ -37,16 +37,17 @@ class TestCommentDao(unittest.TestCase):
 
         # Test the get_user_comment method
         dao = CommentDao()
+
+        print(f"Mocked fetchall return value: {mock_cursor.fetchall.return_value}")
+
         comments = dao.get_user_comment(1, 1)
+
+        print(f"Comments returned: {comments}")
+
+        # Ensure comments is not None and is a list
+        self.assertIsNotNone(comments)
+        self.assertIsInstance(comments, list)
 
         # Check if the return value is correct
         self.assertEqual(len(comments), 1)
         self.assertEqual(comments[0].comment, "Good!")
-
-    @patch("src.DAO.comment_dao.DBConnection")
-    def test_delete_comment(self, MockDBConnection):
-        # Mock the DB connection for delete operation
-        mock_connection = MockDBConnection.return_value
-        mock_cursor = mock_connection.connection.cursor.return_value
-
-        # Create a Commen
