@@ -1,10 +1,10 @@
-from typing import Dict, List
-
-from pydantic import BaseModel
-
+from typing import Dict, List, Optional
+from pydantic import BaseModel, Field, validator
+from datetime import date
 # Model
-from src.Model.Genre import Genre
+from src.Model.genre import Genre
 from src.Model.movie_collection import MovieCollection
+# from src.Model.Rating import Rating
 
 # Utils
 from src.Utils.utils import _is_valid_date
@@ -60,18 +60,17 @@ class Movie(BaseModel):
 
     id_movie: int
     title: str
-    # attention la ligne suivante ne marche pas car pydantic ne connait pas MovieCollection je crois
-    belongs_to_collection: List[MovieCollection]
-    budget: float
+    belongs_to_collection: Optional[List[MovieCollection]] = None # peut ne pas avoir de MovieCollection.
+    budget: Optional[int]
     genres: List[Genre]
-    origin_country: List[str]
+    origin_country: Optional[List[str]]
     original_language: str
     original_title: str
     overview: str
     popularity: float
-    release_date: str
-    revenue: float
-    runtime: str
+    release_date: date # pydantic convertit automatiuqement str en date. 
+    revenue: Optional[int]
+    runtime: Optional[int]
     vote_average: float
     vote_count: int
     adult: bool = False
@@ -81,7 +80,7 @@ class Movie(BaseModel):
         Print a string representation of the Movie object.
         """
         return (
-            f"Title : {self.title}', ID: {self.id_movie}, "
+            f"Title : {self.title} ( ID: {self.id_movie} ), "
             f"Release Date: {self.release_date}, Popularity: {self.popularity}, "
             f"Vote Average: {self.vote_average}, Vote Count: {self.vote_count}"
         )

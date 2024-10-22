@@ -1,35 +1,10 @@
-from typing import Dict
+from pydantic import BaseModel
+from typing import Dict, Any
 
-
-class MovieCollection:
-    """
-    Class representing the collection of the movie.
-
-    Parameters
-    ----------
-    id : int
-        The id of the collection
-    name : str
-        The name of the collection
-
-    Examples
-    --------
-
-    """
-
-    def __init__(self, movie_collection_data: Dict):
-        """Constructor
-
-        Parameters:
-        -----------
-        MovieCollection_data : dict
-            A dictionary containing the collection of the movie data.
-        """
-        self.name = movie_collection_data.get("name")
-        self.id = movie_collection_data.get("id")
-
-    def __repr__(self):
-        return f" 'Movie Collection : {self.name}' "
-
-
-# Unrelated code to show sys.path to understand error with classes ipmports.
+class MovieCollection(BaseModel):
+    id: int
+    name: str
+    
+    def __str__(self):
+        """Méthode d'affichage pour une collection de films."""
+        return f"Collection: {self.name} (ID: {self.id})"
