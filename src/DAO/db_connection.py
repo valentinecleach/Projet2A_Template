@@ -119,7 +119,6 @@ class DBConnection(metaclass=Singleton):
             id_user INTEGER PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
             pseudo VARCHAR(255) NOT NULL,
-            username VARCHAR(255) UNIQUE NOT NULL,
             hashed_password VARCHAR(255) NOT NULL,
             email VARCHAR(255) UNIQUE NOT NULL,
             date_of_birth DATE, 

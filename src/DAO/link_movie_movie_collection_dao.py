@@ -31,7 +31,7 @@ class LinkMovieMovieCollectionDAO(metaclass=Singleton):
                     result = cursor.fetchone()
                     link_exists =  result['count']> 0
 
-                    if link_exists is None:
+                    if not link_exists:
                         cursor.execute(
                         """
                         INSERT INTO link_movie_movie_collection (id_movie, id_movie_collection)

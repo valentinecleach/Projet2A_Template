@@ -34,17 +34,17 @@ class UserDao(metaclass=Singleton):
                 res = cursor.execute(query, values)
                 DBConnection().connection.commit()
         except Exception as e:
-                print(f"Erreur lors de l'insertion dans users: {str(e)}")
-                DBConnection().connection.rollback()
-                return None    
+            print(f"Erreur lors de l'insertion dans users: {str(e)}")
+            DBConnection().connection.rollback()
+            return None    
         if res:
             created = ConnectedUser(
-                id_user=id_user
+                id_user=id_user,
                 name=name,
                 pseudo=pseudo,
                 email=email,
                 gender=gender,
-                hashed_password=hashed_password,  # hacher ce mot de passe
+                hashed_password=hashed_password,
                 date_of_birth=date_of_birth,
                 phone_number=phone_number,
             )
