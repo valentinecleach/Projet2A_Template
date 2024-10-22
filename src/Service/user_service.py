@@ -8,10 +8,7 @@ from src.DAO.db_connection import DBConnection
 from src.Model.movie import Movie
 
 # Service
-from src.Service.password_service import check_password_strenght
-from src.Service.password_service import hash_password
-from src.Service.password_service import create_salt
-
+from src.Service.password_service import check_password_strenght, hash_password, create_salt
 
 class UserService:
     def __init__(self, db_connection : DBConnection):
