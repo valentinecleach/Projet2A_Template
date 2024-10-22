@@ -1,6 +1,9 @@
 import bcrypt  # Assurez-vous d'avoir bcrypt installé pour le hachage
 import psycopg2  # Assurez-vous d'avoir psycopg2 installé pour la connexion à PostgreSQL
+
 from src.DAO.db_connection import DBConnection
+from src.Model.movie import Movie
+
 
 class UserService:
     def __init__(self, db_connection : DBConnection):

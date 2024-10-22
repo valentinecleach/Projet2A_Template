@@ -1,7 +1,7 @@
 from typing import List  # , Optional
 
 from src.DAO.db_connection import DBConnection, Singleton
-from src.sModel.connected_user import ConnectedUser
+from src.Model.connected_user import ConnectedUser
 
 
 class UserDao(metaclass=Singleton):
@@ -58,7 +58,7 @@ class UserDao(metaclass=Singleton):
         return user_read
 
     # READ (Fetch some users by name)
-    def get_user_by_name(self, search_string, size=10) -> List(ConnectedUser):
+    def get_user_by_name(self, search_string, size=10) -> List[ConnectedUser]:
 
         results = DBConnection().read_by_string(cine.user, "name", search_string, size)
         if results:

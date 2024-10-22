@@ -1,5 +1,6 @@
 import pytest
 from pydantic_core import ValidationError
+
 from src.Model.movie import Movie
 from tests.conftest import avatar, titanic
 
