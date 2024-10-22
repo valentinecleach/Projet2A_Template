@@ -4,7 +4,7 @@ from typing import Dict, List, Optional
 from pydantic import BaseModel, Field, validator
 
 # Model
-from src.Model.Genre import Genre
+from src.Model.genre import Genre
 from src.Model.movie_collection import MovieCollection
 from src.Model.rating import Rating
 # Utils
@@ -59,9 +59,7 @@ class Movie(BaseModel):
 
     id_movie: int
     title: str
-    belongs_to_collection: Optional[List[MovieCollection]] = (
-        None  # peut ne pas avoir de MovieCollection.
-    )
+    belongs_to_collection: Optional[List[MovieCollection]] = None  # peut ne pas avoir de MovieCollection.
     budget: Optional[int]
     genres: List[Genre]
     origin_country: Optional[List[str]]
