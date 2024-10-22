@@ -1,13 +1,17 @@
-from typing import Dict, List, Optional
-from pydantic import BaseModel, Field, validator
 from datetime import date
+from typing import Dict, List, Optional
+
+from pydantic import BaseModel, Field, validator
+
 # Model
-from src.Model.genre import Genre
+from src.Model.Genre import Genre
 from src.Model.movie_collection import MovieCollection
-# from src.Model.Rating import Rating
 
 # Utils
 from src.Utils.utils import _is_valid_date
+
+# from src.Model.Rating import Rating
+
 
 # from src.Model.Rating import Rating
 
@@ -60,7 +64,9 @@ class Movie(BaseModel):
 
     id_movie: int
     title: str
-    belongs_to_collection: Optional[List[MovieCollection]] = None # peut ne pas avoir de MovieCollection.
+    belongs_to_collection: Optional[List[MovieCollection]] = (
+        None  # peut ne pas avoir de MovieCollection.
+    )
     budget: Optional[int]
     genres: List[Genre]
     origin_country: Optional[List[str]]
@@ -68,7 +74,7 @@ class Movie(BaseModel):
     original_title: str
     overview: str
     popularity: float
-    release_date: date # pydantic convertit automatiuqement str en date. 
+    release_date: date  # pydantic convertit automatiuqement str en date.
     revenue: Optional[int]
     runtime: Optional[int]
     vote_average: float
