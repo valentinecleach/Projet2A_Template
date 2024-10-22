@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List  # , Optional
 
 from src.DAO.db_connection import DBConnection, Singleton
-from src.DAO.Movie_dao import MovieDao
+from src.DAO.Movie_dao import MovieDAO
 from src.DAO.user_dao import UserDao
 from src.Model.comment import Comment
 
