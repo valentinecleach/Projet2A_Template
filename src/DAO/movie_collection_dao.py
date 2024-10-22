@@ -1,4 +1,5 @@
 from typing import Dict, List, Optional
+
 from psycopg2.extras import DictCursor
 
 from src.DAO.db_connection import DBConnection
@@ -61,7 +62,7 @@ class MovieCollectionDao(metaclass=Singleton):
     ) -> MovieCollection:
 
         try:
-            query = "SELECT * FROM cine.movie _collection WHERE id = %s"
+            query = "SELECT * FROM  movie _collection WHERE id = %s"
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(query, (id))
@@ -81,7 +82,7 @@ class MovieCollectionDao(metaclass=Singleton):
     ) -> List[MovieCollection]:
 
         try:
-            query = f"SELECT * FROM cine.movie_collection LIMIT {max(limit, 0)}"
+            query = f"SELECT * FROM  movie_collection LIMIT {max(limit, 0)}"
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
@@ -99,7 +100,7 @@ class MovieCollectionDao(metaclass=Singleton):
     # DELETE / SUPPRIME
     def delete(self, id):
         try:
-            query = "DELETE FROM cine.movie_collection WHERE id = %s"
+            query = "DELETE FROM  movie_collection WHERE id = %s"
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
