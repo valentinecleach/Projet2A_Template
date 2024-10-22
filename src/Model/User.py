@@ -1,6 +1,3 @@
-from src.Model.movie import Movie
-
-
 class User:
     def __init__(self, ip_address: str):
         """Initialisation"""
