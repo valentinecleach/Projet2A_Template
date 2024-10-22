@@ -18,7 +18,7 @@ class CommentDao(metaclass=Singleton):
             return None
         if res:
             user = UserDao().get_user_by_id(id_user)
-            movie = MovieDao().get_user_by_id(id_movie)
+            movie = MovieDAO().get_user_by_id(id_movie)
             return Comment(user=user, movie=movie, date=date, comment=comments)
 
     # READ (Fetch a specific user's comment)
@@ -36,7 +36,7 @@ class CommentDao(metaclass=Singleton):
                     results = cursor.fetchall()
             if results:
                 user = UserDao().get_user_by_id(id_user)
-                movie = MovieDao().get_user_by_id(id_movie)
+                movie = MovieDAO().get_user_by_id(id_movie)
                 com = [
                     Comment(
                         user=user, movie=movie, date=res["date"], comment=res["comment"]
@@ -63,7 +63,7 @@ class CommentDao(metaclass=Singleton):
                     cursor.execute(query, (id_movie))
                     results = cursor.fetchall()
             if results:
-                movie = MovieDao().get_user_by_id(id_movie)
+                movie = MovieDAO().get_user_by_id(id_movie)
                 com = [
                     Comment(
                         user=UserDao().get_user_by_id(res["id_user"]),
