@@ -1,8 +1,10 @@
 # Projet2A_Template\src\Model\MovieMaker.py
 import re
-from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional, List
+from typing import List, Optional
+
+from pydantic import BaseModel
+
 from src.Model.movie import Movie
 from src.Utils.utils import _is_valid_date
 

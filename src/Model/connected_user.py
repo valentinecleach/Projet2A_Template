@@ -1,4 +1,4 @@
-from src.Model.User import User
+from src.Model.user import User
 
 
 class ConnectedUser(User):
