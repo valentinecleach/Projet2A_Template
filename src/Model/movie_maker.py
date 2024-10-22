@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional, List
 from src.Model.movie import Movie
-from src.Service.static import _is_valid_date
+from src.Utils.utils import _is_valid_date
 
 # mettre en anglais
 
