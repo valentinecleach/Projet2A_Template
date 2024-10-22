@@ -3,13 +3,13 @@ from typing import Dict, List
 from pydantic import BaseModel
 
 # Model
-from src.Model.genre import Genre
+from src.Model.Genre import Genre
 from src.Model.movie_collection import MovieCollection
-# from src.Model.Rating import Rating
-
 
 # Utils
 from src.Utils.utils import _is_valid_date
+
+# from src.Model.Rating import Rating
 
 
 class Movie(BaseModel):
@@ -57,6 +57,7 @@ class Movie(BaseModel):
     --------
 
     """
+
     id_movie: int
     title: str
     # attention la ligne suivante ne marche pas car pydantic ne connait pas MovieCollection je crois
@@ -72,10 +73,9 @@ class Movie(BaseModel):
     revenue: float
     runtime: str
     vote_average: float
-    vote_count : int
+    vote_count: int
     adult: bool = False
-   
-   
+
     def __str__(self):
         """
         Print a string representation of the Movie object.
@@ -87,5 +87,6 @@ class Movie(BaseModel):
         )
 
     # def __get_pydantic_core_schema__# ?,
+
 
 # rapid test of the class
