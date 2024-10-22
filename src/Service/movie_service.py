@@ -1,13 +1,13 @@
 from typing import Dict, List
 
-from src.DAO.movie_dao import Movie_DAO
+from src.DAO.movie_dao import MovieDAO
 from src.Model.movie import Movie
 from src.TMDB.movie_tmdb import MovieTMDB
 
 
 class MovieService:
     def __init__(self, movie_db: None):
-        self.movie_dao = Movie_DAO()
+        self.movie_dao = MovieDAO()
         self.movie_tmdb = MovieTMDB()
 
     def get_movie_by_id(self, movie_id: int, test) -> Movie | None:
