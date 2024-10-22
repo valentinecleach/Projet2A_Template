@@ -1,5 +1,6 @@
 # ORM avec framework comme SQLAlchemy fait lesrequêtes pour nous.
 import os
+
 import dotenv
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -22,7 +23,9 @@ class DBConnection(metaclass=Singleton):
             password=os.environ["password"],
             cursor_factory=RealDictCursor,
         )
-        self.__set_search_path(os.environ["schema"]) # change .env to work on test schema
+        self.__set_search_path(
+            os.environ["schema"]
+        )  # change .env to work on test schema
 
     def __set_search_path(self, schema: str):
         """
@@ -66,7 +69,7 @@ class DBConnection(metaclass=Singleton):
             name_genre VARCHAR(255) NOT NULL
         );
         """
-        create_table_Movie_Collection ="""
+        create_table_Movie_Collection = """
         CREATE TABLE IF NOT EXISTS movie_collection (
             id_movie_collection INTEGER PRIMARY KEY,
             name_movie_collection VARCHAR(255) NOT NULL
@@ -94,7 +97,7 @@ class DBConnection(metaclass=Singleton):
             FOREIGN KEY (id_genre) REFERENCES genre(id_genre)
         );
         """
-    
+
         create_table_movie_maker = """
         CREATE TABLE IF NOT EXISTS movie_maker (
             id_movie_maker INTEGER PRIMARY KEY,
@@ -121,8 +124,6 @@ class DBConnection(metaclass=Singleton):
             email VARCHAR(255) UNIQUE NOT NULL
         );
         """
-
-
 
         create_table_rating = """
         CREATE TABLE IF NOT EXISTS rating (
@@ -181,12 +182,11 @@ class DBConnection(metaclass=Singleton):
 
         # add query for the creation of ither tables
         with self.connection as connection:
-                # Creation of a cursor for the request
-                with connection.cursor() as cursor:
-                    cursor.execute(create_table_Genre)
-                    cursor.execute(create_table_Movie)
-                    cursor.execute(create_table_Movie_Collection)          
-                    cursor.execute(create_table_Link_Movie_MovieCollection)
-                    cursor.execute(create_table_Link_Movie_Genre)
-                connection.commit()
-
+            # Creation of a cursor for the request
+            with connection.cursor() as cursor:
+                cursor.execute(create_table_Genre)
+                cursor.execute(create_table_Movie)
+                cursor.execute(create_table_Movie_Collection)
+                cursor.execute(create_table_Link_Movie_MovieCollection)
+                cursor.execute(create_table_Link_Movie_Genre)
+            connection.commit()
