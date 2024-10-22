@@ -9,6 +9,9 @@ from src.Model.movie import Movie
 
 # Service
 from src.Service.password_service import check_password_strenght
+from src.Service.password_service import hash_password
+from src.Service.password_service import create_salt
+
 
 class UserService:
     def __init__(self, db_connection : DBConnection):
@@ -24,13 +27,8 @@ class UserService:
         # Validation du mot de passe 
         check_password_strenght(password)
 
-        # Création des parties de sel
-        start_user = username[:3]  # Les trois premiers caractères du nom d'utilisateur
-        end_user = username[3:]  # Les caractères restants du nom d'utilisateur
-
-        # Hachage du mot de passe avec le sel
-        salted_password = f"{start_user}{password}{end_user}".encode('utf-8')
-        hashed_password = bcrypt.hashpw(salted_password, bcrypt.gensalt())
+        # Hashage du mdp
+        hashed_password = hash_password(password, create_salt(username))
 
         # Préparation des valeurs à insérer
         values = (first_name, last_name, username, hashed_password, email_address)
@@ -50,13 +48,9 @@ class UserService:
         if len(username) < 5:
             raise ValueError("Le nom d'utilisateur doit comporter au moins 5 caractères.")
         
-        # Création des parties de sel
-        start_user = username[:3]  # Les trois premiers caractères du nom d'utilisateur
-        end_user = username[3:]  # Les caractères restants du nom d'utilisateur
-        
-        # Hachage du mot de passe avec le sel
-        salted_password = f"{start_user}{password}{end_user}".encode('utf-8')
-        
+        # Hashage du mdp
+        hashed_password = hash_password(password, create_salt(username))
+  
         try:
             with self.db_connection.connection.cursor() as cursor:
                 # Récupération de l'utilisateur de la base de données
