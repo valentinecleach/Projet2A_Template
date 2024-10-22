@@ -4,7 +4,7 @@ from src.Model.user import User
 class ConnectedUser(User):
     def __init__(
         self,
-        id : int,
+        id_user : int,
         name: str,
         pseudo: str,
         email: str,
@@ -16,7 +16,7 @@ class ConnectedUser(User):
         super().__init__(
             ip_address=None
         )  # Pas d'adresse IP pour l'utilisateur connecté
-        self.id_user = id
+        self.id_user = id_user
         self.name = name
         self.pseudo = pseudo
         self.email = email

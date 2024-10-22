@@ -31,14 +31,14 @@ class UserDao(metaclass=Singleton):
         try:
             with DBConnection().connection.cursor() as cursor:
                 query = f"INSERT INTO users(id_user,name,phone_number,email,gender,date_of_birth, hashed_password,pseudo) VALUES ({', '.join(['%s'] * len(values))})"
-                res = cursor.execute(query, values)
+                cursor.execute(query, values)
                 DBConnection().connection.commit()
+
         except Exception as e:
             print(f"Erreur lors de l'insertion dans users: {str(e)}")
             DBConnection().connection.rollback()
             return None    
-        if res:
-            created = ConnectedUser(
+        created = ConnectedUser(
                 id_user=id_user,
                 name=name,
                 pseudo=pseudo,
@@ -46,9 +46,9 @@ class UserDao(metaclass=Singleton):
                 gender=gender,
                 hashed_password=hashed_password,
                 date_of_birth=date_of_birth,
-                phone_number=phone_number,
-            )
-            return created
+                phone_number=phone_number )
+                
+        return created    
 
     # READ (Fetch a single user by ID)
     def get_user_by_id(self, id_user) -> ConnectedUser:
