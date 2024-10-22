@@ -1,5 +1,5 @@
 from src.Model.movie import Movie
-from src.Model.user import User
+from src.Model.User import User
 
 
 class ConnectedUser(User):
