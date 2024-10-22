@@ -13,6 +13,9 @@ class UserService:
         if len(username) < 5:
             raise ValueError("Le nom d'utilisateur doit comporter au moins 5 caractères.")
 
+        # Validation du mot de passe 
+        check_password_strenght(password)
+        
         # Création des parties de sel
         start_user = username[:3]  # Les trois premiers caractères du nom d'utilisateur
         end_user = username[3:]  # Les caractères restants du nom d'utilisateur
