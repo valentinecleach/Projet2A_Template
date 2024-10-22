@@ -29,21 +29,27 @@ class MovieCollectionDao(metaclass=Singleton):
             with self.db_connection.connection as connection:
                 # Creation of a cursor for the request
                 with connection.cursor() as cursor:
-                    # SQL resquest
                     cursor.execute(
-                        """
-                        INSERT INTO movie_collection (id_movie_collection ,
-                                            name_movie_collection)
-                        VALUES (%s, %s)
-                        """,
-                        (
-                            new_movie_collection.id,
-                            new_movie_collection.name
-                        ),
+                        "SELECT id_movie_collection FROM movie_collection WHERE id_movie_collection = %s",
+                        (new_movie_collection.id,)
                     )
-                connection.commit()
+                    movie_collection__exists = cursor.fetchone()
 
-            print("Insertion successful : Movie Colelction added.")
+                    if movie_collection__exists is None:
+                    # SQL resquest
+                        cursor.execute(
+                            """
+                            INSERT INTO movie_collection (id_movie_collection ,
+                                                name_movie_collection)
+                            VALUES (%s, %s)
+                            """,
+                            (
+                                new_movie_collection.id,
+                                new_movie_collection.name
+                            ),
+                        )
+                    connection.commit()
+                    print("Insertion successful : Movie Collection added.")
         except Exception as e:
             print("Insertion error : ", str(e))
 

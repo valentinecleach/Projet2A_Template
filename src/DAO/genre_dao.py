@@ -29,19 +29,25 @@ class GenreDao(metaclass=Singleton):
                 with connection.cursor() as cursor:
                     # SQL resquest
                     cursor.execute(
-                        """
-                        INSERT INTO Genre (id_genre ,
-                                            name_genre)
-                        VALUES (%s, %s)
-                        """,
-                        (
-                            new_genre.id,
-                            new_genre.name
-                        ),
+                        "SELECT id_genre FROM genre WHERE id_genre = %s",
+                        (new_genre.id,)
                     )
-                connection.commit()
+                    genre_exists = cursor.fetchone()
 
-            print("Insertion successful : Genre added.")
+                    if genre_exists is None:
+                        cursor.execute(
+                            """
+                            INSERT INTO Genre (id_genre ,
+                                                name_genre)
+                            VALUES (%s, %s)
+                            """,
+                            (
+                                new_genre.id,
+                                new_genre.name
+                            ),
+                        )
+                    connection.commit()
+                    print("Insertion successful : Genre added.")
         except Exception as e:
             print("Insertion error : ", str(e))
 

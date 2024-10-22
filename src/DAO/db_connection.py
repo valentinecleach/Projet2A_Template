@@ -55,7 +55,7 @@ class DBConnection(metaclass=Singleton):
             overview VARCHAR(255),
             popularity FLOAT,
             release_date VARCHAR(255),
-            revenue INTEGER,
+            revenue BIGINT,
             runtime INTEGER,
             vote_average FLOAT,
             vote_count INTEGER,
@@ -114,14 +114,17 @@ class DBConnection(metaclass=Singleton):
         );
         """
 
-        create_table_user = """
-        CREATE TABLE IF NOT EXISTS user (
+        create_table_users = """
+        CREATE TABLE IF NOT EXISTS users (
             id_user INTEGER PRIMARY KEY,
-            first_name VARCHAR(255) NOT NULL,
-            last_name VARCHAR(255) NOT NULL,
+            name VARCHAR(255) NOT NULL,
+            pseudo VARCHAR(255) NOT NULL,
             username VARCHAR(255) UNIQUE NOT NULL,
             hashed_password VARCHAR(255) NOT NULL,
-            email VARCHAR(255) UNIQUE NOT NULL
+            email VARCHAR(255) UNIQUE NOT NULL,
+            date_of_birth DATE, 
+            phone_number VARCHAR(255) UNIQUE NOT NULL,
+            gender INTEGER
         );
         """
 
