@@ -30,8 +30,8 @@ class GenreDAO(metaclass=Singleton):
                     # SQL resquest
                     cursor.execute(
                         """
-                        INSERT INTO Genre (id ,
-                                            name)
+                        INSERT INTO Genre (id_genre ,
+                                            name_genre)
                         VALUES (%s, %s)
                         """,
                         (
@@ -45,6 +45,6 @@ class GenreDAO(metaclass=Singleton):
         except Exception as e:
             print("Insertion error : ", str(e))
 
-
-mon_objet = GenreDAO()
-mon_objet.insert(Genre(id =  28, name = "Action"))
+# works : add a new genre in the schema 
+#mon_objet = GenreDAO()
+#mon_objet.insert(Genre(id =  28, name = "Action"))
