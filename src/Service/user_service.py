@@ -1,6 +1,11 @@
 import bcrypt  # Assurez-vous d'avoir bcrypt installé pour le hachage
 import psycopg2  # Assurez-vous d'avoir psycopg2 installé pour la connexion à PostgreSQL
+
+# DAO
 from src.DAO.db_connection import DBConnection
+
+# Service
+from src.Service.password_service import check_password_strenght
 
 class UserService:
     def __init__(self, db_connection : DBConnection):
