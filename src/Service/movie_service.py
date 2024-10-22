@@ -1,7 +1,9 @@
-from src.DAO.movie_dao import Movie_dao
-from src.TMDB.movie_tmdb import MovieTMDB 
+from typing import Dict, List
+
+from src.DAO.movie_dao import Movie_DAO
 from src.Model.movie import Movie
-from typing import List, Dict
+from src.TMDB.movie_tmdb import MovieTMDB
+
 
 class MovieService:
     def __init__(self, movie_db: None):
