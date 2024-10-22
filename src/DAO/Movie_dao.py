@@ -1,4 +1,5 @@
-from typing import List, Optional, Dict
+from typing import Dict, List, Optional
+
 from psycopg2.extras import DictCursor
 
 from src.DAO.db_connection import DBConnection
@@ -26,7 +27,6 @@ class MovieDAO(metaclass=Singleton):
                 with connection.cursor() as cursor:
                     # SQL resquest
                     cursor.execute(
-                        
                         """
                         INSERT INTO Movie (id ,
                                             title ,
@@ -47,12 +47,12 @@ class MovieDAO(metaclass=Singleton):
                         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                         """,
                         (
-                            new_movie.id ,
-                            new_movie.title ,
-                            new_movie.belongs_to_collection ,
+                            new_movie.id,
+                            new_movie.title,
+                            new_movie.belongs_to_collection,
                             new_movie.budget,
-                            new_movie.genres ,
-                            new_movie.origin_country ,
+                            new_movie.genres,
+                            new_movie.origin_country,
                             new_movie.original_language,
                             new_movie.original_title,
                             new_movie.overview,
@@ -62,7 +62,7 @@ class MovieDAO(metaclass=Singleton):
                             new_movie.runtime,
                             new_movie.vote_average,
                             new_movie.vote_count,
-                            new_movie.adult
+                            new_movie.adult,
                         ),
                     )
                     # tagline? status?)
@@ -160,7 +160,6 @@ class MovieDAO(metaclass=Singleton):
         except Exception as e:
             print("Error during recovery by name : ", str(e))
             return None
-
 
 
 """
