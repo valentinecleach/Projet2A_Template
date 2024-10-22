@@ -1,4 +1,3 @@
-from src.Model.movie import Movie
 from src.Model.User import User
 
 

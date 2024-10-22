@@ -1,5 +1,4 @@
 from src.Model.movie import Movie
-from src.Service.user_service import UserService
 
 
 class User:

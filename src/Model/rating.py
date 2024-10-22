@@ -1,6 +1,3 @@
-from src.Model.connected_user import ConnectedUser
-from src.Model.movie import Movie
-
 
 class Rating:
     """Rating
@@ -22,13 +19,13 @@ class Rating:
 
     def __init__(
         self,
-        user: ConnectedUser,
-        movie: Movie,
+        id_user: int,
+        id_movie: int,
         date: str,  # import datetime
         rating: int,
     ):
-        self.user = user
-        self.movie = movie
+        self.id_user = id_user
+        self.id_movie = id_movie
         self.date = date
         self.rating = rating
 
