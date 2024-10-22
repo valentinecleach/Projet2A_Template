@@ -104,7 +104,14 @@ class UserDao(metaclass=Singleton):
     # READ (Fetch all users)
     def get_all_users(self, limit: int = 10, offset: int = 0) -> List[ConnectedUser]:
 
-        results = DBConnection().read_all( user, limit, offset)
+        try:
+            query = f"SELECT * FROM user WHERE LIMIT {max(0,limit)} OFFSET {max(offset,0)}"
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(query, ())
+                    results = cursor.fetchall()
+        except Exception as e:
+            print(f"Error while fetching from user: {e}")
         if results:
             users_read = [
                 ConnectedUser(
@@ -164,7 +171,7 @@ class UserDao(metaclass=Singleton):
                 print("No data provided for update.")
                 return None
 
-            query = f"UPDATE cine.user SET {', '.join(updates)} WHERE id_user = %s"
+            query = f"UPDATE  user SET {', '.join(updates)} WHERE id_user = %s"
             values.append(id_user)
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
@@ -177,4 +184,20 @@ class UserDao(metaclass=Singleton):
 
     # DELETE
     def delete_user(self, id_user):
-        DBConnection().delete(cine.user, "id_user", id_user)
+        try:
+            query = (
+                "DELETE FROM  user WHERE id_user = %s" 
+            )
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        query,
+                        (
+                            id_user,
+                        ),
+                    )
+                    connection.commit()
+                    print("Record deleted successfully from user.")
+        except Exception as e:
+            print(f"Error while deleting from user: {e}")
+            return None

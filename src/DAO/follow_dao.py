@@ -29,7 +29,7 @@ class FollowDao(metaclass=Singleton):
 
         try:
             query = "SELECT * FROM follower WHERE id_user = %s"
-            with self.connection as connection:
+            with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(query, (id_user,))
                     results = cursor.fetchall()
@@ -47,7 +47,7 @@ class FollowDao(metaclass=Singleton):
             query = (
                 "DELETE FROM  follower WHERE id_user = %s and id_user_followed = %s"
             )
-            with self.connection as connection:
+            with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
                         query,
