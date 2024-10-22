@@ -4,7 +4,7 @@ from typing import Dict, List, Optional
 from pydantic import BaseModel, Field, validator
 
 # Model
-from src.Model.Genre import Genre
+from src.Model.genre import Genre
 from src.Model.movie_collection import MovieCollection
 from src.Model.rating import Rating
 # Utils
