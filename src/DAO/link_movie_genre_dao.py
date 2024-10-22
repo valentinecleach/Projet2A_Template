@@ -27,7 +27,8 @@ class LinkMovieGenreDAO(metaclass=Singleton):
                         """,
                         (id_movie, id_genre)
                     )
-                    link_exists = cursor.fetchone()[0] > 0
+                    result = cursor.fetchone()
+                    link_exists = result['count'] > 0
 
                     if link_exists is None:
                         cursor.execute(

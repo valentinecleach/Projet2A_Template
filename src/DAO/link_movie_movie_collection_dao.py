@@ -23,12 +23,13 @@ class LinkMovieMovieCollectionDAO(metaclass=Singleton):
                     # SQL resquest
                     cursor.execute(
                         """
-                        SELECT COUNT(*) FROM link_movie_movie_colleciton 
+                        SELECT COUNT(*) FROM link_movie_movie_collection 
                         WHERE id_movie = %s AND id_movie_collection = %s
                         """,
                         (id_movie, id_movie_collection)
                     )
-                    link_exists = cursor.fetchone()[0] > 0
+                    result = cursor.fetchone()
+                    link_exists =  result['count']> 0
 
                     if link_exists is None:
                         cursor.execute(
