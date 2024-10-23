@@ -38,7 +38,7 @@ def check_password_strenght(password: str):
     if len(password) < 8:
         raise Exception("Password length must be at least 8 characters")
     length = len(password)
-    number = False:
+    number = False
     for i in length:
         if isinstance(password[i-1], int): 
             number = True
