@@ -14,7 +14,12 @@ class GenreDao(metaclass=Singleton):
         # Créer des tables si elles n'existent pas
         self.db_connection.create_tables()
 
-    def insert(self, new_genre: Genre):
+<<<<<<< HEAD
+    def insert(self, new_genre):
+=======
+
+    def insert(self, new_genre: Genre): 
+>>>>>>> f2272497c1151fa36673e92207a5cfe5f29a9a58
         try:
             """
             Ajoute un genre dans la base de données.
@@ -28,10 +33,17 @@ class GenreDao(metaclass=Singleton):
             with self.db_connection.connection as connection:
                 # Création d'un curseur pour la requête
                 with connection.cursor() as cursor:
+<<<<<<< HEAD
                     # SQL resquest
                     cursor.execute(
                         "SELECT id_genre FROM genre WHERE id_genre = %s",
                         (new_genre.id,),
+=======
+                    # Requête SQL pour vérifier l'existence du genre
+                    cursor.execute(
+                        'SELECT id_genre FROM genre WHERE id_genre = %s',
+                         (28,)
+>>>>>>> f2272497c1151fa36673e92207a5cfe5f29a9a58
                     )
                     genre_exists = cursor.fetchone()
 
@@ -41,7 +53,11 @@ class GenreDao(metaclass=Singleton):
                             INSERT INTO Genre (id_genre, name_genre)
                             VALUES (%s, %s)
                             """,
+<<<<<<< HEAD
                             (new_genre.id, new_genre.name),
+=======
+                            (new_genre.id, new_genre.name)
+>>>>>>> f2272497c1151fa36673e92207a5cfe5f29a9a58
                         )
                         connection.commit()
                         print("Insertion successful : Genre added.")
@@ -49,3 +65,11 @@ class GenreDao(metaclass=Singleton):
                         print(f"Genre with id {new_genre.id} already exists.")
         except Exception as e:
             print("Insertion error : ", str(e))
+<<<<<<< HEAD
+
+
+# works : add a new genre in the schema
+# mon_objet = GenreDao()
+# mon_objet.insert(Genre(id =  28, name = "Action"))
+=======
+>>>>>>> f2272497c1151fa36673e92207a5cfe5f29a9a58
