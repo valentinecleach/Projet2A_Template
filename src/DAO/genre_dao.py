@@ -28,9 +28,10 @@ class GenreDao(metaclass=Singleton):
             with self.db_connection.connection as connection:
                 # Création d'un curseur pour la requête
                 with connection.cursor() as cursor:
-                    # Requête SQL pour vérifier l'existence du genre
+                    # SQL resquest
                     cursor.execute(
-                        "SELECT id_genre FROM genre WHERE id_genre = %s", (28,)
+                        "SELECT id_genre FROM genre WHERE id_genre = %s",
+                        (new_genre.id,),
                     )
                     genre_exists = cursor.fetchone()
 
