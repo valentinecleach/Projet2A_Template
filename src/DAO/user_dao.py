@@ -1,18 +1,11 @@
 from typing import List
 
-from pydantic import BaseModel
-
 from src.DAO.db_connection import DBConnection, Singleton
 from src.Model.connected_user import ConnectedUser
 
 
 class UserDao(metaclass=Singleton):
-    db_connection: DBConnection
-
-    def __init__(self, db_connection: DBConnection):
-        """Constructor"""
-        self.db_connection = DBConnection
-
+    # CREATE
     def insert(
         self,
         id_user: int,
@@ -119,6 +112,7 @@ class UserDao(metaclass=Singleton):
             return users_read
         return None
 
+    # UPDATE
     def update_user(
         self,
         id_user: int,
@@ -131,9 +125,6 @@ class UserDao(metaclass=Singleton):
         email_address: str = None,
         phone_number: str = None,
     ):
-        """
-        Updates a user with new info. The info don't need to be rewritten
-        """
         try:
             # Build the dynamic query based on the provided parameters
             updates = []
@@ -183,8 +174,8 @@ class UserDao(metaclass=Singleton):
             DBConnection().connection.rollback()
             return None
 
+    # DELETE
     def delete_user(self, id_user):
-        """Delete a user"""
         try:
             query = "DELETE FROM users WHERE id_user = %s"
             with DBConnection().connection as connection:
