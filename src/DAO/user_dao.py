@@ -8,6 +8,7 @@ class UserDao(metaclass=Singleton):
     """
     User DAO..
     """
+    db_connection: DBConnection
 
     def __init__(self, db_connection: DBConnection):
         """Constructor

@@ -2,11 +2,13 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from src.DAO.user_dao import UserDao
+# Model
 from src.Model.connected_user import ConnectedUser
+
+# DAO
+from src.DAO.user_dao import UserDao
 from src.DAO.db_connection import DBConnection
 from src.DAO.user_dao import UserDao
-
 
 
 class TestUserDao():
@@ -29,7 +31,7 @@ class TestUserDao():
     @pytest.fixture
     def user_dao(self, mock_db_connection):
         return UserDao(mock_db_connection)
-         
+
     def test_insert_user(self, mock_db_connection, user_dao):
         """test la méthode insert_user"""
         # GIVEN
@@ -57,6 +59,7 @@ class TestUserDao():
 
         # THEN
         # Vérifier que l'utilisateur a été inséré avec les bonnes valeurs
+        assert user.username == "JacDac"
         assert user.username == new_user["username"]
         assert user.phone_number == new_user["phone_number"]
 
