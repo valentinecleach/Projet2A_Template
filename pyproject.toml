@@ -11,6 +11,8 @@ dependencies = [
     "pydantic>=2.8.2",
     "mypy>=1.11.2",
     "psycopg2>=2.9.9",
+    "python-dotenv>=1.0.1",
+    "requests>=2.32.3",
 ]
 requires-python = "==3.12.*"
 readme = "README.md"
