@@ -54,10 +54,10 @@ class UserDao(metaclass=Singleton):
 
         return created
 
-
     def get_user_by_id(self, id_user) -> ConnectedUser:
-    """ Fetches a single user by it's ID
-    """
+        """
+        Fetches a single user by it's ID
+        """
         try:
             query = "SELECT * FROM users WHERE id_user = %s"
             with DBConnection().connection as connection:
@@ -74,8 +74,9 @@ class UserDao(metaclass=Singleton):
             return None
 
     def get_user_by_name(self, search_string, size=10) -> List[ConnectedUser]:
-    """ Fetch some users by their name
-    """
+        """
+        Fetch some users by their name
+        """
         search_string = str(search_string).lower()
         try:
             query = f"SELECT * FROM users WHERE LOWER(name) LIKE %s or LOWER(pseudo) LIKE %s "
