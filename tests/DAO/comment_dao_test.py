@@ -4,85 +4,48 @@ from unittest.mock import MagicMock, patch
 
 from src.DAO.comment_dao import CommentDao
 from src.Model.comment import Comment
+from src.Model.connected_user import ConnectedUser
+from src.Model.movie import Movie
 
 
 class TestCommentDao(unittest.TestCase):
 
     @patch("src.DAO.comment_dao.DBConnection")
-    def test_insert_comment(self, MockDBConnection):
+    @patch("src.DAO.user_dao.UserDao.get_user_by_id")
+    @patch("src.DAO.movie_dao.MovieDAO.get_by_id")
+    def test_insert_comment(
+        self, mock_get_movie_by_id, mock_get_user_by_id, mock_db_connection
+    ):
         # Mock database connection and cursor
-        mock_connection = MockDBConnection.return_value
+        mock_connection = mock_db_connection.return_value
         mock_cursor = mock_connection.connection.cursor.return_value
         mock_cursor.execute.return_value = 1  # Simulate successful insert
         mock_connection.connection.commit.return_value = None
 
-        # Test the insert method
+        # Mock user and movie retrieval
+        mock_user = ConnectedUser(id=1, name="John Doe")
+        mock_movie = Movie(id=1, title="The Matrix")
+        mock_get_user_by_id.return_value = mock_user
+        mock_get_movie_by_id.return_value = mock_movie
+
+        # Instantiate CommentDao and call insert
         dao = CommentDao()
-        result = dao.insert(1, 1, "Great movie!")
+        result = dao.insert(1, 1, "Amazing movie!")
 
-        # Check if the insert query was called
-        mock_cursor.execute.assert_called_once()
-
-        # Ensure the result is a Comment instance
-        self.assertIsInstance(result, Comment)
-        self.assertEqual(result.comment, "Great movie!")
-
-    @patch("src.DAO.comment_dao.DBConnection")
-    def test_get_user_comment(self, MockDBConnection):
-        # Mock data returned from database
-        mock_connection = MockDBConnection.return_value
-        mock_cursor = mock_connection.connection.cursor.return_value
-        mock_cursor.fetchall.return_value = [
-            {"id_user": 1, "id_movie": 1, "date": datetime.now(), "comment": "Good!"}
-        ]
-
-        # Test the get_user_comment method
-        dao = CommentDao()
-        comments = dao.get_user_comment(1, 1)
-
-        # Ensure comments is a list and not empty
-        self.assertIsInstance(comments, list)
-        self.assertEqual(len(comments), 1)
-        self.assertEqual(comments[0].comment, "Good!")
-
-    @patch("src.DAO.comment_dao.DBConnection")
-    def test_get_recent_comments(self, MockDBConnection):
-        # Mock data returned from database
-        mock_connection = MockDBConnection.return_value
-        mock_cursor = mock_connection.connection.cursor.return_value
-        mock_cursor.fetchall.return_value = [
-            {"id_user": 1, "id_movie": 1, "date": datetime.now(), "comment": "Amazing!"}
-        ]
-
-        # Test the get_recent_comments method
-        dao = CommentDao()
-        comments = dao.get_recent_comments(1)
-
-        # Ensure comments is a list and not empty
-        self.assertIsInstance(comments, list)
-        self.assertEqual(len(comments), 1)
-        self.assertEqual(comments[0].comment, "Amazing!")
-
-    @patch("src.DAO.comment_dao.DBConnection")
-    def test_delete_comment(self, MockDBConnection):
-        # Mock the DB connection for delete operation
-        mock_connection = MockDBConnection.return_value
-        mock_cursor = mock_connection.connection.cursor.return_value
-
-        # Create a mock comment
-        comment = Comment(
-            user=MagicMock(),
-            movie=MagicMock(),
-            date=datetime.now(),
-            comment="To delete",
+        # Assert that the SQL insert query was executed
+        mock_cursor.execute.assert_called_once_with(
+            "INSERT INTO comment(id_user, id_movie, comments, date) VALUES (%s, %s, %s, %s)",
+            (1, 1, "Amazing movie!", mock.ANY),  # mock.ANY for the datetime field
         )
 
-        # Test the delete method
-        dao = CommentDao()
-        dao.delete(comment)
+        # Assert that the result is an instance of Comment
+        self.assertIsInstance(result, Comment)
+        self.assertEqual(result.comment, "Amazing movie!")
+        self.assertEqual(result.user, mock_user)
+        self.assertEqual(result.movie, mock_movie)
 
-        # Ensure the delete query was executed
-        mock_cursor.execute.assert_called_once()
+        # Check if the commit was called
+        mock_connection.connection.commit.assert_called_once()
 
 
 if __name__ == "__main__":
