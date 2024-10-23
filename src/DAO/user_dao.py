@@ -13,7 +13,7 @@ class UserDao(metaclass=Singleton):
         hashed_password: str,
         date_of_birth: str,
         gender: int,
-        first_name: str | None,
+        first_name: str ,
         last_name: str | None,
         email_address: str,
         token: str,
