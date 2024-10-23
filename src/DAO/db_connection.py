@@ -145,7 +145,7 @@ class DBConnection(metaclass=Singleton):
             id_user INTEGER NOT NULL,
             id_movie INTEGER NOT NULL,
             comment TEXT NOT NULL, -- le commentaire ne doit probablement pas être vide
-            date VARCHAR(255) NOT NULL, -- ajouter NOT NULL pour la date
+            date DATE NOT NULL, -- ajouter NOT NULL pour la date
 
             FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE, -- pour gérer la suppression d'utilisateurs
             FOREIGN KEY (id_movie) REFERENCES movie(id_movie) ON DELETE CASCADE -- pour gérer la suppression de films
