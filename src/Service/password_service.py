@@ -21,10 +21,10 @@ def hash_password(password: str, salt: Optional[str] = None) -> str:
 def create_salt(username : str) -> list[str]:
     """ Creates a salt for the password to be hashed
     """
-        # Création des parties de sel
-        start_salt = username[:3]  # Les trois premiers caractères du nom d'utilisateur
-        end_salt = username[3:] + secrets.token_hex(16) # Les caractères restants du nom d'utilisateur et une clef secrete.   
-        salt = [start_user, end_user]
+    # Création des parties de sel
+    start_salt = username[:3]  # Les trois premiers caractères du nom d'utilisateur
+    end_salt = username[3:] + secrets.token_hex(16) # Les caractères restants du nom d'utilisateur et une clef secrete.   
+    salt = [start_user, end_user]
 
 def check_password_strenght(password: str):
     """ Checks a passwords strenght. 
