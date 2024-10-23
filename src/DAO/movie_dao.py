@@ -21,10 +21,10 @@ class MovieDAO(metaclass=Singleton):
         self.db_connection = db_connection
         # Create tables if don't exist
         self.db_connection.create_tables()
-        self.genre_dao = GenreDao()
-        self.movie_collection_dao = MovieCollectionDao()
-        self.link_movie_genre_dao = LinkMovieGenreDAO()
-        self.link_movie_movie_collection_dao = LinkMovieMovieCollectionDAO()
+        self.genre_dao = GenreDao(db_connection)
+        self.movie_collection_dao = MovieCollectionDao(db_connection)
+        self.link_movie_genre_dao = LinkMovieGenreDAO(db_connection)
+        self.link_movie_movie_collection_dao = LinkMovieMovieCollectionDAO(db_connection)
 
     def insert(self, new_movie: Movie):
         try:
