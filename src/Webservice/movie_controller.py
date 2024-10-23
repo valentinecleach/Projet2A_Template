@@ -21,7 +21,7 @@ def get_movie_by_id(tmdb_id: int) -> Movie:
 @movie_router.get("/{title}",response_model= Movie, status_code=status.HTTP_200_OK)
 def get_movie_by_title(title: int) -> Movie:
     try:
-        my_movie = MovieService().get_movie_by_name(name)
+        my_movie = MovieService().get_movie_by_title(title)
         return my_movie
     except FileNotFoundError:
         raise HTTPException(
