@@ -21,7 +21,7 @@ class MovieTMDB:
         self.api_key = os.environ.get("TMDB_API_KEY")
         self.base_url = "https://api.themoviedb.org/3"
 
-    def get_movie_by_id(self, id_movie: int) -> Movie | None:
+    def get_movie_by_id(self, id_movie: int) -> List[Movie] | None:
         """
         Retrieves details of a Movie from TMDB by his ID given by TMDB.
 
@@ -61,6 +61,7 @@ class MovieTMDB:
                     "vote_count": data["vote_count"],
                     "adult": data["adult"],
                 }
+                print("Movie get from TMDB")
                 return Movie(**my_movie)
             else:
                 print(f"No Movie found with the ID : {id_movie}.")
@@ -97,10 +98,9 @@ class MovieTMDB:
                 for result in data["results"]:
                     id_movie = result["id"]
                     movies.append(self.get_movie_by_id(id_movie))
-                print(len(movies))
                 return movies
             else:
-                print(f"No Movie found with name : {name}.")
+                print(f"No Movie found with name : {title}.")
                 return None
         except requests.exceptions.RequestException as e:
             print("Error while fetching Movie from TMDB: ", str(e))

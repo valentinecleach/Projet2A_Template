@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List  # , Optional
 
 from src.DAO.db_connection import DBConnection, Singleton
@@ -7,6 +8,12 @@ from src.Model.comment import Comment
 
 
 class CommentDao(metaclass=Singleton):
+    def __init__(self):
+        """Constructor
+        """
+        self.db_connection = DBConnection()
+        self.db_connection.create_tables()
+
     # CREATE
     def insert(self, id_user: int, id_movie: int, comment: str):
         date = datetime.now()
@@ -14,7 +21,7 @@ class CommentDao(metaclass=Singleton):
             values = (id_user, id_movie, comment, date)
             try:
                 with DBConnection().connection.cursor() as cursor:
-                    query = "INSERT INTO comment(id_user, id_movie, comments, date) VALUES (%s, %s, %s, %s)"
+                    query = "INSERT INTO comment(id_user, id_movie, comment, date) VALUES (%s, %s, %s, %s)"
                     cursor.execute(query, values)
                     DBConnection().connection.commit()
 
