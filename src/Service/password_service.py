@@ -24,7 +24,7 @@ def create_salt(username: str, token: str) -> list[str]:
     # Création des parties de sel
     start_salt = username[:3]  # Les trois premiers caractères du nom d'utilisateur
     end_salt = username[3:] + token # Les caractères restants du nom d'utilisateur et la clef secrete.
-    return salt = [start_salt, end_salt]
+    return [start_salt, end_salt]
 
 def create_token(username: str) -> list[str]:
     """Creates a salt for the password to be hashed"""
