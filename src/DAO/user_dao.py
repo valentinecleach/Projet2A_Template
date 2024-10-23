@@ -159,6 +159,7 @@ class UserDao(metaclass=Singleton):
                     cursor.execute(query, tuple(values))
                     connection.commit()
             print(f"User {id_user} updated successfully!")
+            return 1
 
         except Exception as e:
             print(f"Error updating user: {e}")
