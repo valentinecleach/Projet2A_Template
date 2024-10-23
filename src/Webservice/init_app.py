@@ -6,7 +6,7 @@ from src.Service.jwt_service import JwtService
 from src.Service.user_service import UserService
 
 load_dotenv()
-db_connector = DBConnection()
-user_dao = UserDao(db_connector)
+db_connection = DBConnection()
+user_dao = UserDao(db_connection)
 jwt_service = JwtService()
 user_service = UserService(user_dao)

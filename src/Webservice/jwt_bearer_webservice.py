@@ -2,7 +2,7 @@ from fastapi import HTTPException, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jwt import DecodeError, ExpiredSignatureError
 
-from Webservice.init_tmdb import jwt_service
+from src.Webservice.init_app import jwt_service
 
 
 class JWTBearer(HTTPBearer):
