@@ -5,12 +5,15 @@ from src.Model.connected_user import ConnectedUser
 
 
 class UserDao(metaclass=Singleton):
+    """
+    User DAO..
+    """
 
     def __init__(self, db_connection: DBConnection):
+        """Constructor
+        """
         self.db_connection = db_connection
-        # Create tables if don't exist
         self.db_connection.create_tables()
-
     
     def insert(
         self,
@@ -39,37 +42,42 @@ class UserDao(metaclass=Singleton):
             token,
             phone_number,
         )
+        # User already exists
         user = self.get_user_by_id(id_user)
         if user:
-            return user
+            print("User alreadu exists")
+            Exception
+        # User doesn't exist 
         try:
             with self.db_connection.connection as connection:
                 with connection.cursor() as cursor:
-                query = (
-                    "INSERT INTO users(id_user,username,hashed_password,date_of_birth,"
-                    "gender, first_name, last_name,email_address,token,phone_number) VALUES ("
-                    + ", ".join(["%s"] * len(values))
-                    + ")"
-                )
-                cursor.execute(query, values)
-                DBConnection().connection.commit()
+                    query = (
+                        "INSERT INTO users(id_user,username,hashed_password,date_of_birth,"
+                        "gender, first_name, last_name,email_address,token,phone_number) VALUES ("
+                        + ", ".join(["%s"] * len(values))
+                        + ")"
+                    )
+                    cursor.execute(query, values)
+                    connection.commit()
+                    print("Insertion successful: User added.")
+        # Problème
         except Exception as e:
             print(f"Erreur lors de l'insertion dans users: {str(e)}")
             DBConnection().connection.rollback()
-            return None
-        created = ConnectedUser(
-            id_user=id_user,
-            username=username,
-            hashed_password=hashed_password,
-            date_of_birth=date_of_birth,
-            gender=gender,
-            first_name=first_name,
-            last_name=last_name,
-            email_address=email_address,
-            token=token,
-            phone_number=phone_number,
-        )
-        return created
+            
+        #created = ConnectedUser(
+        #    id_user=id_user,
+        #    username=username,
+        #    hashed_password=hashed_password,
+        #    date_of_birth=date_of_birth,
+        #    gender=gender,
+        #    first_name=first_name,
+        #    last_name=last_name,
+        #    email_address=email_address,
+        #    token=token,
+        #    phone_number=phone_number,
+        #)
+        
 
     def get_user_by_id(self, id_user) -> ConnectedUser:
         """
