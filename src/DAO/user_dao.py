@@ -5,7 +5,10 @@ from src.Model.connected_user import ConnectedUser
 
 
 class UserDao(metaclass=Singleton):
-    # CREATE
+
+    def __init__(self, db_connection: DBConnection):
+        self.db_connection = db_connection
+    
     def insert(
         self,
         id_user: int,
@@ -19,6 +22,8 @@ class UserDao(metaclass=Singleton):
         token: str,
         phone_number: str = None,
     ):
+        """insert
+        """
         values = (
             id_user,
             username,

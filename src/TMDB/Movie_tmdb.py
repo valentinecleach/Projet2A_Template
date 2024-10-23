@@ -41,7 +41,6 @@ class MovieTMDB:
             response.raise_for_status()  # Raises an exception for HTTP error codes.
             data = response.json()
             if "id" in data:  # check if id is in response
-                print(data["id"])
                 my_movie = {
                     "id_movie": data["id"],
                     "title": data["title"],
@@ -72,8 +71,8 @@ class MovieTMDB:
 
     ## get_by_id works. Quick test at the end of the file.
 
-    def get_movie_by_name(self, name: str) -> Movie | None:
-        """Retrieves details of a Movie from TMDB by his name.
+    def get_movies_by_title(self, title: str) -> Movie | None:
+        """Retrieves details of a Movie from TMDB by title.
         Need to call get_by_id because of insomnia API
 
         Parameters:
@@ -87,16 +86,19 @@ class MovieTMDB:
             A Movie object if found, otherwise None.
         """
         try:
-            encoded_name = urllib.parse.quote(name)
+            encoded_name = urllib.parse.quote(title)
             url = f"{self.base_url}/search/movie?api_key={self.api_key}&language=en-US&query={encoded_name}"
             response = requests.get(url)
             response.raise_for_status()  # Raises an exception for HTTP error codes.
             data = response.json()
             # Si des résultats sont trouvés
             if "results" in data and len(data["results"]) > 0:
-                first_result = data["results"][0]
-                id_movie = first_result["id"]
-                return self.get_movie_by_id(id_movie)
+                movies = []
+                for result in data["results"]:
+                    id_movie = result["id"]
+                    movies.append(self.get_movie_by_id(id_movie))
+                print(len(movies))
+                return movies
             else:
                 print(f"No Movie found with name : {name}.")
                 return None
@@ -173,4 +175,4 @@ class MovieTMDB:
 
 #data2 = MovieTMDB()
 #print(data2.get_movie_by_id(19995))
-#print(data2.get_movie_by_name("The Matrix"))
+#print(data2.get_movies_by_title("The Matrix"))

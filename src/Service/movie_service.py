@@ -28,9 +28,21 @@ class MovieService:
 
 
     def get_movie_by_title(self, movie_title : str) -> Movie | None :
-        """find a movie with its title"""
-        #movie = 
-        pass
+        """find movie by title"""
+        movie = self.movie_dao.get_by_title(movie_title)
+        if movie:
+            print("Movie get from database")
+            return movie
+        else:
+            movie_from_tmdb = self.movie_tmdb.get_movie_by_title(movie_title)
+            if movie_from_tmdb:
+                self.movie_dao.insert(movie_from_tmdb)
+                print("Movie get from TMDB")
+                return movie_from_tmdb
+            else:
+                print(f"No Movie found with id :{movie_id}.")
+                return None
+
 
     def create_movies(self, known_for_data: List[Dict]) -> List[Movie]:
         """
@@ -75,4 +87,5 @@ class MovieService:
 # works from DAO ans from TMDB
 
 my_object = MovieService()
-print(my_object.get_movie_by_id(346698))
+#print(my_object.get_movie_by_id(604))
+print(my_object.get_movie_by_title('The Matrix'))

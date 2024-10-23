@@ -143,7 +143,7 @@ class MovieDAO(metaclass=Singleton):
             print("Error during recovery by id : ", str(e))
             return None
 
-    def update(self, movie: Movie, test: bool):
+    def update(self, movie: Movie):
         try:
             with DBConnection(test).connection.cursor() as cursor:
                 cursor.execute(
@@ -171,7 +171,7 @@ class MovieDAO(metaclass=Singleton):
         except Exception as e:
             print("Update error : ", str(e))
 
-    def delete(self, id_movie: int, test: bool):
+    def delete(self, id_movie: int):
         try:
             with DBConnection(test).connection.cursor() as cursor:
                 cursor.execute(
@@ -190,23 +190,32 @@ class MovieDAO(metaclass=Singleton):
     # structure prise du TP
 
 
-    def get_by_name(self, name: str, test: bool) -> List[Movie] | None:
+    def get_by_title(self, title: str) -> List[Movie] | None:
         try:
-            with DBConnection(test).connection.cursor() as cursor:
-                cursor.execute(
-                    """
-                        SELECT * FROM Movie
-                        WHERE name ILIKE %s;
-                    """,
-                    (f"%{name}%",),
-                )  # -- ILIKE for case-insensitive searching
-                results = cursor.fetchall()
-                return [Movie(**row) for row in results] if results else []
+            with self.db_connection.connection as connection:
+                with connection.cursor(cursor_factory=DictCursor) as cursor:
+                    cursor.execute(
+                        """
+                            SELECT id_movie FROM movie
+                            WHERE title ILIKE %s;
+                        """,
+                        (f"%{title}%",),
+                    )  # -- ILIKE for case-insensitive searching
+                    results = cursor.fetchall() #[[603], [604]]
+            if len(results) > 0 :
+                movies = []
+                for id_movie in results:
+                    movies.append(self.get_by_id(id_movie[0]))
+                return movies
+            else :
+                print("no movie with this title in the database")
+                return None
         except Exception as e:
-            print("Error during recovery by name : ", str(e))
+            print("Error during recovery by title : ", str(e))
             return None
 
-
+#my_object = MovieDAO()
+#print(my_object.get_by_title('The Matrix'))
 """
 tout ceci est inclu si on utilisedes with
 conn.commit()
