@@ -18,7 +18,7 @@ def get_movie_by_id(tmdb_id: int) -> Movie:
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid request") from Exception
 
-@movie_router.get("/{title}",response_model= Movie, status_code=status.HTTP_200_OK)
+@movie_router.get("/{title}", status_code=status.HTTP_200_OK)
 def get_movie_by_title(title: str) -> Movie:
     try:
         my_movie = MovieService().get_movie_by_title(title)
