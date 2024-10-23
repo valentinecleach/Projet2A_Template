@@ -22,7 +22,7 @@ user_router = APIRouter(prefix="/users", tags=["Users"])
 
 @user_router.post("/", status_code=status.HTTP_201_CREATED)
 def create_user(username: str, password: str, 
-                first_name: str, last_name: str, 
+                first_name: str | None, last_name: str | None, 
                 email_adress: str) -> APIUser:
     """
     Performs validation on the username and password
