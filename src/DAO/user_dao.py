@@ -5,13 +5,17 @@ from src.Model.connected_user import ConnectedUser
 
 
 class UserDao(metaclass=Singleton):
+    """
+    User DAO..
+    """
+    db_connection: DBConnection
 
     def __init__(self, db_connection: DBConnection):
+        # create a DB connection object
         self.db_connection = db_connection
         # Create tables if don't exist
         self.db_connection.create_tables()
 
-    
     def insert(
         self,
         id_user: int,
@@ -25,8 +29,7 @@ class UserDao(metaclass=Singleton):
         token: str,
         phone_number: str = None,
     ) -> ConnectedUser | None:
-        """insert a Connected User into the database
-        """
+        """insert a Connected User into the database"""
         values = (
             id_user,
             username,
@@ -39,23 +42,26 @@ class UserDao(metaclass=Singleton):
             token,
             phone_number,
         )
+        # User already exists
         user = self.get_user_by_id(id_user)
         if user:
-            return user
+            print("User alreadu exists")
+            Exception
+        # User doesn't exist
         try:
             with self.db_connection.connection as connection:
                 with connection.cursor() as cursor:
-                query = (
-                    "INSERT INTO users(id_user,username,hashed_password,date_of_birth,"
-                    "gender, first_name, last_name,email_address,token,phone_number) VALUES ("
-                    + ", ".join(["%s"] * len(values))
-                    + ")"
-                )
+                    query = (
+                        "INSERT INTO users(id_user,username,hashed_password,date_of_birth,"
+                        "gender, first_name, last_name,email_address,token,phone_number) VALUES ("
+                        + ", ".join(["%s"] * len(values))
+                        + ")"
+                    )
                 cursor.execute(query, values)
-                DBConnection().connection.commit()
+                self.db_connection.connection.commit()
         except Exception as e:
             print(f"Erreur lors de l'insertion dans users: {str(e)}")
-            DBConnection().connection.rollback()
+            self.db_connection.connection.rollback()
             return None
         created = ConnectedUser(
             id_user=id_user,
@@ -77,7 +83,7 @@ class UserDao(metaclass=Singleton):
         """
         try:
             query = "SELECT * FROM users WHERE id_user = %s"
-            with self.db_connection().connection as connection:
+            with self.db_connection.connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(query, (id_user,))
                     res = cursor.fetchone()
@@ -97,7 +103,7 @@ class UserDao(metaclass=Singleton):
         search_string = str(search_string).lower()
         try:
             query = "SELECT * FROM users WHERE LOWER(username) LIKE %s OR LOWER(last_name) LIKE %s OR LOWER(first_name) LIKE %s"
-            with self.db_connection().connection as connection:
+            with self.db_connection.connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
                         query,
@@ -120,7 +126,7 @@ class UserDao(metaclass=Singleton):
     def get_all_users(self, limit: int = 10, offset: int = 0) -> List[ConnectedUser]:
         try:
             query = f"SELECT * FROM users LIMIT {max(0,limit)} OFFSET {max(offset,0)}"
-            with DBConnection().connection as connection:
+            with self.db_connection.connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(query, ())
                     results = cursor.fetchall()
@@ -131,6 +137,40 @@ class UserDao(metaclass=Singleton):
             users_read = [ConnectedUser(**res) for res in results]
             return users_read
         return None
+
+    # check email_address, username
+    def check_email_address(self, email_address: str):
+        try:
+            query = f"SELECT * FROM users WHERE email_address = %s"
+            with self.db_connection.connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(query, (email_address,))
+                    results = cursor.fetchone()
+        except Exception as e:
+            print(f"Error while fetching FROM users: {e}")
+            return None
+        if results:
+            print(f"{email_address} already exist in our database")
+            return None
+        else:
+            return 1
+
+    # check username
+    def check_username(self, username: str):
+        try:
+            query = f"SELECT * FROM users WHERE username = %s"
+            with self.db_connection.connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(query, (username,))
+                    results = cursor.fetchone()
+        except Exception as e:
+            print(f"Error while fetching FROM users: {e}")
+            return None
+        if results:
+            print(f"{username} already exist in our database")
+            return None
+        else:
+            return 1
 
     # UPDATE
     def update_user(
@@ -182,7 +222,7 @@ class UserDao(metaclass=Singleton):
 
             query = f"UPDATE users SET {', '.join(updates)} WHERE id_user = %s"
             values.append(id_user)
-            with DBConnection().connection as connection:
+            with self.db_connection.connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(query, tuple(values))
                     connection.commit()
@@ -191,14 +231,14 @@ class UserDao(metaclass=Singleton):
 
         except Exception as e:
             print(f"Error updating user: {e}")
-            DBConnection().connection.rollback()
+            self.db_connection.connection.rollback()
             return None
 
     # DELETE
     def delete_user(self, id_user):
         try:
             query = "DELETE FROM users WHERE id_user = %s"
-            with DBConnection().connection as connection:
+            with self.db_connection.connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
                         query,
@@ -208,5 +248,5 @@ class UserDao(metaclass=Singleton):
                     print("Record deleted successfully FROM users.")
         except Exception as e:
             print(f"Error while deleting FROM users: {e}")
-            DBConnection().connection.rollback()
+            self.db_connection.connection.rollback()
             return None

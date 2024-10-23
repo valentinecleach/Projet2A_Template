@@ -124,7 +124,7 @@ class DBConnection(metaclass=Singleton):
             hashed_password VARCHAR(255) NOT NULL,
             email_address VARCHAR(255) UNIQUE NOT NULL,
             date_of_birth DATE, 
-            phone_number VARCHAR(255) UNIQUE NOT NULL,
+            phone_number VARCHAR(255),
             gender INTEGER
         );
         """

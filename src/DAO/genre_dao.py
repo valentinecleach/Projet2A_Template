@@ -8,14 +8,13 @@ from src.Model.genre import Genre
 
 
 class GenreDao(metaclass=Singleton):
-    def __init__(self):
-        # Créer un objet de connexion à la base de données
-        self.db_connection = DBConnection()
+    def __init__(self, db_connection: DBConnection):
+        # create a DB connection object
+        self.db_connection = db_connection
         # Créer des tables si elles n'existent pas
         self.db_connection.create_tables()
 
-
-    def insert(self, new_genre: Genre): 
+    def insert(self, new_genre: Genre):
         try:
             """
             Ajoute un genre dans la base de données.
@@ -29,10 +28,10 @@ class GenreDao(metaclass=Singleton):
             with self.db_connection.connection as connection:
                 # Création d'un curseur pour la requête
                 with connection.cursor() as cursor:
-                    # Requête SQL pour vérifier l'existence du genre
-                    cursor.executed(
-                        'SELECT id_genre FROM genre WHERE id_genre = %s',
-                         (28,)
+                    # SQL resquest
+                    cursor.execute(
+                        "SELECT id_genre FROM genre WHERE id_genre = %s",
+                        (new_genre.id,),
                     )
                     genre_exists = cursor.fetchone()
 
@@ -42,7 +41,7 @@ class GenreDao(metaclass=Singleton):
                             INSERT INTO Genre (id_genre, name_genre)
                             VALUES (%s, %s)
                             """,
-                            (new_genre.id, new_genre.name)
+                            (new_genre.id, new_genre.name),
                         )
                         connection.commit()
                         print("Insertion successful : Genre added.")
