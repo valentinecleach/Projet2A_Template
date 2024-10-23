@@ -14,6 +14,7 @@ class UserDao(metaclass=Singleton):
         """
         self.db_connection = db_connection
         self.db_connection.create_tables()
+
     
     def insert(
         self,
@@ -139,6 +140,40 @@ class UserDao(metaclass=Singleton):
             users_read = [ConnectedUser(**res) for res in results]
             return users_read
         return None
+
+    # check email_address, username
+    def check_email_address(self, email_address: str):
+        try:
+            query = f"SELECT * FROM users WHERE email_address = %s"
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(query, (email_address,))
+                    results = cursor.fetchone()
+        except Exception as e:
+            print(f"Error while fetching FROM users: {e}")
+            return None
+        if results:
+            print(f"{email_address} already exist in our database")
+            return None
+        else:
+            return 1
+
+    # check username
+    def check_username(self, username: str):
+        try:
+            query = f"SELECT * FROM users WHERE username = %s"
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(query, (username,))
+                    results = cursor.fetchone()
+        except Exception as e:
+            print(f"Error while fetching FROM users: {e}")
+            return None
+        if results:
+            print(f"{username} already exist in our database")
+            return None
+        else:
+            return 1
 
     # UPDATE
     def update_user(
