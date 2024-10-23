@@ -8,6 +8,9 @@ class UserDao(metaclass=Singleton):
 
     def __init__(self, db_connection: DBConnection):
         self.db_connection = db_connection
+        # Create tables if don't exist
+        self.db_connection.create_tables()
+
     
     def insert(
         self,
@@ -21,8 +24,8 @@ class UserDao(metaclass=Singleton):
         email_address: str,
         token: str,
         phone_number: str = None,
-    ):
-        """insert
+    ) -> ConnectedUser | None:
+        """insert a Connected User into the database
         """
         values = (
             id_user,
@@ -40,7 +43,8 @@ class UserDao(metaclass=Singleton):
         if user:
             return user
         try:
-            with DBConnection().connection.cursor() as cursor:
+            with self.db_connection.connection as connection:
+                with connection.cursor() as cursor:
                 query = (
                     "INSERT INTO users(id_user,username,hashed_password,date_of_birth,"
                     "gender, first_name, last_name,email_address,token,phone_number) VALUES ("
@@ -73,7 +77,7 @@ class UserDao(metaclass=Singleton):
         """
         try:
             query = "SELECT * FROM users WHERE id_user = %s"
-            with DBConnection().connection as connection:
+            with self.db_connection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(query, (id_user,))
                     res = cursor.fetchone()
@@ -93,7 +97,7 @@ class UserDao(metaclass=Singleton):
         search_string = str(search_string).lower()
         try:
             query = "SELECT * FROM users WHERE LOWER(username) LIKE %s OR LOWER(last_name) LIKE %s OR LOWER(first_name) LIKE %s"
-            with DBConnection().connection as connection:
+            with self.db_connection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
                         query,
