@@ -8,12 +8,12 @@ from src.Model.movie_collection import MovieCollection
 
 
 class MovieCollectionDao(metaclass=Singleton):
-    def __init__(self):
+    def __init__(self, db_connection: DBConnection):
         # create a DB connection object
-        self.db_connection = DBConnection()
+        self.db_connection = db_connection
         # Create tables if don't exist
         self.db_connection.create_tables()
-    
+
     def insert(self, new_movie_collection):
         try:
             """
@@ -31,30 +31,26 @@ class MovieCollectionDao(metaclass=Singleton):
                 with connection.cursor() as cursor:
                     cursor.execute(
                         "SELECT id_movie_collection FROM movie_collection WHERE id_movie_collection = %s",
-                        (new_movie_collection.id,)
+                        (new_movie_collection.id,),
                     )
                     movie_collection__exists = cursor.fetchone()
 
                     if movie_collection__exists is None:
-                    # SQL resquest
+                        # SQL resquest
                         cursor.execute(
                             """
                             INSERT INTO movie_collection (id_movie_collection ,
                                                 name_movie_collection)
                             VALUES (%s, %s)
                             """,
-                            (
-                                new_movie_collection.id,
-                                new_movie_collection.name
-                            ),
+                            (new_movie_collection.id, new_movie_collection.name),
                         )
                     connection.commit()
                     print("Insertion successful : Movie Collection added.")
         except Exception as e:
             print("Insertion error : ", str(e))
 
-
-#######################################################################################
+    #######################################################################################
     # READ (Fetch a specific user's comment)
     def get_movie_collection_by_id(
         self,
@@ -63,7 +59,7 @@ class MovieCollectionDao(metaclass=Singleton):
 
         try:
             query = "SELECT * FROM  movie _collection WHERE id = %s"
-            with DBConnection().connection as connection:
+            with self.db_connection.connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(query, (id))
                     res = cursor.fetchone()
@@ -74,7 +70,6 @@ class MovieCollectionDao(metaclass=Singleton):
         except Exception:
             return None
 
-
     # READ (Fetch all comments of a specific movie)
     def get_all(
         self,
@@ -83,7 +78,7 @@ class MovieCollectionDao(metaclass=Singleton):
 
         try:
             query = f"SELECT * FROM  movie_collection LIMIT {max(limit, 0)}"
-            with DBConnection().connection as connection:
+            with self.db_connection.connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
                         query,
@@ -101,7 +96,7 @@ class MovieCollectionDao(metaclass=Singleton):
     def delete(self, id):
         try:
             query = "DELETE FROM  movie_collection WHERE id = %s"
-            with DBConnection().connection as connection:
+            with self.db_connection.connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
                         query,
@@ -113,6 +108,7 @@ class MovieCollectionDao(metaclass=Singleton):
             print(f"Error while deleting from movie collection: {e}")
             return None
 
-# works : add a new Movie Collecction in the schema 
-#mon_objet = MovieCollectionDao()
-#mon_objet.insert(MovieCollection(id = 87096, name = 'Avatar Collection'))
+
+# works : add a new Movie Collecction in the schema
+# mon_objet = MovieCollectionDao()
+# mon_objet.insert(MovieCollection(id = 87096, name = 'Avatar Collection'))

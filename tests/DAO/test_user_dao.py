@@ -71,7 +71,7 @@ class TestUserDao:
         }
 
         # Appeler la méthode
-        user = user_dao.get_user_by_id(1000)
+        user = user_dao.get_user_by_id(1)
 
         # Vérifier les valeurs renvoyées
         assert user.username == "JohnDoe"
@@ -82,7 +82,7 @@ class TestUserDao:
         # Simuler le retour de plusieurs utilisateurs par nom
         mock_db_connection.fetchmany.return_value = [
             {
-                "id_user": 1000,
+                "id_user": 1,
                 "username": "JohnDoe",
                 "hashed_password": "hashed_password123",
                 "date_of_birth": "1990-01-01",
