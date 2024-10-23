@@ -45,7 +45,7 @@ def check_password_strenght(password: str):
     for i in length:
         if isinstance(password[i - 1], int):
             number = True
-    if number == False:
+    if number is False:
         raise Exception("Password must contain at least one number")
 
 
