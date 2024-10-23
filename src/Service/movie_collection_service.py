@@ -17,7 +17,10 @@ class MovieCollectionService:
         MovieCollection
             Une instance de MovieCollection contenant uniquement l'id et le nom.
         """
-        return [MovieCollection(id=data['id'], name=data['name'])]
+        if data:
+            return [MovieCollection(id=data['id'], name=data['name'])]
+        else:
+            return None
 
 #movie_collection_service = MovieCollectionService()
 

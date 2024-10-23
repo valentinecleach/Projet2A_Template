@@ -75,4 +75,4 @@ class MovieService:
 # works from DAO ans from TMDB
 
 my_object = MovieService()
-print(my_object.get_movie_by_id(603))
+print(my_object.get_movie_by_id(346698))
