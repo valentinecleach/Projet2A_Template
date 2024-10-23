@@ -117,16 +117,17 @@ class DBConnection(metaclass=Singleton):
         create_table_users = """
         CREATE TABLE IF NOT EXISTS users (
             id_user INTEGER PRIMARY KEY,
-            name VARCHAR(255) NOT NULL,
-            pseudo VARCHAR(255) NOT NULL,
+            username VARCHAR(255) NOT NULL,
+            first_name VARCHAR(255) NOT NULL,
+            last_name VARCHAR(255) ,
+            token VARCHAR(255) NOT NULL,
             hashed_password VARCHAR(255) NOT NULL,
-            email VARCHAR(255) UNIQUE NOT NULL,
+            email_address VARCHAR(255) UNIQUE NOT NULL,
             date_of_birth DATE, 
             phone_number VARCHAR(255) UNIQUE NOT NULL,
             gender INTEGER
         );
         """
-
         create_table_rating = """
         CREATE TABLE IF NOT EXISTS rating (
             id_user INTEGER NOT NULL,

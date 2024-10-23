@@ -1,152 +1,139 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from src.DAO.user_dao import UserDao
 from src.Model.connected_user import ConnectedUser
 
 
 class TestUserDao(unittest.TestCase):
-    @pytest.fixture
-    def mock_db():
-        with patch("src.DAO.db_connection.DBConnection") as mock_db_conn:
-            mock_connection = mock_db_conn.return_value
-            mock_cursor = MagicMock()
-            mock_connection.connection.cursor.return_value.__enter__.return_value = (
-                mock_cursor
-            )
-            yield mock_cursor
 
-    @pytest.fixture
-    def user_dao():
-        return UserDao()
+    @patch("src.DAO.db_connection.DBConnection")
+    def test_insert(self, MockDBConnection):
+        mock_conn = MockDBConnection.return_value
+        mock_cursor = mock_conn.connection.cursor.return_value
 
-    # Test INSERT
-    def test_insert_user(mock_db, user_dao):
-        # Mock the database insertion result
-        mock_db.execute.return_value = 1000
-        mock_db.fetchone.return_value = None
+        user_dao = UserDao()
+        user = user_dao.insert(
+            1,
+            "testuser",
+            "hashed_password",
+            "1990-01-01",
+            1,
+            "Test",
+            "User",
+            "test@example.com",
+            "token123",
+        )
 
-        # Sample input data for user insertion
-        new_user = {
-            "id_user": 1000,
-            "name": "John Doe",
-            "phone_number": "123456080",
-            "email": "john@exampI.com",
-            "gender": 1,
+        mock_cursor.execute.assert_called_once()
+        mock_conn.connection.commit.assert_called_once()
+        self.assertIsInstance(user, ConnectedUser)
+
+    @patch("src.DAO.db_connection.DBConnection")
+    def test_get_user_by_id(self, MockDBConnection):
+        mock_conn = MockDBConnection.return_value
+        mock_cursor = mock_conn.connection.cursor.return_value
+        mock_cursor.fetchone.return_value = {
+            "id_user": 1,
+            "username": "testuser",
+            "hashed_password": "hashed_password",
             "date_of_birth": "1990-01-01",
-            "hashed_password": "password123",
-            "pseudo": "johnny",
+            "gender": 1,
+            "first_name": "Test",
+            "last_name": "User",
+            "email_address": "test@example.com",
+            "token": "token123",
+            "phone_number": "1234567890",
         }
 
-        # Call the method
-        user = user_dao.insert(**new_user)
+        user_dao = UserDao()
+        user = user_dao.get_user_by_id(1)
 
-        # Assertions
-        assert user.pseudo == new_user["pseudo"]
-        assert user.phone_number == new_user["phone_number"]
+        mock_cursor.execute.assert_called_once_with(
+            "SELECT * FROM users WHERE id_user = %s", (1,)
+        )
+        self.assertIsInstance(user, ConnectedUser)
+        self.assertEqual(user.id_user, 1)
 
-    # Test get_user_by_id
-    def test_get_user_by_id(mock_db, user_dao):
-        # Mock the database return value
-        mock_db.fetchone.return_value = {
-            "id_user": 1000,
-            "name": "John Doe",
-            "phone_number": "123456080",
-            "email": "john@exampI.com",
-            "gender": 1,
-            "date_of_birth": "1990-01-01",
-            "hashed_password": "password123",
-            "pseudo": "johnny",
-        }
-
-        # Call the method
-        user = user_dao.get_user_by_id(1000)
-
-        # Assertions
-        assert user.pseudo == "johnny"
-        assert user.phone_number == "123456080"
-
-    # Test get_user_by_name
-    def test_get_user_by_name(mock_db, user_dao):
-        # Mock the database return value
-        mock_db.fetchmany.return_value = [
+    @patch("src.DAO.db_connection.DBConnection")
+    def test_get_user_by_name(self, MockDBConnection):
+        mock_conn = MockDBConnection.return_value
+        mock_cursor = mock_conn.connection.cursor.return_value
+        mock_cursor.fetchmany.return_value = [
             {
-                "id_user": 1000,
-                "name": "John Doe",
-                "phone_number": "123456080",
-                "email": "john@exampI.com",
-                "gender": 1,
+                "id_user": 1,
+                "username": "testuser",
+                "hashed_password": "hashed_password",
                 "date_of_birth": "1990-01-01",
-                "hashed_password": "password123",
-                "pseudo": "johnny",
+                "gender": 1,
+                "first_name": "Test",
+                "last_name": "User",
+                "email_address": "test@example.com",
+                "token": "token123",
+                "phone_number": "1234567890",
             }
         ]
 
-        # Call the method
-        users = user_dao.get_user_by_name("John", size=1)
+        user_dao = UserDao()
+        users = user_dao.get_user_by_name("test")
 
-        # Assertions
-        assert len(users) == 1
-        assert users[0].name == "John Doe"
+        mock_cursor.execute.assert_called_once()
+        self.assertIsInstance(users, list)
+        self.assertGreater(len(users), 0)
+        self.assertIsInstance(users[0], ConnectedUser)
 
-    # Test get_all_users
-    def test_get_all_users(mock_db, user_dao):
-        # Mock the database return value
-        mock_db.fetchall.return_value = [
+    @patch("src.DAO.db_connection.DBConnection")
+    def test_get_all_users(self, MockDBConnection):
+        mock_conn = MockDBConnection.return_value
+        mock_cursor = mock_conn.connection.cursor.return_value
+        mock_cursor.fetchall.return_value = [
             {
                 "id_user": 1,
-                "name": "John Doe",
-                "pseudo": "johnny",
-                "email": "john@example.com",
-                "hashed_password": "password123",
+                "username": "testuser",
+                "hashed_password": "hashed_password",
                 "date_of_birth": "1990-01-01",
-                "phone_number": "123456789",
                 "gender": 1,
-            },
-            {
-                "id_user": 2,
-                "name": "Jane Doe",
-                "pseudo": "jane",
-                "email": "jane@example.com",
-                "hashed_password": "password456",
-                "date_of_birth": "1992-02-02",
-                "phone_number": "987654321",
-                "gender": 2,
-            },
+                "first_name": "Test",
+                "last_name": "User",
+                "email_address": "test@example.com",
+                "token": "token123",
+                "phone_number": "1234567890",
+            }
         ]
 
-        # Call the method
-        users = user_dao.get_all_users(limit=2)
+        user_dao = UserDao()
+        users = user_dao.get_all_users()
 
-        # Assertions
-        assert len(users) == 2
-        assert users[0].name == "John Doe"
+        mock_cursor.execute.assert_called_once()
+        self.assertIsInstance(users, list)
+        self.assertGreater(len(users), 0)
+        self.assertIsInstance(users[0], ConnectedUser)
 
-    # Test update_user
-    def test_update_user(mock_db, user_dao):
-        # Mock the database update success
-        mock_db.execute.return_value = 1
+    @patch("src.DAO.db_connection.DBConnection")
+    def test_update_user(self, MockDBConnection):
+        mock_conn = MockDBConnection.return_value
+        mock_cursor = mock_conn.connection.cursor.return_value
 
-        # Call the method to update the user
-        user_dao.update_user(
-            id_user=1000, name="John Updated", email="updated_john@example.com"
+        user_dao = UserDao()
+        result = user_dao.update_user(1, username="updateduser")
+
+        mock_cursor.execute.assert_called_once()
+        mock_conn.connection.commit.assert_called_once()
+        self.assertEqual(result, 1)
+
+    @patch("src.DAO.db_connection.DBConnection")
+    def test_delete_user(self, MockDBConnection):
+        mock_conn = MockDBConnection.return_value
+        mock_cursor = mock_conn.connection.cursor.return_value
+
+        user_dao = UserDao()
+        result = user_dao.delete_user(1)
+
+        mock_cursor.execute.assert_called_once_with(
+            "DELETE FROM users WHERE id_user = %s", (1,)
         )
-
-        # Assertions
-        assert UserDao().get_user_by_id(1000).name == "John Updated"
-
-    # Test delete_user
-    def test_delete_user(mock_db, user_dao):
-        # Mock the database deletion success
-        mock_db.execute.return_value = 1
-
-        # Call the method
-        user_dao.delete_user(1)
-
-        # Assertions
-        assert UserDao().get_user_by_id(1) is None
+        mock_conn.connection.commit.assert_called_once()
+        self.assertIsNone(result)
 
 
 if __name__ == "__main__":
