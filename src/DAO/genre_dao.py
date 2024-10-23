@@ -32,6 +32,12 @@ class GenreDao(metaclass=Singleton):
                     cursor.execute(
                         "SELECT id_genre FROM genre WHERE id_genre = %s",
                         (new_genre.id,),
+=======
+                    # Requête SQL pour vérifier l'existence du genre
+                    cursor.execute(
+                        'SELECT id_genre FROM genre WHERE id_genre = %s',
+                         (28,)
+>>>>>>> f2272497c1151fa36673e92207a5cfe5f29a9a58
                     )
                     genre_exists = cursor.fetchone()
 
