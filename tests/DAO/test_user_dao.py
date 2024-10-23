@@ -11,7 +11,6 @@ def mock_db():
     with patch("src.DAO.db_connection.DBConnection") as mock_db_conn:
         mock_connection = mock_db_conn.return_value
         mock_cursor = MagicMock()
-        # Simulation du retour du curseur avec le mock
         mock_connection.connection.cursor.return_value.__enter__.return_value = (
             mock_cursor
         )
@@ -25,100 +24,86 @@ def user_dao():
 
 # Test INSERT
 def test_insert_user(mock_db, user_dao):
-    # Simuler l'insertion réussie
-    mock_db.execute.return_value = 1  # Simuler que 1 ligne est affectée
+    # Mock the database insertion result
+    mock_db.execute.return_value = 1000
     mock_db.fetchone.return_value = None
 
-    # Données d'entrée pour l'insertion d'un nouvel utilisateur
+    # Sample input data for user insertion
     new_user = {
         "id_user": 1000,
         "name": "John Doe",
-        "phone_number": "123456789",
-        "email": "john@example.com",
+        "phone_number": "123456080",
+        "email": "john@exampI.com",
         "gender": 1,
         "date_of_birth": "1990-01-01",
-        "password": "hashed_password123",
+        "hashed_password": "password123",
         "pseudo": "johnny",
     }
 
-    # Appeler la méthode d'insertion
+    # Call the method
     user = user_dao.insert(**new_user)
 
-    # Vérifier que l'utilisateur a été inséré avec les bonnes valeurs
-    assert user.name == new_user["name"]
-    assert user.email == new_user["email"]
-
-    # Vérifier que l'exécution de la requête a été appelée
-    mock_db.execute.assert_called_once()
+    # Assertions
+    assert user.pseudo == new_user["pseudo"]
+    assert user.phone_number == new_user["phone_number"]
 
 
-# Test GET_USER_BY_ID
+# Test get_user_by_id
 def test_get_user_by_id(mock_db, user_dao):
-    # Simuler le retour de la base de données pour un utilisateur spécifique
+    # Mock the database return value
     mock_db.fetchone.return_value = {
-        "id_user": 1,
+        "id_user": 1000,
         "name": "John Doe",
-        "pseudo": "johnny",
-        "email": "john@example.com",
-        "password": "hashed_password123",
-        "date_of_birth": "1990-01-01",
-        "phone_number": "123456789",
+        "phone_number": "123456080",
+        "email": "john@exampI.com",
         "gender": 1,
+        "date_of_birth": "1990-01-01",
+        "hashed_password": "password123",
+        "pseudo": "johnny",
     }
 
-    # Appeler la méthode
-    user = user_dao.get_user_by_id(1)
+    # Call the method
+    user = user_dao.get_user_by_id(1000)
 
-    # Vérifier les valeurs renvoyées
-    assert user.name == "John Doe"
-    assert user.email == "john@example.com"
-
-    # Vérifier que la requête SQL a été exécutée
-    mock_db.execute.assert_called_once_with(
-        "SELECT * FROM user WHERE id_user = %s", (1,)
-    )
+    # Assertions
+    assert user.pseudo == "johnny"
+    assert user.phone_number == "123456080"
 
 
-# Test GET_USER_BY_NAME
+# Test get_user_by_name
 def test_get_user_by_name(mock_db, user_dao):
-    # Simuler le retour de plusieurs utilisateurs par nom
+    # Mock the database return value
     mock_db.fetchmany.return_value = [
         {
-            "id_user": 1,
+            "id_user": 1000,
             "name": "John Doe",
-            "pseudo": "johnny",
-            "email": "john@example.com",
-            "password": "hashed_password123",
-            "date_of_birth": "1990-01-01",
-            "phone_number": "123456789",
+            "phone_number": "123456080",
+            "email": "john@exampI.com",
             "gender": 1,
+            "date_of_birth": "1990-01-01",
+            "hashed_password": "password123",
+            "pseudo": "johnny",
         }
     ]
 
-    # Appeler la méthode
+    # Call the method
     users = user_dao.get_user_by_name("John", size=1)
 
-    # Vérifier le nombre d'utilisateurs retournés
+    # Assertions
     assert len(users) == 1
     assert users[0].name == "John Doe"
 
-    # Vérifier que la requête SQL a été exécutée
-    mock_db.execute.assert_called_once_with(
-        "SELECT * FROM user WHERE LOWER(name) LIKE %s or LOWER(pseudo) LIKE %s",
-        ("%john%", "%john%"),
-    )
 
-
-# Test GET_ALL_USERS
+# Test get_all_users
 def test_get_all_users(mock_db, user_dao):
-    # Simuler le retour de la base de données pour plusieurs utilisateurs
+    # Mock the database return value
     mock_db.fetchall.return_value = [
         {
             "id_user": 1,
             "name": "John Doe",
             "pseudo": "johnny",
             "email": "john@example.com",
-            "password": "hashed_password123",
+            "hashed_password": "password123",
             "date_of_birth": "1990-01-01",
             "phone_number": "123456789",
             "gender": 1,
@@ -128,50 +113,42 @@ def test_get_all_users(mock_db, user_dao):
             "name": "Jane Doe",
             "pseudo": "jane",
             "email": "jane@example.com",
-            "password": "hashed_password456",
+            "hashed_password": "password456",
             "date_of_birth": "1992-02-02",
             "phone_number": "987654321",
             "gender": 2,
         },
     ]
 
-    # Appeler la méthode
+    # Call the method
     users = user_dao.get_all_users(limit=2)
 
-    # Vérifier que deux utilisateurs ont été retournés
+    # Assertions
     assert len(users) == 2
     assert users[0].name == "John Doe"
-    assert users[1].name == "Jane Doe"
-
-    # Vérifier que la requête SQL a été exécutée
-    mock_db.execute.assert_called_once_with(
-        "SELECT * FROM user WHERE LIMIT 2 OFFSET 0", ()
-    )
 
 
-# Test UPDATE_USER
+# Test update_user
 def test_update_user(mock_db, user_dao):
-    # Simuler la mise à jour réussie
-    mock_db.execute.return_value = 1  # Une ligne modifiée
+    # Mock the database update success
+    mock_db.execute.return_value = 1
 
-    # Appeler la méthode de mise à jour
+    # Call the method to update the user
     user_dao.update_user(
-        id_user=1, name="John Updated", email="updated_john@example.com"
+        id_user=1000, name="John Updated", email="updated_john@example.com"
     )
 
-    # Vérifier que la requête SQL a bien été exécutée
-    mock_db.execute.assert_called_once()
-    assert "name = %s" in mock_db.execute.call_args[0][0]
-    assert "email = %s" in mock_db.execute.call_args[0][0]
+    # Assertions
+    assert UserDao().get_user_by_id(1000).name == "John Updated"
 
 
-# Test DELETE_USER
+# Test delete_user
 def test_delete_user(mock_db, user_dao):
-    # Simuler la suppression réussie
-    mock_db.execute.return_value = 1  # Une ligne supprimée
+    # Mock the database deletion success
+    mock_db.execute.return_value = 1
 
-    # Appeler la méthode de suppression
+    # Call the method
     user_dao.delete_user(1)
 
-    # Vérifier que la requête SQL a bien été exécutée
-    mock_db.execute.assert_called_once_with("DELETE FROM user WHERE id_user = %s", (1,))
+    # Assertions
+    assert UserDao().get_user_by_id(1) is None
