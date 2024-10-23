@@ -9,6 +9,11 @@ from pydantic import BaseModel
 class UserDao(metaclass=Singleton):
     db_connection: DBConnection
 
+    def __init__(self, db_connection: DBConnection):
+        """Constructor
+        """
+        self.db_connection = DBConnection
+
     def insert(
         self,
         id_user: int,
