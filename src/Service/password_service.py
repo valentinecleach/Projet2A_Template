@@ -2,12 +2,14 @@ import hashlib
 import secrets
 from typing import Optional
 
+import bcrypt
+
 # DAO
-from src.DAO.user_dao import UserDao
-from src.Model.connected_user import ConnectedUser
+# from src.DAO.user_dao import UserDao
+# from src.Model.connected_user import ConnectedUser
 
 # Model
-from src.Model.user import User
+# from src.Model.user import User
 
 # hash password and salt password in user_service
 
@@ -23,12 +25,16 @@ def create_salt(username: str, token: str) -> list[str]:
     """Creates a salt for the password to be hashed"""
     # Création des parties de sel
     start_salt = username[:3]  # Les trois premiers caractères du nom d'utilisateur
-    end_salt = username[3:] + token # Les caractères restants du nom d'utilisateur et la clef secrete.
+    end_salt = (
+        username[3:] + token
+    )  # Les caractères restants du nom d'utilisateur et la clef secrete.
     return [start_salt, end_salt]
+
 
 def create_token(username: str) -> list[str]:
     """Creates a salt for the password to be hashed"""
     return secrets.token_hex(16)
+
 
 def check_password_strenght(password: str):
     """Checks a passwords strenght.
@@ -50,7 +56,7 @@ def check_password_strenght(password: str):
         raise Exception("Password must contain at least one number")
 
 
-#def validate_username_password(username: str, password: str, user_dao: UserDao) -> User:
+# def validate_username_password(username: str, password: str, user_dao: UserDao) -> User:
 #    connected_user: Optional[User] = user_dao.get_user_by_name(username=username)
-    ## Fait dans user_service donc pas nécéssaire?
+## Fait dans user_service donc pas nécéssaire?
 #    return connected_user
