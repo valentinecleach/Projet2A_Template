@@ -42,7 +42,7 @@ class CommentDao(metaclass=Singleton):
                     results = cursor.fetchall()
             if results:
                 user = UserDao().get_user_by_id(id_user)
-                movie = MovieDAO().get_user_by_id(id_movie)
+                movie = MovieDAO().get_by_id(id_movie)
                 com = [
                     Comment(
                         user=user, movie=movie, date=res["date"], comment=res["comment"]
