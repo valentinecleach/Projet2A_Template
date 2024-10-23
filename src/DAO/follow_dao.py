@@ -7,20 +7,26 @@ from src.Model.connected_user import ConnectedUser
 
 
 class FollowDao(metaclass=Singleton):
+    def __init__(self, db_connection: DBConnection):
+        # create a DB connection object
+        self.db_connection = db_connection
+        # Create tables if don't exist
+        self.db_connection.create_tables()
+
     # CREATE
     def insert(self, id_user: int, id_user_followed: int):
         date = datetime.now()
         values = (id_user, id_user_followed, date)
         try:
-            with DBConnection().connection.cursor() as cursor:
+            with self.db_connection.connection.cursor() as cursor:
                 query = f"INSERT INTO follower(id_user, id_user_followed,date) VALUES ({', '.join(['%s'] * len(values))})"
                 res = cursor.execute(query, values)
-                DBConnection().connection.commit()
-                
+                self.db_connection.connection.commit()
+
         except Exception as e:
             print(f"Erreur lors de l'insertion dans follower: {str(e)}")
-            DBConnection().connection.rollback()
-            return None 
+            self.db_connection.connection.rollback()
+            return None
         if res:
             return res
 
@@ -29,7 +35,7 @@ class FollowDao(metaclass=Singleton):
 
         try:
             query = "SELECT * FROM follower WHERE id_user = %s"
-            with DBConnection().connection as connection:
+            with self.db_connection.connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(query, (id_user,))
                     results = cursor.fetchall()
@@ -44,10 +50,8 @@ class FollowDao(metaclass=Singleton):
     # DELETE
     def delete_followed(self, id_user: int, id_user_followed: int):
         try:
-            query = (
-                "DELETE FROM  follower WHERE id_user = %s and id_user_followed = %s"
-            )
-            with DBConnection().connection as connection:
+            query = "DELETE FROM  follower WHERE id_user = %s and id_user_followed = %s"
+            with self.db_connection.connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
                         query,

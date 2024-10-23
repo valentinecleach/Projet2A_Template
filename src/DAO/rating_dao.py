@@ -9,6 +9,12 @@ from src.Model.rating import Rating
 
 
 class RatingDao(metaclass=Singleton):
+    def __init__(self, db_connection: DBConnection):
+        # create a DB connection object
+        self.db_connection = db_connection
+        # Create tables if don't exist
+        self.db_connection.create_tables()
+
     # CREATE
     def insert(self, id_user: int, id_movie: int, rate: int):
         date = datetime.now()
@@ -16,13 +22,13 @@ class RatingDao(metaclass=Singleton):
             values = (id_user, id_movie, rate, date)
             date = datetime.now()
             try:
-                with DBConnection().connection.cursor() as cursor:
+                with self.db_connection.connection.cursor() as cursor:
                     query = f"INSERT INTO rating(id_user, id_movie, rate, date) VALUES ({', '.join(['%s'] * len(values))})"
                     res = cursor.execute(query, values)
-                    DBConnection().connection.commit()
+                    self.db_connection.connection.commit()
             except Exception as e:
                 print(f"Erreur lors de l'insertion dans rating: {str(e)}")
-                DBConnection().connection.rollback()
+                self.db_connection.connection.rollback()
                 return None
         if res:
             user = UserDao().get_user_by_id(id_user)
@@ -39,7 +45,7 @@ class RatingDao(metaclass=Singleton):
 
         try:
             query = "SELECT * FROM  rating WHERE id_user = %s and id_movie = %s"
-            with DBConnection().connection as connection:
+            with self.db_connection.connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(query, (id_user, id_movie))
                     res = cursor.fetchone()
@@ -59,7 +65,7 @@ class RatingDao(metaclass=Singleton):
     def delete(self, id_user: int, id_movie: int):
         try:
             query = "DELETE FROM  rating WHERE id_user = %s and id_movie = %s"
-            with DBConnection().connection as connection:
+            with self.db_connection.connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
                         query,
@@ -72,13 +78,13 @@ class RatingDao(metaclass=Singleton):
                     print("Record deleted successfully from ratings.")
         except Exception as e:
             print(f"Error while deleting from ratings: {e}")
-            DBConnection().connection.rollback()
+            self.db_connection.connection.rollback()
             return None
 
     def get_overall_rating(id_movie: int):
         try:
             query = "SELECT AVG(rate) as mean  FROM  rating WHERE id_movie = %s"
-            with DBConnection().connection as connection:
+            with self.db_connection.connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
                         query,
@@ -94,7 +100,7 @@ class RatingDao(metaclass=Singleton):
     def count_rating(id_movie: int):
         try:
             query = "SELECT count(*) as number  FROM  rating WHERE id_movie = %s"
-            with DBConnection().connection as connection:
+            with self.db_connection.connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
                         query,

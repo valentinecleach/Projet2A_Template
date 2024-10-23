@@ -8,6 +8,12 @@ from src.Model.movie_maker import MovieMaker
 
 # to do : Documentation
 class MovieMakerDAO(metaclass=Singleton):
+    def __init__(self, db_connection: DBConnection):
+        # create a DB connection object
+        self.db_connection = db_connection
+        # Create tables if don't exist
+        self.db_connection.create_tables()
+
     def insert(self, movie_maker: MovieMaker, test: bool) -> MovieMaker:
         """
         Insert a new MovieMaker in the Database.

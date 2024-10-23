@@ -8,14 +8,14 @@ class UserDao(metaclass=Singleton):
     """
     User DAO..
     """
+    db_connection: DBConnection
 
     def __init__(self, db_connection: DBConnection):
-        """Constructor
-        """
+        # create a DB connection object
         self.db_connection = db_connection
+        # Create tables if don't exist
         self.db_connection.create_tables()
 
-    
     def insert(
         self,
         id_user: int,
@@ -29,8 +29,7 @@ class UserDao(metaclass=Singleton):
         token: str,
         phone_number: str = None,
     ) -> ConnectedUser | None:
-        """insert a Connected User into the database
-        """
+        """insert a Connected User into the database"""
         values = (
             id_user,
             username,
@@ -48,7 +47,7 @@ class UserDao(metaclass=Singleton):
         if user:
             print("User alreadu exists")
             Exception
-        # User doesn't exist 
+        # User doesn't exist
         try:
             with self.db_connection.connection as connection:
                 with connection.cursor() as cursor:
@@ -58,27 +57,25 @@ class UserDao(metaclass=Singleton):
                         + ", ".join(["%s"] * len(values))
                         + ")"
                     )
-                    cursor.execute(query, values)
-                    connection.commit()
-                    print("Insertion successful: User added.")
-        # Problème
+                cursor.execute(query, values)
+                self.db_connection.connection.commit()
         except Exception as e:
             print(f"Erreur lors de l'insertion dans users: {str(e)}")
-            DBConnection().connection.rollback()
-            
-        #created = ConnectedUser(
-        #    id_user=id_user,
-        #    username=username,
-        #    hashed_password=hashed_password,
-        #    date_of_birth=date_of_birth,
-        #    gender=gender,
-        #    first_name=first_name,
-        #    last_name=last_name,
-        #    email_address=email_address,
-        #    token=token,
-        #    phone_number=phone_number,
-        #)
-        
+            self.db_connection.connection.rollback()
+            return None
+        created = ConnectedUser(
+            id_user=id_user,
+            username=username,
+            hashed_password=hashed_password,
+            date_of_birth=date_of_birth,
+            gender=gender,
+            first_name=first_name,
+            last_name=last_name,
+            email_address=email_address,
+            token=token,
+            phone_number=phone_number,
+        )
+        return created
 
     def get_user_by_id(self, id_user) -> ConnectedUser:
         """
@@ -86,7 +83,7 @@ class UserDao(metaclass=Singleton):
         """
         try:
             query = "SELECT * FROM users WHERE id_user = %s"
-            with self.db_connection().connection as connection:
+            with self.db_connection.connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(query, (id_user,))
                     res = cursor.fetchone()
@@ -106,7 +103,7 @@ class UserDao(metaclass=Singleton):
         search_string = str(search_string).lower()
         try:
             query = "SELECT * FROM users WHERE LOWER(username) LIKE %s OR LOWER(last_name) LIKE %s OR LOWER(first_name) LIKE %s"
-            with self.db_connection().connection as connection:
+            with self.db_connection.connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
                         query,
@@ -129,7 +126,7 @@ class UserDao(metaclass=Singleton):
     def get_all_users(self, limit: int = 10, offset: int = 0) -> List[ConnectedUser]:
         try:
             query = f"SELECT * FROM users LIMIT {max(0,limit)} OFFSET {max(offset,0)}"
-            with DBConnection().connection as connection:
+            with self.db_connection.connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(query, ())
                     results = cursor.fetchall()
@@ -145,7 +142,7 @@ class UserDao(metaclass=Singleton):
     def check_email_address(self, email_address: str):
         try:
             query = f"SELECT * FROM users WHERE email_address = %s"
-            with DBConnection().connection as connection:
+            with self.db_connection.connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(query, (email_address,))
                     results = cursor.fetchone()
@@ -162,7 +159,7 @@ class UserDao(metaclass=Singleton):
     def check_username(self, username: str):
         try:
             query = f"SELECT * FROM users WHERE username = %s"
-            with DBConnection().connection as connection:
+            with self.db_connection.connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(query, (username,))
                     results = cursor.fetchone()
@@ -225,7 +222,7 @@ class UserDao(metaclass=Singleton):
 
             query = f"UPDATE users SET {', '.join(updates)} WHERE id_user = %s"
             values.append(id_user)
-            with DBConnection().connection as connection:
+            with self.db_connection.connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(query, tuple(values))
                     connection.commit()
@@ -234,14 +231,14 @@ class UserDao(metaclass=Singleton):
 
         except Exception as e:
             print(f"Error updating user: {e}")
-            DBConnection().connection.rollback()
+            self.db_connection.connection.rollback()
             return None
 
     # DELETE
     def delete_user(self, id_user):
         try:
             query = "DELETE FROM users WHERE id_user = %s"
-            with DBConnection().connection as connection:
+            with self.db_connection.connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
                         query,
@@ -251,5 +248,5 @@ class UserDao(metaclass=Singleton):
                     print("Record deleted successfully FROM users.")
         except Exception as e:
             print(f"Error while deleting FROM users: {e}")
-            DBConnection().connection.rollback()
+            self.db_connection.connection.rollback()
             return None
