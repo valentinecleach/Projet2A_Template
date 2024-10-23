@@ -17,9 +17,12 @@ class ConnectedUser(User):
         salt: list[str],
         phone_number: str = None
     ):
+        # For all Users
         super().__init__(
             ip_address=None
         )  # Pas d'adresse IP pour l'utilisateur connecté
+        
+        # Info on users 
         self.id_user = id_user
         self.username = username
         self.date_of_birth = date_of_birth
@@ -33,6 +36,7 @@ class ConnectedUser(User):
         # 2 lines above create a circular import
         self.salt = salt
         self.hashed_password = hashed_password
+        
         # Collections associated with the connected user
         self.own_film_collection = []  # Liste des films ajoutés par l'utilisateur
         self.follow_list = []  # Liste des utilisateurs suivis
