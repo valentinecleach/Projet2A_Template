@@ -3,25 +3,41 @@ import psycopg2  # Assurez-vous d'avoir psycopg2 installé pour la connexion à 
 
 # DAO
 from src.DAO.db_connection import DBConnection
+from src.Model.connected_user import ConnectedUser
 
 # Model
 from src.Model.movie import Movie
+from src.Model.user import User
 
 # Service
-from src.Service.password_service import check_password_strenght, hash_password, create_salt
+from src.Service.password_service import (
+    check_password_strenght,
+    create_salt,
+    hash_password,
+)
+
 
 class UserService:
-    def __init__(self, db_connection : DBConnection):
+    def __init__(self, db_connection: DBConnection):
         self.db_connection = db_connection  # Connexion à la base de données
 
-    def sign_up(self, first_name: str, last_name: str, username: str, password: str, email_address: str):
+    def sign_up(
+        self,
+        first_name: str,
+        last_name: str,
+        username: str,
+        password: str,
+        email_address: str,
+    ):
         """Permet de créer un compte utilisateur."""
-        
+
         # Validation de la longueur du nom d'utilisateur
         if len(username) < 5:
-            raise ValueError("Le nom d'utilisateur doit comporter au moins 5 caractères.")
+            raise ValueError(
+                "Le nom d'utilisateur doit comporter au moins 5 caractères."
+            )
 
-        # Validation du mot de passe 
+        # Validation du mot de passe
         check_password_strenght(password)
 
         # Hashage du mdp
@@ -32,46 +48,66 @@ class UserService:
 
         try:
             # Utilisation de la méthode insert de DBConnection
-            self.db_connection.insert('users', values)
+            self.db_connection.insert("users", values)
             print(f"Utilisateur '{username}' inscrit avec succès.")
         except Exception as e:
             print(f"Erreur lors de l'inscription : {str(e)}")
 
     def log_in(self, username: str, password: str):
         """Permet à un utilisateur de se connecter."""
-        
+
         # Validation de la longueur du nom d'utilisateur
         # Inutile le nom d'utilisateur a déjà été validé lors du sign up?
         if len(username) < 5:
-            raise ValueError("Le nom d'utilisateur doit comporter au moins 5 caractères.")
-        
+            raise ValueError(
+                "Le nom d'utilisateur doit comporter au moins 5 caractères."
+            )
+
         # Hashage du mdp
         salted_password = create_salt(username)
         hashed_password = hash_password(password, salted_password)
-  
+
         try:
             with self.db_connection.connection.cursor() as cursor:
                 # Récupération de l'utilisateur de la base de données
-                cursor.execute("SELECT hashed_password FROM users WHERE username = %s", (username,))
+                cursor.execute(
+                    "SELECT hashed_password FROM users WHERE username = %s", (username,)
+                )
                 result = cursor.fetchone()
-                
-                if result and bcrypt.checkpw(salted_password, result[0].encode('utf-8')):
+
+                if result and bcrypt.checkpw(
+                    salted_password, result[0].encode("utf-8")
+                ):
                     print(f"Utilisateur '{username}' connecté avec succès.")
                     # Retourner une instance de ConnectedUser avec les informations pertinentes
-                    return ConnectedUser(username=username, ip_address="placeholder_ip")  # Remplacez par l'adresse IP réelle
+                    return ConnectedUser(
+                        username=username, ip_address="placeholder_ip"
+                    )  # Remplacez par l'adresse IP réelle
                 else:
-                    print("Échec de la connexion : nom d'utilisateur ou mot de passe incorrect.")
-                    return User(ip_address="placeholder_ip")  # Retourne un User non connecté
+                    print(
+                        "Échec de la connexion : nom d'utilisateur ou mot de passe incorrect."
+                    )
+                    return User(
+                        ip_address="placeholder_ip"
+                    )  # Retourne un User non connecté
         except Exception as e:
             print(f"Erreur lors de la connexion : {str(e)}")
             return User(ip_address="placeholder_ip")  # Retourne un User non connecté
 
     def search_user(self, username: str):
         """Permet de chercher le profil d'un autre utilisateur."""
+        if not username:
+            print("Le nom d'utilisateur est requis.")
+            return None
 
-    def add_film(self, film: Movie):
-        """Ajoute un film à la collection de l'utilisateur."""
-        self.film_collection.append(film)
+        # Appel à la méthode get_user_by_name de UserDao
+        users = self.user_dao.get_user_by_name(username)
+
+        if users:
+            return users  # Retourne une liste d'instances ConnectedUser correspondant à la recherche
+
+        print("Aucun utilisateur trouvé pour le nom :", username)
+        return None
 
     def follow(self, utilisateur):
         """Ajoute un utilisateur à la liste des éclaireurs."""
