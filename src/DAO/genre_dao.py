@@ -30,7 +30,7 @@ class GenreDao(metaclass=Singleton):
                 # Création d'un curseur pour la requête
                 with connection.cursor() as cursor:
                     # Requête SQL pour vérifier l'existence du genre
-                    cursor.executed(
+                    cursor.execute(
                         'SELECT id_genre FROM genre WHERE id_genre = %s',
                          (28,)
                     )
