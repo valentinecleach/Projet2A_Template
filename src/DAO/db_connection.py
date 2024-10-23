@@ -175,11 +175,23 @@ class DBConnection(metaclass=Singleton):
 
         create_table_KnownFor = """
         CREATE TABLE IF NOT EXISTS KnownFor (
-            id_movie_maker INTEGER,
+            id_movie INTEGER,
             id_movie INTEGER,
 
             FOREIGN KEY (id_maker) REFERENCES movie_maker(id_movie_maker),
             FOREIGN KEY (id_movie) REFERENCES movie(id_movie)
+        );
+        """
+
+        create_table_user_movie_collection = """
+        CREATE TABLE IF NOT EXISTS user_movie_collection (
+            id_user INTEGER NOT NULL,
+            id_movie INTEGER NOT NULL,
+            date VARCHAR(255) NOT NULL,
+
+            PRIMARY KEY (id_movie, id_user), 
+            FOREIGN KEY (id_movie) REFERENCES movie(id_movie),
+            FOREIGN KEY (id_user) REFERENCES users(id_user)
         );
         """
 
