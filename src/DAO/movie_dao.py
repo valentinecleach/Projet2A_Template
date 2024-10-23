@@ -202,6 +202,7 @@ class MovieDAO(metaclass=Singleton):
                         (f"%{title}%",),
                     )  # -- ILIKE for case-insensitive searching
                     results = cursor.fetchall() #[[603], [604]]
+                    print(results)
             if len(results) > 0 :
                 movies = []
                 for id_movie in results:

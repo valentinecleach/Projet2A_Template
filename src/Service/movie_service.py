@@ -34,11 +34,11 @@ class MovieService:
             print("Movie get from database")
             return movie
         else:
-            movie_from_tmdb = self.movie_tmdb.get_movie_by_title(movie_title)
+            movie_from_tmdb = self.movie_tmdb.get_movies_by_title(movie_title)
             if movie_from_tmdb:
-                self.movie_dao.insert(movie_from_tmdb)
-                print("Movie get from TMDB")
-                return movie_from_tmdb
+                for movie in movie_from_tmdb:
+                    self.movie_dao.insert(movie)
+                print("Movies added in database")
             else:
                 print(f"No Movie found with id :{movie_id}.")
                 return None
@@ -86,6 +86,7 @@ class MovieService:
 
 # works from DAO ans from TMDB
 
-my_object = MovieService()
+#my_object = MovieService()
 #print(my_object.get_movie_by_id(604))
-print(my_object.get_movie_by_title('The Matrix'))
+#print(my_object.get_movie_by_title('The wild robot'))
+
