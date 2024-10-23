@@ -3,9 +3,12 @@ from typing import List  # , Optional
 from src.DAO.db_connection import DBConnection, Singleton
 from src.Model.connected_user import ConnectedUser
 
+from pydantic import BaseModel
+
 
 class UserDao(metaclass=Singleton):
-    # CREATE
+    db_connection: DBConnection
+
     def insert(
         self,
         id_user: int,
@@ -15,9 +18,10 @@ class UserDao(metaclass=Singleton):
         gender: int,
         date_of_birth: str,
         hashed_password: str,
-        pseudo: str = "",
+        username: str = "",
     ) -> ConnectedUser:
-
+        """Inserts a user into the database
+        """
         values = (
             id_user,
             name,
@@ -26,14 +30,14 @@ class UserDao(metaclass=Singleton):
             gender,
             date_of_birth,
             hashed_password,
-            pseudo,
+            username,
         )
         user = self.get_user_by_id(id_user)
         if user:
             return user
         try:
             with DBConnection().connection.cursor() as cursor:
-                query = f"INSERT INTO users(id_user,name,phone_number,email,gender,date_of_birth, hashed_password,pseudo) VALUES ({', '.join(['%s'] * len(values))})"
+                query = f"INSERT INTO users(id_user,name,phone_number,email,gender,date_of_birth, hashed_password,username) VALUES ({', '.join(['%s'] * len(values))})"
                 cursor.execute(query, values)
                 DBConnection().connection.commit()
 
@@ -44,7 +48,7 @@ class UserDao(metaclass=Singleton):
         created = ConnectedUser(
             id_user=id_user,
             name=name,
-            pseudo=pseudo,
+            username=username,
             email=email,
             gender=gender,
             hashed_password=hashed_password,
@@ -79,7 +83,7 @@ class UserDao(metaclass=Singleton):
         """
         search_string = str(search_string).lower()
         try:
-            query = f"SELECT * FROM users WHERE LOWER(name) LIKE %s or LOWER(pseudo) LIKE %s "
+            query = f"SELECT * FROM users WHERE LOWER(name) LIKE %s or LOWER(username) LIKE %s "
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
@@ -93,9 +97,10 @@ class UserDao(metaclass=Singleton):
             users_read = [ConnectedUser(**res) for res in results]
         return users_read
 
-    # READ (Fetch all users)
-    def get_all_users(self, limit: int = 10, offset: int = 0) -> List[ConnectedUser]:
 
+    def get_all_users(self, limit: int = 10, offset: int = 0) -> List[ConnectedUser]:
+        """Fetch all users
+        """
         try:
             query = f"SELECT * FROM users LIMIT {max(0,limit)} OFFSET {max(offset,0)}"
             with DBConnection().connection as connection:
@@ -108,18 +113,20 @@ class UserDao(metaclass=Singleton):
             users_read = [ConnectedUser(**res) for res in results]
         return users_read
 
-    # UPDATE
     def update_user(
         self,
         id_user: int,
         name=None,
         email=None,
-        pseudo=None,
+        username=None,
         hashed_password=None,
         phone_number=None,
         date_of_birth=None,
         gender=None,
     ):
+        """
+        Updates a user with new info. The info don't need to be rewritten
+        """
         try:
             # Build the dynamic query based on the provided parameters
             updates = []
@@ -143,9 +150,9 @@ class UserDao(metaclass=Singleton):
             if gender:
                 updates.append("gender = %s")
                 values.append(gender)
-            if pseudo:
-                updates.append("pseudo = %s")
-                values.append(pseudo)
+            if username:
+                updates.append("username = %s")
+                values.append(username)
 
             # If there are no updates, return
             if not updates:
@@ -165,8 +172,10 @@ class UserDao(metaclass=Singleton):
             print(f"Error updating user: {e}")
             DBConnection().connection.rollback()
 
-    # DELETE
+    
     def delete_user(self, id_user):
+        """Delete a user
+        """
         try:
             query = "DELETE FROM users WHERE id_user = %s"
             with DBConnection().connection as connection:
