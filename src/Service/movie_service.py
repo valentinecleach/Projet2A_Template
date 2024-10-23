@@ -29,7 +29,8 @@ class MovieService:
 
     def get_movie_by_title(self, movie_title : str) -> Movie | None :
         """find a movie with its title"""
-        movie = 
+        #movie = 
+        pass
 
     def create_movies(self, known_for_data: List[Dict]) -> List[Movie]:
         """
