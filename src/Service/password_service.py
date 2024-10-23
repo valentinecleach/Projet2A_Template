@@ -49,7 +49,7 @@ def check_password_strenght(password: str):
         raise Exception("Password must contain at least one number")
 
 
-def validate_username_password(username: str, password: str, user_dao: UserDao) -> User:
-    connected_user: Optional[User] = user_dao.get_user_by_name(username=username)
+#def validate_username_password(username: str, password: str, user_dao: UserDao) -> User:
+#    connected_user: Optional[User] = user_dao.get_user_by_name(username=username)
     ## Fait dans user_service donc pas nécéssaire?
-    return connected_user
+#    return connected_user
