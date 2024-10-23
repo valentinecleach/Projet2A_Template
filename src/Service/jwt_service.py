@@ -4,6 +4,8 @@
 import os
 import time
 
+# "pip install jwt" a ne pas oublier avant
+# et "pip install --upgrade PyJWT"
 import jwt
 from jwt import ExpiredSignatureError
 

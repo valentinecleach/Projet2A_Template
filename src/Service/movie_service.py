@@ -29,7 +29,8 @@ class MovieService:
 
     def get_movie_by_title(self, movie_title : str) -> Movie | None :
         """find a movie with its title"""
-        movie = 
+        #movie = 
+        pass
 
     def create_movies(self, known_for_data: List[Dict]) -> List[Movie]:
         """
@@ -72,7 +73,6 @@ class MovieService:
         pass
 
 # works from DAO ans from TMDB
-"""
+
 my_object = MovieService()
 print(my_object.get_movie_by_id(603))
-"""

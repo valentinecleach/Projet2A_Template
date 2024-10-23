@@ -28,7 +28,5 @@ def run_app():
 
     uvicorn.run(app, port=8000, host="localhost")
 
-# Lancement seulement si le fichier est exécuté directement
-if __name__ == "__main__":
-    run_app()
+
 
