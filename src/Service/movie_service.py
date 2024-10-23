@@ -26,6 +26,11 @@ class MovieService:
                 print(f"No Movie found with id :{movie_id}.")
                 return None
 
+
+    def get_movie_by_title(self, movie_title : str) -> Movie | None :
+        """find a movie with its title"""
+        movie = 
+
     def create_movies(self, known_for_data: List[Dict]) -> List[Movie]:
         """
         Transforms a list of dictionaries into a list of Movie objects.
