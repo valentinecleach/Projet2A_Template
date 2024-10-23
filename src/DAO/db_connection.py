@@ -52,7 +52,7 @@ class DBConnection(metaclass=Singleton):
             origin_country VARCHAR(255)[],
             original_language VARCHAR(255),
             original_title VARCHAR(255),
-            overview VARCHAR(255),
+            overview TEXT,
             popularity FLOAT,
             release_date DATE,
             revenue BIGINT,

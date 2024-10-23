@@ -7,8 +7,7 @@ from pydantic import BaseModel, Field, validator
 from src.Model.genre import Genre
 from src.Model.movie_collection import MovieCollection
 from src.Model.rating import Rating
-# Utils
-from src.Utils.utils import _is_valid_date
+
 
 
 class Movie(BaseModel):
@@ -57,7 +56,7 @@ class Movie(BaseModel):
 
     """
 
-    id_movie: int
+    id_movie: int = Field(..., gt=0, description="The id needs to be a positive integer")
     title: str
     belongs_to_collection: Optional[List[MovieCollection]] = None  # peut ne pas avoir de MovieCollection.
     budget: Optional[int]
@@ -86,5 +85,3 @@ class Movie(BaseModel):
 
     # def __get_pydantic_core_schema__# ?,
 
-
-# rapid test of the class

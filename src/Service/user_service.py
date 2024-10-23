@@ -46,7 +46,8 @@ class UserService:
             raise ValueError("Le nom d'utilisateur doit comporter au moins 5 caractères.")
         
         # Hashage du mdp
-        hashed_password = hash_password(password, create_salt(username))
+        salted_password = create_salt(username)
+        hashed_password = hash_password(password, salted_password)
   
         try:
             with self.db_connection.connection.cursor() as cursor:

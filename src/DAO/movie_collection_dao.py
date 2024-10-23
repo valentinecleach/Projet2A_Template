@@ -114,5 +114,5 @@ class MovieCollectionDao(metaclass=Singleton):
             return None
 
 # works : add a new Movie Collecction in the schema 
-mon_objet = MovieCollectionDao()
-mon_objet.insert(MovieCollection(id = 87096, name = 'Avatar Collection'))
+#mon_objet = MovieCollectionDao()
+#mon_objet.insert(MovieCollection(id = 87096, name = 'Avatar Collection'))

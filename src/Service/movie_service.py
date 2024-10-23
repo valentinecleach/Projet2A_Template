@@ -12,13 +12,15 @@ class MovieService:
 
     def get_movie_by_id(self, movie_id: int) -> Movie | None:
         """find movie by id"""
-        movie = None #self.movie_dao.get_by_id(movie_id)
+        movie = self.movie_dao.get_by_id(movie_id)
         if movie:
+            print("Movie get from database")
             return movie
         else:
             movie_from_tmdb = self.movie_tmdb.get_movie_by_id(movie_id)
             if movie_from_tmdb:
                 self.movie_dao.insert(movie_from_tmdb)
+                print("Movie get from TMDB")
                 return movie_from_tmdb
             else:
                 print(f"No Movie found with id :{movie_id}.")
@@ -64,6 +66,8 @@ class MovieService:
         """Filters the movie by the popularity"""
         pass
 
-
+# works from DAO ans from TMDB
+"""
 my_object = MovieService()
-my_object.get_movie_by_id(19995)
+print(my_object.get_movie_by_id(603))
+"""

@@ -95,6 +95,53 @@ class MovieDAO(metaclass=Singleton):
         except Exception as e:
             print("Insertion error: ", str(e))
 
+    def get_by_id(self, id_movie: int) -> Movie:
+        try:
+            with self.db_connection.connection as connection:
+                with connection.cursor(cursor_factory=DictCursor) as cursor:
+                    # Récupérer le film
+                    cursor.execute(
+                        """
+                        SELECT * FROM Movie
+                        WHERE id_movie = %s;
+                        """,
+                        (id_movie,),
+                    )
+                    result = cursor.fetchone()
+                    if result:
+                        movie_data = dict(result)
+                        cursor.execute(
+                            """
+                            SELECT g.id_genre, g.name_genre
+                            FROM link_movie_genre l
+                            JOIN Genre g ON l.id_genre = g.id_genre
+                            WHERE l.id_movie = %s;
+                            """,
+                            (id_movie,)
+                            )
+                        genres_result = cursor.fetchall()
+                        # Récupérer les collections associées
+                        cursor.execute(
+                            """
+                            SELECT mc.id_movie_collection, mc.name_movie_collection
+                            FROM link_movie_movie_collection lm
+                            JOIN Movie_Collection mc ON lm.id_movie_collection = mc.id_movie_collection
+                            WHERE lm.id_movie = %s;
+                            """,
+                            (id_movie,)
+                        )
+                        collections_result = cursor.fetchall()     
+
+                        movie_data['genres'] = [{'id': genre['id_genre'], 'name': genre['name_genre']} for genre in genres_result]
+                        movie_data['belongs_to_collection'] = [{'id': collection['id_movie_collection'], 'name': collection['name_movie_collection']} for collection in collections_result]
+
+                        return(Movie(**movie_data))
+                    else:
+                        print("No movie with this ID.")
+                        return None           
+        except Exception as e:
+            print("Error during recovery by id : ", str(e))
+            return None
 
     def update(self, movie: Movie, test: bool):
         try:
@@ -141,27 +188,7 @@ class MovieDAO(metaclass=Singleton):
             print("Delete error : ", str(e))
 
     # structure prise du TP
-    def get_by_id(self, id_movie: int, test: bool) -> Movie:
-        try:
-            with DBConnection(test).connection as connection:
-                # Creation of a cursor for the request
-                with connection.cursor(cursor_factory=DictCursor) as cursor:
-                    cursor.execute(
-                        """
-                        SELECT * FROM Movie
-                        WHERE id = %s;
-                        """,
-                        (id,),
-                    )
-                    result = cursor.fetchone()
-                if result:
-                    return Movie(**result)
-                else:
-                    print("NO Movie with this id.")
-                    return None
-        except Exception as e:
-            print("Error during recovery by id : ", str(e))
-            return None
+
 
     def get_by_name(self, name: str, test: bool) -> List[Movie] | None:
         try:
