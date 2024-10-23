@@ -1,71 +1,66 @@
-from typing import List  # , Optional
+from typing import List
+
+from pydantic import BaseModel
 
 from src.DAO.db_connection import DBConnection, Singleton
 from src.Model.connected_user import ConnectedUser
-
-from pydantic import BaseModel
 
 
 class UserDao(metaclass=Singleton):
     db_connection: DBConnection
 
     def __init__(self, db_connection: DBConnection):
-        """Constructor
-        """
+        """Constructor"""
         self.db_connection = DBConnection
 
     def insert(
         self,
         id_user: int,
-        name: str,
-        phone_number: str,
-        email: str,
-        gender: int,
-        date_of_birth: str,
+        username: str,
         hashed_password: str,
-        username: str = "",
-    ) -> ConnectedUser:
-        """Inserts a user into the database
-        """
+        date_of_birth: str,
+        gender: int,
+        first_name: str,
+        last_name: str,
+        email_address: str,
+        token: str,
+        phone_number: str = None,
+    ):
         values = (
             id_user,
-            name,
-            phone_number,
-            email,
-            gender,
-            date_of_birth,
-            hashed_password,
             username,
+            hashed_password,
+            date_of_birth,
+            gender,
+            first_name,
+            last_name,
+            email_address,
+            token,
+            phone_number,
         )
         user = self.get_user_by_id(id_user)
         if user:
             return user
         try:
             with DBConnection().connection.cursor() as cursor:
-                query = f"INSERT INTO users(id_user,name,phone_number,email,gender,date_of_birth, hashed_password,username) VALUES ({', '.join(['%s'] * len(values))})"
+                query = (
+                    "INSERT INTO users(id_user,username,hashed_password,date_of_birth,"
+                    "gender, first_name, last_name,email_address,token,phone_number) VALUES ("
+                    + ", ".join(["%s"] * len(values))
+                    + ")"
+                )
                 cursor.execute(query, values)
                 DBConnection().connection.commit()
-
         except Exception as e:
             print(f"Erreur lors de l'insertion dans users: {str(e)}")
             DBConnection().connection.rollback()
             return None
-        created = ConnectedUser(
-            id_user=id_user,
-            name=name,
-            username=username,
-            email=email,
-            gender=gender,
-            hashed_password=hashed_password,
-            date_of_birth=date_of_birth,
-            phone_number=phone_number,
-        )
-
+        created = ConnectedUser(values)
         return created
 
     def get_user_by_id(self, id_user) -> ConnectedUser:
         """
-        Fetches a single user by it's ID
+        Fetches a single user by its ID
         """
         try:
             query = "SELECT * FROM users WHERE id_user = %s"
@@ -88,11 +83,16 @@ class UserDao(metaclass=Singleton):
         """
         search_string = str(search_string).lower()
         try:
-            query = f"SELECT * FROM users WHERE LOWER(name) LIKE %s or LOWER(username) LIKE %s "
+            query = "SELECT * FROM users WHERE LOWER(username) LIKE %s OR LOWER(last_name) LIKE %s OR LOWER(first_name) LIKE %s"
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        query, ("%" + search_string + "%", "%" + search_string + "%")
+                        query,
+                        (
+                            "%" + search_string + "%",
+                            "%" + search_string + "%",
+                            "%" + search_string + "%",
+                        ),
                     )
                     results = cursor.fetchmany(size)
         except Exception as e:
@@ -100,12 +100,11 @@ class UserDao(metaclass=Singleton):
             return None
         if results:
             users_read = [ConnectedUser(**res) for res in results]
-        return users_read
+            return users_read
+        return None
 
-
+    # READ (Fetch all users)
     def get_all_users(self, limit: int = 10, offset: int = 0) -> List[ConnectedUser]:
-        """Fetch all users
-        """
         try:
             query = f"SELECT * FROM users LIMIT {max(0,limit)} OFFSET {max(offset,0)}"
             with DBConnection().connection as connection:
@@ -114,20 +113,23 @@ class UserDao(metaclass=Singleton):
                     results = cursor.fetchall()
         except Exception as e:
             print(f"Error while fetching FROM users: {e}")
+            return None
         if results:
             users_read = [ConnectedUser(**res) for res in results]
-        return users_read
+            return users_read
+        return None
 
     def update_user(
         self,
         id_user: int,
-        name=None,
-        email=None,
-        username=None,
-        hashed_password=None,
-        phone_number=None,
-        date_of_birth=None,
-        gender=None,
+        username: str = None,
+        hashed_password: str = None,
+        date_of_birth: str = None,
+        gender: int = None,
+        first_name: str = None,
+        last_name: str = None,
+        email_address: str = None,
+        phone_number: str = None,
     ):
         """
         Updates a user with new info. The info don't need to be rewritten
@@ -137,12 +139,12 @@ class UserDao(metaclass=Singleton):
             updates = []
             values = []
 
-            if name:
-                updates.append("name = %s")
-                values.append(name)
-            if email:
-                updates.append("email = %s")
-                values.append(email)
+            if username:
+                updates.append("username = %s")
+                values.append(username)
+            if email_address:
+                updates.append("email_address = %s")
+                values.append(email_address)
             if hashed_password:
                 updates.append("hashed_password = %s")
                 values.append(hashed_password)
@@ -155,9 +157,12 @@ class UserDao(metaclass=Singleton):
             if gender:
                 updates.append("gender = %s")
                 values.append(gender)
-            if username:
-                updates.append("username = %s")
-                values.append(username)
+            if first_name:
+                updates.append("first_name = %s")
+                values.append(first_name)
+            if last_name:
+                updates.append("last_name = %s")
+                values.append(last_name)
 
             # If there are no updates, return
             if not updates:
@@ -176,11 +181,10 @@ class UserDao(metaclass=Singleton):
         except Exception as e:
             print(f"Error updating user: {e}")
             DBConnection().connection.rollback()
+            return None
 
-    
     def delete_user(self, id_user):
-        """Delete a user
-        """
+        """Delete a user"""
         try:
             query = "DELETE FROM users WHERE id_user = %s"
             with DBConnection().connection as connection:
