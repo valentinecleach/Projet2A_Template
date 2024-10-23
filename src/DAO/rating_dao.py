@@ -21,12 +21,12 @@ class RatingDao(metaclass=Singleton):
                     res = cursor.execute(query, values)
                     DBConnection().connection.commit()
             except Exception as e:
-                    print(f"Erreur lors de l'insertion dans rating: {str(e)}")
-                    DBConnection().connection.rollback()
-                    return None
+                print(f"Erreur lors de l'insertion dans rating: {str(e)}")
+                DBConnection().connection.rollback()
+                return None
         if res:
             user = UserDao().get_user_by_id(id_user)
-            movie = MovieDao().get_user_by_id(id_movie)
+            movie = MovieDao().get_by_id(id_movie)
             rate = Rating(user=user, movie=movie, date=date, rating=rate)
             return rate
 
@@ -45,7 +45,7 @@ class RatingDao(metaclass=Singleton):
                     res = cursor.fetchone()
             if res:
                 user = UserDao().get_user_by_id(id_user)
-                movie = MovieDao().get_user_by_id(id_movie)
+                movie = MovieDao().get_by_id(id_movie)
                 rate = Rating(
                     user=user, movie=movie, date=res["date"], rating=res["rating"]
                 )
@@ -72,6 +72,7 @@ class RatingDao(metaclass=Singleton):
                     print("Record deleted successfully from ratings.")
         except Exception as e:
             print(f"Error while deleting from ratings: {e}")
+            DBConnection().connection.rollback()
             return None
 
     def get_overall_rating(id_movie: int):
@@ -89,7 +90,6 @@ class RatingDao(metaclass=Singleton):
             return None
         if res:
             return res["mean"]
-
 
     def count_rating(id_movie: int):
         try:

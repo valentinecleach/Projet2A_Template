@@ -129,7 +129,7 @@ class UserDao(metaclass=Singleton):
             if email:
                 updates.append("email = %s")
                 values.append(email)
-            if password:
+            if hashed_password:
                 updates.append("hashed_password = %s")
                 values.append(hashed_password)
             if phone_number:
@@ -160,6 +160,7 @@ class UserDao(metaclass=Singleton):
 
         except Exception as e:
             print(f"Error updating user: {e}")
+            DBConnection().connection.rollback()
 
     # DELETE
     def delete_user(self, id_user):
@@ -175,4 +176,5 @@ class UserDao(metaclass=Singleton):
                     print("Record deleted successfully FROM users.")
         except Exception as e:
             print(f"Error while deleting FROM users: {e}")
+            DBConnection().connection.rollback()
             return None
