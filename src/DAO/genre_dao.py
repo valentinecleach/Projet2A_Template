@@ -1,9 +1,11 @@
 from typing import Dict, List, Optional
+
 from psycopg2.extras import DictCursor
 
 from src.DAO.db_connection import DBConnection
 from src.DAO.singleton import Singleton
 from src.Model.genre import Genre
+
 
 class GenreDao(metaclass=Singleton):
     def __init__(self):
@@ -12,7 +14,7 @@ class GenreDao(metaclass=Singleton):
         # Create tables if don't exist
         self.db_connection.create_tables()
 
-    def insert(self, new_genre): 
+    def insert(self, new_genre):
         try:
             """
             Adds a Genre into the database.
@@ -30,7 +32,7 @@ class GenreDao(metaclass=Singleton):
                     # SQL resquest
                     cursor.execute(
                         "SELECT id_genre FROM genre WHERE id_genre = %s",
-                        (new_genre.id,)
+                        (new_genre.id,),
                     )
                     genre_exists = cursor.fetchone()
 
@@ -41,16 +43,14 @@ class GenreDao(metaclass=Singleton):
                                                 name_genre)
                             VALUES (%s, %s)
                             """,
-                            (
-                                new_genre.id,
-                                new_genre.name
-                            ),
+                            (new_genre.id, new_genre.name),
                         )
                     connection.commit()
                     print("Insertion successful : Genre added.")
         except Exception as e:
             print("Insertion error : ", str(e))
 
-# works : add a new genre in the schema 
-#mon_objet = GenreDao()
-#mon_objet.insert(Genre(id =  28, name = "Action"))
+
+# works : add a new genre in the schema
+# mon_objet = GenreDao()
+# mon_objet.insert(Genre(id =  28, name = "Action"))

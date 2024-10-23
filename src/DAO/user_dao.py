@@ -6,9 +6,12 @@ from src.Model.connected_user import ConnectedUser
 
 class UserDao(metaclass=Singleton):
 
-    def __init__(self, db_connection: DBConnection):
-        self.db_connection = db_connection
-    
+    def __init__(self):
+        # create a DB connection object
+        self.db_connection = DBConnection()
+        # Create tables if don't exist
+        self.db_connection.create_tables()
+
     def insert(
         self,
         id_user: int,
@@ -22,8 +25,7 @@ class UserDao(metaclass=Singleton):
         token: str,
         phone_number: str = None,
     ):
-        """insert
-        """
+        """insert"""
         values = (
             id_user,
             username,
@@ -39,6 +41,8 @@ class UserDao(metaclass=Singleton):
         user = self.get_user_by_id(id_user)
         if user:
             return user
+        if self.check_email_address(email_address) or self.username(username):
+            return None
         try:
             with DBConnection().connection.cursor() as cursor:
                 query = (
@@ -127,6 +131,40 @@ class UserDao(metaclass=Singleton):
             users_read = [ConnectedUser(**res) for res in results]
             return users_read
         return None
+
+    # check email_address, username
+    def check_email_address(self, email_address: str):
+        try:
+            query = f"SELECT * FROM users WHERE email_address = %s"
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(query, (email_address,))
+                    results = cursor.fetchone()
+        except Exception as e:
+            print(f"Error while fetching FROM users: {e}")
+            return None
+        if results:
+            print(f"{email_address} already exist in our database")
+            return None
+        else:
+            return 1
+
+    # check username
+    def check_username(self, username: str):
+        try:
+            query = f"SELECT * FROM users WHERE username = %s"
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(query, (username,))
+                    results = cursor.fetchone()
+        except Exception as e:
+            print(f"Error while fetching FROM users: {e}")
+            return None
+        if results:
+            print(f"{username} already exist in our database")
+            return None
+        else:
+            return 1
 
     # UPDATE
     def update_user(
