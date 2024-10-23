@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import List  # , Optional
 
 from src.DAO.db_connection import DBConnection, Singleton
@@ -15,17 +14,20 @@ class CommentDao(metaclass=Singleton):
             values = (id_user, id_movie, comment, date)
             try:
                 with DBConnection().connection.cursor() as cursor:
-                    query = f"INSERT INTO comment(id_user, id_movie, comments, date) VALUES ({', '.join(['%s'] * len(values))})"
-                    res = cursor.execute(query, values)
+                    query = "INSERT INTO comment(id_user, id_movie, comments, date) VALUES (%s, %s, %s, %s)"
+                    cursor.execute(query, values)
                     DBConnection().connection.commit()
+
+                user = UserDao().get_user_by_id(id_user)
+                movie = MovieDAO().get_by_id(id_movie)
+                return Comment(user=user, movie=movie, date=date, comment=comment)
+
             except Exception as e:
                 print(f"Erreur lors de l'insertion dans comment: {str(e)}")
                 DBConnection().connection.rollback()
                 return None
-        if res:
-            user = UserDao().get_user_by_id(id_user)
-            movie = MovieDAO().get_by_id(id_movie)
-            return Comment(user=user, movie=movie, date=date, comment=comment)
+
+        return None
 
     # READ (Fetch a specific user's comment)
     def get_user_comment(
