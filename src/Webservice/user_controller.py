@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from src.Model.user import user
 
 # Service
-from src.Service.password_service import check_password_strength, 
+from src.Service.password_service import check_password_strength
 
 # Webservice
 from src.Webservice.init_app import jwt_service, user_dao, user_service
