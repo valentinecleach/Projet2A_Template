@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials
 
 # Model
-from src.Model.user import user # API User??
+from src.Model.api_user import APIUser 
 from src.Model.jwt_response import JWTResponse
 if TYPE_CHECKING:
     from src.Model.user import user
@@ -21,7 +21,9 @@ user_router = APIRouter(prefix="/users", tags=["Users"])
 
 
 @user_router.post("/", status_code=status.HTTP_201_CREATED)
-def create_user(username: str, password: str) -> APIUser:
+def create_user(username: str, password: str, 
+                first_name: str, last_name: str, 
+                email_adress: str) -> APIUser:
     """
     Performs validation on the username and password
 
@@ -42,11 +44,21 @@ def create_user(username: str, password: str) -> APIUser:
     except Exception:
         raise HTTPException(status_code=400, detail="Password too weak") from Exception
     try:
-        user: User = user_service.sign_up(first_name = , last_name = , username = username, password = password, email_address = )
+        user: User = user_service.sign_up(first_name = first_name, 
+                                          last_name = last_name, 
+                                          username = username, 
+                                          password = password, 
+                                          email_address = email_address)
     except Exception as error:
         raise HTTPException(status_code=409, detail="Username already exists") from error
 
-    return APIUser(id=user.id, username=user.username)
+    return APIUser(id=user.id, 
+                   username=user.username, 
+                   first_name = first_name, 
+                   last_name= last_name, 
+                   password = password, 
+                   email_address=email_address)
+
 
 
 @user_router.post("/jwt", status_code=status.HTTP_201_CREATED)
