@@ -5,6 +5,9 @@ from src.Model.connected_user import ConnectedUser
 
 
 class UserDao(metaclass=Singleton):
+    """
+    User DAO..
+    """
 
     def __init__(self, db_connection: DBConnection):
         # create a DB connection object
@@ -38,11 +41,12 @@ class UserDao(metaclass=Singleton):
             token,
             phone_number,
         )
+        # User already exists
         user = self.get_user_by_id(id_user)
         if user:
-            return user
-        if self.check_email_address(email_address) or self.username(username):
-            return None
+            print("User alreadu exists")
+            Exception
+        # User doesn't exist
         try:
             with self.db_connection.connection as connection:
                 with connection.cursor() as cursor:

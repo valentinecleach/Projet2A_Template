@@ -1,22 +1,36 @@
 import pytest
 from psycopg2 import OperationalError, connect
 
-from src.DAO.db_connection import DBConnection
-from src.DAO.genre_dao import GenreDao
-from src.Model.genre import Genre
+from src.DAO.db_connection import \
+    DBConnection  # Assure-toi que cette importation est correcte
+from src.DAO.genre_dao import \
+    GenreDao  # Assure-toi que cette importation est correcte
+from src.Model.genre import \
+    Genre  # Assure-toi que l'importation du modèle Genre est correcte
 
+# Informations de connexion à la base de données
+DB_NAME = "id2464"
+DB_USER = "id2464"
+DB_PASSWORD = "id2464"
+DB_HOST = "sgbd-eleves.domensai.ecole"
+DB_PORT = "5432"
+DB_SCHEMA = "projet_info_test"  # Utilisation du schéma de test
 
 # Configuration pour la base de données de test
 @pytest.fixture(scope="module")
 def db_connection():
     try:
+        # Connexion à la base de données avec les paramètres donnés
         connection = connect(
-            dbname="test_db",
-            user="username",
-            password="password",
-            host="localhost",
-            port="5432"
+            dbname=DB_NAME,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            host=DB_HOST,
+            port=DB_PORT
         )
+        # Changement de schéma (optionnel si nécessaire)
+        with connection.cursor() as cursor:
+            cursor.execute(f'SET search_path TO {DB_SCHEMA};')
         yield connection
         connection.close()
     except OperationalError as e:
@@ -28,7 +42,7 @@ def genre_dao(db_connection):
 
 def test_insert_genre(genre_dao):
     # Créer un nouvel objet Genre
-    new_genre = Genre(id=28, name="Test Genre")
+    #new_genre = Genre(id=28, name="Test Genre")  # Assure-toi que la classe Genre est bien définie dans ton code
 
     # Appel de la méthode insert
     genre_dao.insert(new_genre)
@@ -47,6 +61,7 @@ def test_insert_genre(genre_dao):
         with connection.cursor() as cursor:
             cursor.execute("DELETE FROM Genre WHERE id_genre = %s", (28,))
             connection.commit()
+
 
 
 
