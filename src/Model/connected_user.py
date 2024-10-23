@@ -35,7 +35,7 @@ class ConnectedUser(User):
         # self.salt = create_salt(self.username)
         # self.hashed_password = hash_password(password, self.salt)
         # 2 lines above create a circular import
-        self.salt = salt
+        self.token = token
         self.hashed_password = hashed_password
 
         # Collections associated with the connected user

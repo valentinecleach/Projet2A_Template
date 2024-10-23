@@ -13,7 +13,7 @@ class UserDao(metaclass=Singleton):
         hashed_password: str,
         date_of_birth: str,
         gender: int,
-        first_name: str ,
+        first_name: str,
         last_name: str | None,
         email_address: str,
         token: str,
@@ -48,7 +48,18 @@ class UserDao(metaclass=Singleton):
             print(f"Erreur lors de l'insertion dans users: {str(e)}")
             DBConnection().connection.rollback()
             return None
-        created = ConnectedUser(values)
+        created = ConnectedUser(
+            id_user=id_user,
+            username=username,
+            hashed_password=hashed_password,
+            date_of_birth=date_of_birth,
+            gender=gender,
+            first_name=first_name,
+            last_name=last_name,
+            email_address=email_address,
+            token=token,
+            phone_number=phone_number,
+        )
         return created
 
     def get_user_by_id(self, id_user) -> ConnectedUser:
