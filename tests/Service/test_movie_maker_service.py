@@ -7,6 +7,8 @@ from src.Service.movie_maker_service import MovieMakerService
 def movie_maker_data():
     """Fixture pour fournir des données de collection de films."""
     return {
+        movie_maker_dao = 
+        movie_maker_tmdb = 
         
     }
 
