@@ -192,5 +192,6 @@ class DBConnection(metaclass=Singleton):
                 cursor.execute(create_table_Movie_Collection)
                 cursor.execute(create_table_Link_Movie_MovieCollection)
                 cursor.execute(create_table_Link_Movie_Genre)
-                cursor.execute(create_table_comment)
+                cursor.execute(create_table_users)
+                cursor.execute(create_table_comment)         
             connection.commit()
