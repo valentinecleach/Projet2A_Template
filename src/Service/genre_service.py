@@ -17,7 +17,10 @@ class GenreService:
         List[Genre]
             Une liste d'instances de Genre.
         """
-        return [Genre(id=item['id'], name=item['name']) for item in data]
+        if data:
+            return [Genre(id=item['id'], name=item['name']) for item in data]
+        else:
+            return []
 
 # code to prepare the doctests
 #genre_service = GenreService()
