@@ -10,6 +10,8 @@ class JWTBearer(HTTPBearer):
         super(JWTBearer, self).__init__(auto_error=auto_error)
 
     async def __call__(self, request: Request) -> HTTPAuthorizationCredentials:
+        # async = code asynchrone.
+        # on peut faire attendre la fontion call pendant un moment
         credentials: HTTPAuthorizationCredentials | None = await super(JWTBearer, self).__call__(request)
        
         if not credentials:
