@@ -22,6 +22,3 @@ def test_get_movie_maker_by_id_MovieMaker(self, id : int, test):
 def test_get_movie_maker_by_id_None(self, id : int, test):
     pass
     
-        
-
-def

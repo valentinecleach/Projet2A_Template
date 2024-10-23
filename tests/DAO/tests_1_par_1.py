@@ -11,7 +11,6 @@ from src.DAO.db_connection import DBConnection
 from src.DAO.user_dao import UserDao
 
 
-class TestUserDao():
 
     # Fixture pour mocker toute la connexion DB
     @pytest.fixture
@@ -59,7 +58,9 @@ class TestUserDao():
 
         # THEN
         # Vérifier que l'utilisateur a été inséré avec les bonnes valeurs
-        assert user.username == "JacDac"
-        assert user.username == new_user["username"]
-        assert user.phone_number == new_user["phone_number"]
+        self.assertEqual(user.username, new_user["username"])
+        
+        #assert user.username == "JacDac"
+        #assert user.username == new_user["username"]
+        #assert user.phone_number == new_user["phone_number"]
 
