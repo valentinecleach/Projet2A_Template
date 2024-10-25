@@ -1,6 +1,7 @@
 # src/DAO/movie_maker_dao.py
 from typing import List
 
+from src.DAO.tables_creation import TablesCreation
 from src.DAO.db_connection import DBConnection
 from src.DAO.singleton import Singleton
 from src.Model.movie_maker import MovieMaker
@@ -12,7 +13,7 @@ class MovieMakerDAO(metaclass=Singleton):
         # create a DB connection object
         self.db_connection = db_connection
         # Create tables if don't exist
-        self.db_connection.create_tables()
+        self.tables_creation = TablesCreation(db_connection)
 
     def insert(self, movie_maker: MovieMaker, test: bool) -> MovieMaker:
         """

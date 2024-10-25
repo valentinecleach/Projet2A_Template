@@ -1,8 +1,8 @@
 from typing import Dict, List, Optional
-
 from psycopg2.extras import DictCursor
 
 # DAO
+from src.DAO.tables_creation import TablesCreation
 from src.DAO.db_connection import DBConnection
 from src.DAO.genre_dao import GenreDao
 from src.DAO.link_movie_genre_dao import LinkMovieGenreDAO
@@ -20,11 +20,12 @@ class MovieDAO(metaclass=Singleton):
         # create a DB connection object
         self.db_connection = db_connection
         # Create tables if don't exist
-        self.db_connection.create_tables()
+        self.tables_creation = TablesCreation(db_connection)
         self.genre_dao = GenreDao(db_connection)
         self.movie_collection_dao = MovieCollectionDao(db_connection)
         self.link_movie_genre_dao = LinkMovieGenreDAO(db_connection)
         self.link_movie_movie_collection_dao = LinkMovieMovieCollectionDAO(db_connection)
+
 
     def insert(self, new_movie: Movie):
         try:

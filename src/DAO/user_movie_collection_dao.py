@@ -4,6 +4,7 @@ from psycopg2.extras import DictCursor
 
 from src.DAO.db_connection import DBConnection
 from src.DAO.singleton import Singleton
+from src.DAO.tables_creation import TablesCreation
 
 
 class UserMovieCollectionDao(metaclass=Singleton):
@@ -11,7 +12,7 @@ class UserMovieCollectionDao(metaclass=Singleton):
         # create a DB connection object
         self.db_connection = db_connection
         # Créer des tables si elles n'existent pas
-        self.db_connection.create_tables()
+        self.tables_creation = TablesCreation(db_connection)
 
     def insert(self, id_user : int, id_movie: int):
         date = datetime.now()

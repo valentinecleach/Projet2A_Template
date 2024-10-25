@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from src.DAO.tables_creation import TablesCreation
 from src.DAO.db_connection import DBConnection, Singleton
 from src.DAO.movie_dao import MovieDAO
 from src.DAO.user_dao import UserDao
@@ -13,7 +14,7 @@ class RatingDao(metaclass=Singleton):
         # create a DB connection object
         self.db_connection = db_connection
         # Create tables if don't exist
-        self.db_connection.create_tables()
+        self.tables_creation = TablesCreation(db_connection)
 
     # CREATE
     def insert(self, id_user: int, id_movie: int, rate: int):

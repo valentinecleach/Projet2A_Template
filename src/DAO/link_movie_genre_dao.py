@@ -4,6 +4,7 @@ from psycopg2.extras import DictCursor
 
 from src.DAO.db_connection import DBConnection
 from src.DAO.singleton import Singleton
+from src.DAO.tables_creation import TablesCreation
 
 
 class LinkMovieGenreDAO(metaclass=Singleton):
@@ -12,7 +13,7 @@ class LinkMovieGenreDAO(metaclass=Singleton):
         # create a DB connection object
         self.db_connection = db_connection
         # Create tables if don't exist
-        self.db_connection.create_tables()
+        self.tables_creation = TablesCreation(db_connection)
 
     def insert(self, id_movie, id_genre):
         try:

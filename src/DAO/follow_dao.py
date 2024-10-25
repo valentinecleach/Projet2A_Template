@@ -4,6 +4,7 @@ from typing import List  # , Optional
 from src.DAO.db_connection import DBConnection, Singleton
 from src.DAO.user_dao import UserDao
 from src.Model.connected_user import ConnectedUser
+from src.DAO.tables_creation import TablesCreation
 
 
 class FollowDao(metaclass=Singleton):
@@ -11,7 +12,7 @@ class FollowDao(metaclass=Singleton):
         # create a DB connection object
         self.db_connection = db_connection
         # Create tables if don't exist
-        self.db_connection.create_tables()
+        self.tables_creation = TablesCreation(db_connection)
 
     # CREATE
     def insert(self, id_user: int, id_user_followed: int):
