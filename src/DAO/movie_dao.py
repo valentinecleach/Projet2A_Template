@@ -204,28 +204,28 @@ class MovieDAO(metaclass=Singleton):
 
     def get_by_title(self, title: str) -> List[Movie] | None:
         try:
-            with self.db_connection.connection as connection:
-                with connection.cursor(cursor_factory=DictCursor) as cursor:
-                    cursor.execute(
-                        """
-                            SELECT id_movie FROM movie
-                            WHERE title ILIKE %s;
-                        """,
-                        (f"%{title}%",),
-                    )  # -- ILIKE for case-insensitive searching
-                    results = cursor.fetchall()  # [[603], [604]]
-                    print(results)
-            if len(results) > 0:
+            # Utiliser DBConnector pour exécuter la requête
+            query = """
+                SELECT id_movie FROM movie
+                WHERE title ILIKE %s;
+            """
+            results = self.db_connection.sql_query(query, (f"%{title}%",), return_type="all")
+            
+            if results:  # Vérifiez si des résultats ont été trouvés
                 movies = []
-                for id_movie in results:
-                    movies.append(self.get_by_id(id_movie[0]))
+                for result in results:
+                    # Récupérez chaque film par ID
+                    movie = self.get_by_id(result["id_movie"])
+                    if movie:
+                        movies.append(movie)
                 return movies
             else:
-                print("no movie with this title in the database")
+                print("No movie with this title in the database.")
                 return None
         except Exception as e:
-            print("Error during recovery by title : ", str(e))
+            print("Error during recovery by title:", str(e))
             return None
+
 
 
 # my_object = MovieDAO()

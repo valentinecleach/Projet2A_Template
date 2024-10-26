@@ -8,25 +8,15 @@ def avatar():
     "id_movie": 19995,
     "title": "Avatar",
     "adult": False,
-    "belongs_to_collection": {
-        "id": 87096,
-        "name": "Avatar Collection",
-        "poster_path": "/uO2yU3QiGHvVp0L5e5IatTVRkYk.jpg",
-        "backdrop_path": "/gxnvX9kF7RRUQYvB52dMLPgeJkt.jpg",
-    },
+    "belongs_to_collection": None ,
     "budget": 237000000,
-    "genre": [
-        {"id": 28, "name": "Action"},
-        {"id": 12, "name": "Adventure"},
-        {"id": 14, "name": "Fantasy"},
-        {"id": 878, "name": "Science Fiction"},
-    ],
+    "genre": None,
     "origine_country": ["US"],
     "original_language": "en",
     "original_title": "Avatar",
-    "overview": ("In the 22nd century, a paraplegic Marine is dispatched to the moon "
+    "overview": "In the 22nd century, a paraplegic Marine is dispatched to the moon "
                  "Pandora on a unique mission, but becomes torn between following orders "
-                 "and protecting an alien civilization."),
+                 "and protecting an alien civilization.",
     "popularity": 100.088,
     "release_date": "2009-12-15",
     "revenue": 2923706026,
