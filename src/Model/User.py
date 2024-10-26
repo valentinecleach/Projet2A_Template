@@ -1,4 +1,8 @@
-class User:
-    def __init__(self, ip_address: str):
-        """Initialisation"""
-        self.ip_address = ip_address  # Adresse IP de l'utilisateur
+from pydantic import BaseModel
+
+class User(BaseModel):
+    ip_address: str | None = None  
+
+    class Config:
+        # Options de configuration supplémentaires si nécessaire
+        pass

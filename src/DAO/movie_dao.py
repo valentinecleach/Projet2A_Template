@@ -51,7 +51,7 @@ class MovieDAO(metaclass=Singleton):
                             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
                                     %s, %s, %s, %s)
                             """
-                self.db_connection.sql_query(insert_query, (
+                values = (
                     new_movie.id_movie,
                     new_movie.title,
                     (
@@ -82,7 +82,8 @@ class MovieDAO(metaclass=Singleton):
                     new_movie.vote_average,
                     new_movie.vote_count,
                     new_movie.adult,
-                ))
+                )
+                self.db_connection.sql_query(insert_query, values )
                 print(f"Insertion movie successful: {new_movie.title}")
 
             # Insertion des genres

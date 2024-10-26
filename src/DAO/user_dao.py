@@ -8,91 +8,68 @@ class UserDao(metaclass=Singleton):
     """
     User DAO..
     """
-    db_connection: DBConnection
 
     def __init__(self, db_connection: DBConnector):
         # create a DB connection object
         self.db_connection = db_connection
 
-    def insert(
-        self,
-        id_user: int,
-        username: str,
-        hashed_password: str,
-        date_of_birth: str,
-        gender: int,
-        first_name: str,
-        last_name: str | None,
-        email_address: str,
-        token: str,
-        phone_number: str = None,
-    ) -> ConnectedUser | None:
+    def insert(self,new_user) -> ConnectedUser | None:
         """insert a Connected User into the database"""
-        values = (
-            id_user,
-            username,
-            hashed_password,
-            date_of_birth,
-            gender,
-            first_name,
-            last_name,
-            email_address,
-            token,
-            phone_number,
-        )
+        try : 
         # User already exists
-        user = self.get_user_by_id(id_user)
-        if user:
-            print("User alreadu exists")
-            Exception
-        # User doesn't exist
-        try:
-            with self.db_connection.connection as connection:
-                with connection.cursor() as cursor:
-                    query = (
-                        "INSERT INTO users(id_user,username,hashed_password,date_of_birth,"
-                        "gender, first_name, last_name,email_address,token,phone_number) VALUES ("
-                        + ", ".join(["%s"] * len(values))
-                        + ")"
-                    )
-                cursor.execute(query, values)
-                self.db_connection.connection.commit()
-        except Exception as e:
-            print(f"Erreur lors de l'insertion dans users: {str(e)}")
-            self.db_connection.connection.rollback()
-            return None
-        created = ConnectedUser(
-            id_user=id_user,
-            username=username,
-            hashed_password=hashed_password,
-            date_of_birth=date_of_birth,
-            gender=gender,
-            first_name=first_name,
-            last_name=last_name,
-            email_address=email_address,
-            token=token,
-            phone_number=phone_number,
-        )
-        return created
+        query = """
+                SELECT COUNT(*)
+                FROM users
+                WHERE id_user = %s;
+            """
+        result = result = self.db_connection.sql_query(query, (new_user.id_user))
+        user_exist = result["count"] > 0  # True si film, False sinon
 
-    def get_user_by_id(self, id_user) -> ConnectedUser:
-        """
-        Fetches a single user by its ID
-        """
+        if not user_exist:
+            print(f"Inserting User : {new_user.username}")
+            insert_query = """
+                        INSERT INTO users (id_user, username, hashed_password,
+                                        date_of_birth, gender, first_name, last_name,
+                                        email_address, token, phone_number) 
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """
+            values= (
+                new_user.id_user,
+                new_user.username,
+                new_user.hashed_password,
+                new_user.date_of_birth,
+                new_user.gender,
+                new_user.first_name,
+                new_user.last_name,
+                new_user.email_address,
+                new_user.token,
+                (
+                    new_user.phone_number
+                    if new_user.phone_number is not None
+                    else None
+                ),
+            )
+            self.db_connection.sql_query(insert_query, values )
+            print(f"Insertion user successful: {new_user.username}")
+
+        except Exception as e:
+            print(f"Insertion error: {str(e)}")
+
+
+    def get_user_by_id(self, id_user: int) -> ConnectedUser | None:
+        """Fetches a single user by its ID."""
         try:
             query = "SELECT * FROM users WHERE id_user = %s"
-            with self.db_connection.connection as connection:
-                with connection.cursor() as cursor:
-                    cursor.execute(query, (id_user,))
-                    res = cursor.fetchone()
+            result = self.db_connection.sql_query(query, (id_user,), return_type="one")
         except Exception as e:
             print(f"Error while fetching FROM users: {e}")
             return None
-        if res:
-            user_read = ConnectedUser(**res)
-            return user_read
+        if result:
+            user = dict(result)
+            return ConnectedUser(**user)  # Crée et retourne l'utilisateur connecté
         else:
-            return None
+            return None  # Aucun utilisateur trouvé
+
 
     def get_user_by_name(self, search_string, size=10) -> List[ConnectedUser]:
         """
