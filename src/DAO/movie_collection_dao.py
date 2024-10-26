@@ -2,54 +2,44 @@ from typing import Dict, List, Optional
 
 from psycopg2.extras import DictCursor
 
-from src.DAO.db_connection import DBConnection
+from src.DAO.db_connection import DBConnector
 from src.DAO.singleton import Singleton
 from src.Model.movie_collection import MovieCollection
-from src.DAO.tables_creation import TablesCreation
 
 
 class MovieCollectionDao(metaclass=Singleton):
-    def __init__(self, db_connection: DBConnection):
+    def __init__(self, db_connection: DBConnector):
         # create a DB connection object
         self.db_connection = db_connection
-        # Create tables if don't exist
-        self.tables_creation = TablesCreation(db_connection)
+
 
     def insert(self, new_movie_collection):
         try:
             """
-            Adds a Genre into the database.
+            Adds a Movie Collection into the database.
 
             Parameters:
             -----------
-            new_genre : Genre
-                The Genre to add in the schema
-
+            new_movie_collection : MovieCollection
+                The Movie Collection to add in the schema.
             """
-            # Connexion
-            with self.db_connection.connection as connection:
-                # Creation of a cursor for the request
-                with connection.cursor() as cursor:
-                    cursor.execute(
-                        "SELECT id_movie_collection FROM movie_collection WHERE id_movie_collection = %s",
-                        (new_movie_collection.id,),
-                    )
-                    movie_collection__exists = cursor.fetchone()
+            # Vérification de l'existence de la collection
+            query = "SELECT id_movie_collection FROM movie_collection WHERE id_movie_collection = %s;"
+            movie_collection_exists = self.db_connection.sql_query(query, (new_movie_collection.id,), return_type="one")
 
-                    if movie_collection__exists is None:
-                        # SQL resquest
-                        cursor.execute(
-                            """
-                            INSERT INTO movie_collection (id_movie_collection ,
-                                                name_movie_collection)
-                            VALUES (%s, %s)
-                            """,
-                            (new_movie_collection.id, new_movie_collection.name),
-                        )
-                    connection.commit()
-                    print("Insertion successful : Movie Collection added.")
+            if movie_collection_exists is None:
+                insert_query = """
+                    INSERT INTO movie_collection (id_movie_collection, name_movie_collection)
+                    VALUES (%s, %s);
+                """
+                self.db_connection.sql_query(insert_query, (new_movie_collection.id, new_movie_collection.name,))
+                print("Insertion successful: Movie Collection added.")
+            else:
+                print(f"Movie Collection with id {new_movie_collection.id} already exists.")
+
         except Exception as e:
-            print("Insertion error : ", str(e))
+            print("Insertion error: ", str(e))
+
 
     #######################################################################################
     # READ (Fetch a specific user's comment)

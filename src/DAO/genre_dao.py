@@ -2,19 +2,15 @@ from typing import Dict, List, Optional
 
 from psycopg2.extras import DictCursor
 
-from src.DAO.db_connection import DBConnection
+from src.DAO.db_connection import DBConnector
 from src.DAO.singleton import Singleton
 from src.Model.genre import Genre
-from src.DAO.tables_creation import TablesCreation
 
 
 class GenreDao(metaclass=Singleton):
-    def __init__(self, db_connection: DBConnection):
+    def __init__(self, db_connection: DBConnector):
         # create a DB connection object
         self.db_connection = db_connection
-        # Créer des tables si elles n'existent pas
-        self.tables_creation = TablesCreation(db_connection)
-
 
     def insert(self, new_genre: Genre): 
         try:
@@ -26,31 +22,23 @@ class GenreDao(metaclass=Singleton):
             new_genre : Genre
                 Le genre à ajouter dans le schéma.
             """
-            # Connexion
-            with self.db_connection.connection as connection:
-                # Création d'un curseur pour la requête
-                with connection.cursor() as cursor:
-                    # SQL resquest
-                    cursor.execute(
-                        "SELECT id_genre FROM genre WHERE id_genre = %s",
-                        (new_genre.id,),
-                    )
-                    genre_exists = cursor.fetchone()
+            # Vérification de l'existence du genre
+            query = "SELECT id_genre FROM genre WHERE id_genre = %s;"
+            genre_exists = self.db_connection.sql_query(query, (new_genre.id,), return_type="one")
 
-                    if genre_exists is None:
-                        cursor.execute(
-                            """
-                            INSERT INTO Genre (id_genre, name_genre)
-                            VALUES (%s, %s)
-                            """,
-                            (new_genre.id, new_genre.name),
-                        )
-                        connection.commit()
-                        print("Insertion successful : Genre added.")
-                    else:
-                        print(f"Genre with id {new_genre.id} already exists.")
+            if genre_exists is None:
+                insert_query = """
+                    INSERT INTO Genre (id_genre, name_genre)
+                    VALUES (%s, %s);
+                """
+                self.db_connection.sql_query(insert_query, (new_genre.id, new_genre.name,))
+                print("Insertion successful: Genre added.")
+            else:
+                print(f"Genre with id {new_genre.id} already exists.")
+
         except Exception as e:
-            print("Insertion error : ", str(e))
+            print("Insertion error: ", str(e))
+
 
 
 # works : add a new genre in the schema

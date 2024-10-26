@@ -3,11 +3,11 @@ from typing import Dict, List
 from src.DAO.movie_dao import MovieDAO
 from src.Model.movie import Movie
 from src.TMDB.movie_tmdb import MovieTMDB
-from src.DAO.db_connection import DBConnection
+from src.DAO.db_connection import DBConnector
 
 class MovieService:
     def __init__(self):
-        db_connection_instance = DBConnection()
+        db_connection_instance = DBConnector()
         self.movie_dao = MovieDAO(db_connection= db_connection_instance)
         self.movie_tmdb = MovieTMDB()
 
@@ -88,6 +88,6 @@ class MovieService:
 # works from DAO ans from TMDB
 
 my_object = MovieService()
-#print(my_object.get_movie_by_id(604))
-print(my_object.get_movie_by_title('Avatar'))
+print(my_object.get_movie_by_id(884))
+#print(my_object.get_movie_by_title('Avatar'))
 

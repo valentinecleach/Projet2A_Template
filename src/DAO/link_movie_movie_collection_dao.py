@@ -2,46 +2,36 @@ from typing import Dict, List, Optional
 
 from psycopg2.extras import DictCursor
 
-from src.DAO.db_connection import DBConnection
+from src.DAO.db_connection import DBConnector
 from src.DAO.singleton import Singleton
-from src.DAO.tables_creation import TablesCreation
 
 
 class LinkMovieMovieCollectionDAO(metaclass=Singleton):
 
-    def __init__(self, db_connection: DBConnection):
+    def __init__(self, db_connection: DBConnector):
         # create a DB connection object
         self.db_connection = db_connection
-        # Create tables if don't exist
-        self.tables_creation = TablesCreation(db_connection)
 
-    def insert(self, id_movie, id_movie_collection):
+    def insert(self, id_movie: int, id_movie_collection: int):
         try:
+            # Vérification de l'existence du lien
+            query = """
+                SELECT COUNT(*) FROM link_movie_movie_collection 
+                WHERE id_movie = %s AND id_movie_collection = %s;
+            """
+            result = self.db_connection.sql_query(query, (id_movie, id_movie_collection,), return_type="one")
+            link_exists = result["count"] > 0 if result else False
 
-            # Connexion
-            with self.db_connection.connection as connection:
-                # Creation of a cursor for the request
-                with connection.cursor() as cursor:
-                    # SQL resquest
-                    cursor.execute(
-                        """
-                        SELECT COUNT(*) FROM link_movie_movie_collection 
-                        WHERE id_movie = %s AND id_movie_collection = %s
-                        """,
-                        (id_movie, id_movie_collection),
-                    )
-                    result = cursor.fetchone()
-                    link_exists = result["count"] > 0
+            if not link_exists:
+                print("Inserting link between movie and movie collection.")
+                insert_query = """
+                    INSERT INTO link_movie_movie_collection (id_movie, id_movie_collection)
+                    VALUES (%s, %s);
+                """
+                self.db_connection.sql_query(insert_query, (id_movie, id_movie_collection,))
+                print("Insertion successful: Link Movie Movie Collection added.")
+            else:
+                print("Link already exists.")
 
-                    if not link_exists:
-                        cursor.execute(
-                            """
-                        INSERT INTO link_movie_movie_collection (id_movie, id_movie_collection)
-                        VALUES (%s, %s)
-                        """,
-                            (id_movie, id_movie_collection),
-                        )
-                    connection.commit()
-                    print("Insertion successful : Link Movie Movie Collection added.")
         except Exception as e:
-            print("Insertion error : ", str(e))
+            print("Insertion error: ", str(e))

@@ -2,50 +2,38 @@ from typing import Dict, List, Optional
 
 from psycopg2.extras import DictCursor
 
-from src.DAO.db_connection import DBConnection
+from src.DAO.db_connection import DBConnector
 from src.DAO.singleton import Singleton
-from src.DAO.tables_creation import TablesCreation
 
 
 class LinkMovieGenreDAO(metaclass=Singleton):
 
-    def __init__(self, db_connection: DBConnection):
+    def __init__(self, db_connection: DBConnector):
         # create a DB connection object
         self.db_connection = db_connection
-        # Create tables if don't exist
-        self.tables_creation = TablesCreation(db_connection)
 
-    def insert(self, id_movie, id_genre):
+    def insert(self, id_movie: int, id_genre: int):
         try:
+            # Vérification de l'existence du lien
+            query = """
+                SELECT COUNT(*) FROM link_movie_genre 
+                WHERE id_movie = %s AND id_genre = %s;
+            """
+            result = self.db_connection.sql_query(query, (id_movie, id_genre,), return_type="one")
+            link_exists = result["count"] > 0 if result else False
+            print(link_exists)
 
-            # Connexion
-            with self.db_connection.connection as connection:
-                # Creation of a cursor for the request
-                with connection.cursor() as cursor:
-                    # SQL resquest
-                    cursor.execute(
-                        """
-                        SELECT COUNT(*) FROM link_movie_genre 
-                        WHERE id_movie = %s AND id_genre = %s
-                        """,
-                        (id_movie, id_genre),
-                    )
-                    result = cursor.fetchone()
-                    link_exists = result["count"] > 0
-                    print(link_exists)
+            if not link_exists:
+                print("Inserting link between movie and genre.")
+                insert_query = """
+                    INSERT INTO link_movie_genre (id_movie, id_genre)
+                    VALUES (%s, %s);
+                """
+                self.db_connection.sql_query(insert_query, (id_movie, id_genre,))
+                print("Insertion successful: Link Movie Genre added.")
+            else:
+                print("Link already exists.")
 
-                    if not link_exists:
-                        cursor.execute(
-                            """
-                        INSERT INTO link_movie_genre (id_movie, id_genre)
-                        VALUES (%s, %s)
-                        """,
-                            (
-                                id_movie,
-                                id_genre,
-                            ),  # Assurez-vous que genre.id_genre existe
-                        )
-                    connection.commit()
-                    print("Insertion successful : Link Movie Genre added.")
         except Exception as e:
-            print("Insertion error : ", str(e))
+            print("Insertion error: ", str(e))
+
