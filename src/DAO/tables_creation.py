@@ -123,11 +123,11 @@ class TablesCreation(metaclass=Singleton):
         CREATE TABLE IF NOT EXISTS follower (
             id_user INTEGER NOT NULL,
             id_user_followed INTEGER NOT NULL,
-            date VARCHAR(255) NOT NULL,
+            date DATE NOT NULL,
 
             PRIMARY KEY (id_user, id_user_followed),
-            FOREIGN KEY (id_user) REFERENCES user(id_user) ON DELETE CASCADE,
-            FOREIGN KEY (id_user_followed) REFERENCES user(id_user) ON DELETE CASCADE
+            FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE,
+            FOREIGN KEY (id_user_followed) REFERENCES users(id_user) ON DELETE CASCADE
         );
 
         """
@@ -157,7 +157,7 @@ class TablesCreation(metaclass=Singleton):
         CREATE TABLE IF NOT EXISTS user_movie_collection (
             id_user INTEGER NOT NULL,
             id_movie INTEGER NOT NULL,
-            date VARCHAR(255) NOT NULL,
+            date DATE NOT NULL,
 
             PRIMARY KEY (id_movie, id_user), 
             FOREIGN KEY (id_movie) REFERENCES movie(id_movie) ON DELETE CASCADE,
@@ -172,9 +172,9 @@ class TablesCreation(metaclass=Singleton):
             create_table_Link_Movie_MovieCollection,
             create_table_Link_Movie_Genre,
             create_table_users,
-            create_table_comment
-            create_table_Follower
-            create_table_User_Movie_Collection
+            create_table_comment,
+            create_table_Follower,
+            create_table_User_Movie_Collection,
         ]
         for query in create_queries:
             self.db_connection.sql_query(query)
