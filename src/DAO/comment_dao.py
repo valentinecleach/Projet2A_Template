@@ -5,7 +5,6 @@ from src.DAO.db_connection import DBConnector
 from src.DAO.movie_dao import MovieDAO
 from src.DAO.user_dao import UserDao
 from src.Model.comment import Comment
-from src.DAO.tables_creation import TablesCreation
 
 
 class CommentDao(metaclass=Singleton):
