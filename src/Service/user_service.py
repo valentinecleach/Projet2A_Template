@@ -2,10 +2,14 @@ import bcrypt  # Assurez-vous d'avoir bcrypt installé pour le hachage
 import psycopg2  # Assurez-vous d'avoir psycopg2 installé pour la connexion à PostgreSQL
 
 # DAO
-from src.DAO.db_connection import DBConnection
-from src.Model.connected_user import ConnectedUser
+from src.DAO.db_connection import DBConnector
+from src.DAO.user_dao import UserDAO
+from src.DAO.user_favorites import UserFavorites
+from src.DAO.user_follow import UserFollow
+
 
 # Model
+from src.Model.connected_user import ConnectedUser
 from src.Model.movie import Movie
 from src.Model.user import User
 
@@ -18,7 +22,7 @@ from src.Service.password_service import (
 
 
 class UserService:
-    def __init__(self, db_connection: DBConnection):
+    def __init__(self, db_connection: DBConnector):
         self.db_connection = db_connection  # Connexion à la base de données
 
     def sign_up(

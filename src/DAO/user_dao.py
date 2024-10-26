@@ -70,7 +70,7 @@ class UserDao(metaclass=Singleton):
         else:
             return None  # Aucun utilisateur trouvé
 
-
+############################################################################################################
     def get_user_by_name(self, search_string, size=10) -> List[ConnectedUser]:
         """
         Fetch some users by their name

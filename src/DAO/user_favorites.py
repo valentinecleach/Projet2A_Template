@@ -4,15 +4,15 @@ class UserFavorites:
     def __init__(self, db_connection):
         self.db_connection = db_connection
 
-    def insert(self, user_id: int, movie_id: int):
+    def insert(self, id_user: int, id_movie: int):
         """Insert a favorite movie for a user if it doesn't already exist."""
         try:
             # Vérification de l'existence de la relation
             query = """
-                SELECT COUNT(*) as count FROM user_favorites 
-                WHERE user_id = %s AND movie_id = %s;
+                SELECT COUNT(*) as count FROM user_movie_collection 
+                WHERE id_user = %s AND id_movie = %s;
             """
-            result = self.db_connection.sql_query(query, (user_id, movie_id,), return_type="one")
+            result = self.db_connection.sql_query(query, (id_user,id_movie,), return_type="one")
             
             # Vérifiez si la relation existe
             favorite_exists = result["count"] > 0 if result else False
@@ -20,10 +20,10 @@ class UserFavorites:
             if not favorite_exists:
                 print("Inserting favorite movie.")
                 insert_query = """
-                    INSERT INTO user_favorites (user_id, movie_id)
+                    INSERT INTO user_movie_collection (id_user,id_movie)
                     VALUES (%s, %s);
                 """
-                self.db_connection.sql_query(insert_query, (user_id, movie_id,))
+                self.db_connection.sql_query(insert_query, (id_user, id_movie,))
                 print("Insertion successful: Movie added to favorites.")
             else:
                 print("Favorite movie already exists, no insertion performed.")
