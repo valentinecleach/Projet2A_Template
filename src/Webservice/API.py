@@ -15,23 +15,17 @@ from src.Webservice.movie_controller import movie_router
 db_connection = DBConnector()  # Vous pouvez passer des paramètres ici si nécessaire
 creation_object = TablesCreation(db_connection)
 
-app = FastAPI(title="Projet Info 2A", description="Projet info")
-
-# Inclure les routeurs
-app.include_router(movie_router)
-
-
-
 
 def run_app():
 
     app = FastAPI(title="Projet Info 2A", description="Projet info")
 
-    @app.get("/", include_in_schema=False)  # Ne pas inclure cette route dans la documentation
+    @app.get("/", include_in_schema=False)  
     async def redirect_to_docs(request: Request):
         return RedirectResponse(url="/docs")
-    #app.include_router(user_router)
 
+    #router
+    #app.include_router(user_router)
     app.include_router(movie_router)
 
     uvicorn.run(app, port=8000, host="localhost")

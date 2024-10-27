@@ -10,7 +10,7 @@ load_dotenv()
 from src.Model.api_user import APIUser 
 from src.Model.jwt_response import JWTResponse
 if TYPE_CHECKING:
-    from src.Model.user import user
+    from src.Model.connected_user import ConnectedUser
 
 # Service
 from src.Service.password_service import check_password_strenght

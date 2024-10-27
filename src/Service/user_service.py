@@ -23,7 +23,7 @@ from src.Service.password_service import (
 
 class UserService:
     def __init__(self, db_connection: DBConnector):
-        self.db_connection = db_connection  # Connexion à la base de données
+        self.db_connection = db_connection  
 
     def sign_up(
         self,
