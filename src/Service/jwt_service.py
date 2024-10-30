@@ -7,7 +7,7 @@ import time
 # "pip install jwt" a ne pas oublier avant
 # et "pip install --upgrade PyJWT"
 import jwt
-from jwt import ExpiredSignatureError
+#from jwt.exceptions import ExpiredSignatureError
 
 # Model
 from src.Model.jwt_response import JWTResponse
@@ -47,5 +47,5 @@ class JwtService:
         """
         decoded_jwt = self.decode_jwt(token)
         if decoded_jwt["expiry_timestamp"] < time.time():
-            raise ExpiredSignatureError("Expired JWT")
+            raise jwt.ExpiredSignatureError("Expired JWT")
         return decoded_jwt["user_id"]

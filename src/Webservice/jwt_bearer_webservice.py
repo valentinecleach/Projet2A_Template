@@ -1,6 +1,8 @@
 from fastapi import HTTPException, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from jwt import DecodeError, ExpiredSignatureError
+
+import jwt 
+#from jwt import DecodeError, ExpiredSignatureError
 
 from src.Webservice.init_app import jwt_service
 
@@ -21,9 +23,9 @@ class JWTBearer(HTTPBearer):
             raise HTTPException(status_code=403, detail="Invalid authentication scheme.")
         try:
             jwt_service.validate_user_jwt(credentials.credentials)
-        except ExpiredSignatureError as e:
+        except jwt.ExpiredSignatureError as e:
             raise HTTPException(status_code=403, detail="Expired token") from e
-        except DecodeError as e:
+        except jwt.DecodeError as e:
             raise HTTPException(status_code=403, detail="Error decoding token") from e
         except Exception as e:
             raise HTTPException(status_code=403, detail="Unknown error") from e

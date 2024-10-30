@@ -3,9 +3,9 @@ import psycopg2  # Assurez-vous d'avoir psycopg2 installé pour la connexion à 
 
 # DAO
 from src.DAO.db_connection import DBConnector
-from src.DAO.user_dao import UserDAO
-from src.DAO.user_favorites import UserFavorites
-from src.DAO.user_follow import UserFollow
+from src.DAO.user_dao import UserDao
+from src.DAO.user_favorites import UserFavoritesDAO
+from src.DAO.user_follow import UserFollowDAO
 
 
 # Model

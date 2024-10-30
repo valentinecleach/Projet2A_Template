@@ -10,10 +10,10 @@ from src.DAO.db_connection import DBConnector
 from src.DAO.tables_creation import TablesCreation
 
 from src.Webservice.movie_controller import movie_router
-#from src.Webservice.user_controller import user_router
+from src.Webservice.user_controller import user_router
 
-db_connection = DBConnector()  # Vous pouvez passer des paramètres ici si nécessaire
-creation_object = TablesCreation(db_connection)
+db_connection = DBConnector()  
+creation_object = TablesCreation(db_connection) # creation of all table before start
 
 
 def run_app():
@@ -24,8 +24,7 @@ def run_app():
     async def redirect_to_docs(request: Request):
         return RedirectResponse(url="/docs")
 
-    #router
-    #app.include_router(user_router)
+    app.include_router(user_router)
     app.include_router(movie_router)
 
     uvicorn.run(app, port=8000, host="localhost")

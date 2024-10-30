@@ -2,6 +2,7 @@ from typing import List
 
 from src.DAO.db_connection import DBConnector
 from src.Model.connected_user import ConnectedUser
+from src.DAO.singleton import Singleton
 
 
 class UserDao(metaclass=Singleton):
@@ -16,41 +17,41 @@ class UserDao(metaclass=Singleton):
     def insert(self,new_user) -> ConnectedUser | None:
         """insert a Connected User into the database"""
         try : 
-        # User already exists
-        query = """
-                SELECT COUNT(*)
-                FROM users
-                WHERE id_user = %s;
-            """
-        result = result = self.db_connection.sql_query(query, (new_user.id_user))
-        user_exist = result["count"] > 0  # True si film, False sinon
+            # User already exists
+            query = """
+                    SELECT COUNT(*)
+                    FROM users
+                    WHERE id_user = %s;
+                """
+            result = result = self.db_connection.sql_query(query, (new_user.id_user))
+            user_exist = result["count"] > 0  # True si film, False sinon
 
-        if not user_exist:
-            print(f"Inserting User : {new_user.username}")
-            insert_query = """
-                        INSERT INTO users (id_user, username, hashed_password,
-                                        date_of_birth, gender, first_name, last_name,
-                                        email_address, token, phone_number) 
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """
-            values= (
-                new_user.id_user,
-                new_user.username,
-                new_user.hashed_password,
-                new_user.date_of_birth,
-                new_user.gender,
-                new_user.first_name,
-                new_user.last_name,
-                new_user.email_address,
-                new_user.token,
-                (
-                    new_user.phone_number
-                    if new_user.phone_number is not None
-                    else None
-                ),
-            )
-            self.db_connection.sql_query(insert_query, values )
-            print(f"Insertion user successful: {new_user.username}")
+            if not user_exist:
+                print(f"Inserting User : {new_user.username}")
+                insert_query = """
+                            INSERT INTO users (id_user, username, hashed_password,
+                                            date_of_birth, gender, first_name, last_name,
+                                            email_address, token, phone_number) 
+                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """
+                values= (
+                    new_user.id_user,
+                    new_user.username,
+                    new_user.hashed_password,
+                    new_user.date_of_birth,
+                    new_user.gender,
+                    new_user.first_name,
+                    new_user.last_name,
+                    new_user.email_address,
+                    new_user.token,
+                    (
+                        new_user.phone_number
+                        if new_user.phone_number is not None
+                        else None
+                    ),
+                )
+                self.db_connection.sql_query(insert_query, values )
+                print(f"Insertion user successful: {new_user.username}")
 
         except Exception as e:
             print(f"Insertion error: {str(e)}")
