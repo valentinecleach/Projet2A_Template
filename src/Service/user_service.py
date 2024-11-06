@@ -1,5 +1,6 @@
 import bcrypt  # Assurez-vous d'avoir bcrypt installé pour le hachage
 import psycopg2  # Assurez-vous d'avoir psycopg2 installé pour la connexion à PostgreSQL
+from datetime import date
 
 # DAO
 from src.DAO.db_connection import DBConnector
@@ -20,10 +21,17 @@ from src.Service.password_service import (
     hash_password,
 )
 
-
 class UserService:
     def __init__(self, db_connection: DBConnector):
         self.db_connection = db_connection  
+        self.user_dao = UserDao(db_connection= db_connection_instance)
+
+    def check_valid_username(username):
+        if len(username) <= 5:
+            raise ValueError("Username must contain at least 5 characters")
+        existing_user = user_dao.get_user_by_name(username)
+        if existing_user is None:
+            raise ValueError("This username is already taken.")
 
     def sign_up(
         self,
@@ -31,28 +39,25 @@ class UserService:
         last_name: str,
         username: str,
         password: str,
+        gender : int,
+        date_of_birth : date,
         email_address: str,
+        phone_number: str | None = None  # Optionnel
     ):
         """Permet de créer un compte utilisateur."""
 
-        # Validation de la longueur du nom d'utilisateur
-        if len(username) < 5:
-            raise ValueError(
-                "Le nom d'utilisateur doit comporter au moins 5 caractères."
-            )
-
-        # Validation du mot de passe
+        check_valid_username(username)
         check_password_strenght(password)
 
-        # Hashage du mdp
+        salt = create_salt(username)
         hashed_password = hash_password(password, create_salt(username))
 
         # Préparation des valeurs à insérer
-        values = (first_name, last_name, username, hashed_password, email_address)
+        values = (username, first_name, last_name, salt[-1], hashed_password, email_address, date_of_birth, phone_number, gender)
 
         try:
             # Utilisation de la méthode insert de DBConnection
-            self.db_connection.insert("users", values)
+            self.user_dao.insert("users", values)
             print(f"Utilisateur '{username}' inscrit avec succès.")
         except Exception as e:
             print(f"Erreur lors de l'inscription : {str(e)}")
@@ -86,7 +91,7 @@ class UserService:
                     # Retourner une instance de ConnectedUser avec les informations pertinentes
                     return ConnectedUser(
                         username=username, ip_address="placeholder_ip"
-                    )  # Remplacez par l'adresse IP réelle
+                    ) 
                 else:
                     print(
                         "Échec de la connexion : nom d'utilisateur ou mot de passe incorrect."

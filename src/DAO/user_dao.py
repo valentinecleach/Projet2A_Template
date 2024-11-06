@@ -31,7 +31,7 @@ class UserDao(metaclass=Singleton):
                 insert_query = """
                             INSERT INTO users (id_user, username, hashed_password,
                                             date_of_birth, gender, first_name, last_name,
-                                            email_address, token, phone_number) 
+                                            email_address, phone_number, password_token) 
                             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """
                 values= (
@@ -43,12 +43,12 @@ class UserDao(metaclass=Singleton):
                     new_user.first_name,
                     new_user.last_name,
                     new_user.email_address,
-                    new_user.token,
                     (
                         new_user.phone_number
                         if new_user.phone_number is not None
                         else None
                     ),
+                    new_user.password_token
                 )
                 self.db_connection.sql_query(insert_query, values )
                 print(f"Insertion user successful: {new_user.username}")

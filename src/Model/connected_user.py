@@ -10,7 +10,7 @@ class ConnectedUser(User):
     first_name: str
     last_name: str
     email_address: str
-    token: str
+    password_token: str
     phone_number: str | None = None  # Optionnel
 
     # Collections associées à l'utilisateur connecté
