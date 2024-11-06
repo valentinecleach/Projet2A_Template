@@ -29,26 +29,21 @@ class UserDao(metaclass=Singleton):
             if not user_exist:
                 print(f"Inserting User : {new_user.username}")
                 insert_query = """
-                            INSERT INTO users (id_user, username, hashed_password,
+                            INSERT INTO users (username, hashed_password,
                                             date_of_birth, gender, first_name, last_name,
                                             email_address, phone_number, password_token) 
                             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """
-                values= (
-                    new_user.id_user,
-                    new_user.username,
-                    new_user.hashed_password,
-                    new_user.date_of_birth,
-                    new_user.gender,
-                    new_user.first_name,
-                    new_user.last_name,
-                    new_user.email_address,
-                    (
-                        new_user.phone_number
-                        if new_user.phone_number is not None
-                        else None
-                    ),
-                    new_user.password_token
+                values = (
+                    new_user['username'],
+                    new_user['hashed_password'],
+                    new_user['date_of_birth'],
+                    new_user['gender'],
+                    new_user['first_name'],
+                    new_user['last_name'],
+                    new_user['email_address'],
+                    new_user['phone_number'] if new_user['phone_number'] is not None else None,
+                    new_user['password_token']
                 )
                 self.db_connection.sql_query(insert_query, values )
                 print(f"Insertion user successful: {new_user.username}")

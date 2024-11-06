@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING, Annotated
-
+from datetime import date 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials
 
@@ -51,7 +51,7 @@ def create_user(first_name: str,
         user: User = user_service.sign_up(first_name = first_name, 
                                           last_name = last_name,
                                           gender = gender,
-                                          date_of_birth = date_of_birth
+                                          date_of_birth = date_of_birth,
                                           username = username, 
                                           password = password, 
                                           email_address = email_address,

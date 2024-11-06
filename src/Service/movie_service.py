@@ -6,9 +6,9 @@ from src.TMDB.movie_tmdb import MovieTMDB
 from src.DAO.db_connection import DBConnector
 
 class MovieService:
-    def __init__(self):
-        db_connection_instance = DBConnector()
-        self.movie_dao = MovieDAO(db_connection= db_connection_instance)
+    def __init__(self, db_connection: DBConnector):
+        self.db_connection = db_connection
+        self.movie_dao = MovieDAO(db_connection)
         self.movie_tmdb = MovieTMDB()
 
     def get_movie_by_id(self, movie_id: int) -> Movie | None:
@@ -86,8 +86,8 @@ class MovieService:
         pass
 
 # works from DAO ans from TMDB
-
-#my_object = MovieService()
-#print(my_object.get_movie_by_id(884))
+db_connection = DBConnector()
+#my_object = MovieService(db_connection)
+#print(my_object.get_movie_by_id(1945))
 #print(my_object.get_movie_by_title('Avatar'))
 

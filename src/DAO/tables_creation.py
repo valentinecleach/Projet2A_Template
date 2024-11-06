@@ -83,7 +83,7 @@ class TablesCreation(metaclass=Singleton):
 
         create_table_users = """
         CREATE TABLE IF NOT EXISTS users (
-            id_user INTEGER AUTO_INCREMENT PRIMARY KEY,
+            id_user SERIAL PRIMARY KEY,
             username VARCHAR(255) UNIQUE NOT NULL,
             first_name VARCHAR(255) NOT NULL,
             last_name VARCHAR(255) NOT NULL,
