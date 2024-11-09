@@ -30,9 +30,11 @@ class UserService:
         if len(username) <= 5:
             raise ValueError("Username must contain at least 5 characters")
         existing_user = self.user_dao.get_user_by_name(username)
+        print(existing_user)
         if existing_user is not None:
             raise ValueError("This username is already taken.")
-        print("good username")
+        else:
+            print("good username")
 
     def sign_up(
         self,
@@ -64,7 +66,6 @@ class UserService:
             "phone_number": phone_number,
             "gender": gender
         }
-
         try:
             # Utilisation de la méthode insert de DBConnection
             self.user_dao.insert(user)
@@ -72,15 +73,10 @@ class UserService:
         except Exception as e:
             print(f"Erreur lors de l'inscription : {str(e)}")
 
+##### sign_up fonctionne
+
     def log_in(self, username: str, password: str):
         """Permet à un utilisateur de se connecter."""
-
-        # Validation de la longueur du nom d'utilisateur
-        # Inutile le nom d'utilisateur a déjà été validé lors du sign up?
-        if len(username) < 5:
-            raise ValueError(
-                "Le nom d'utilisateur doit comporter au moins 5 caractères."
-            )
 
         # Hashage du mdp
         salted_password = create_salt(username)

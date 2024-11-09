@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 
 from src.DAO.db_connection import DBConnector
 from src.Model.connected_user import ConnectedUser
@@ -14,25 +14,25 @@ class UserDao(metaclass=Singleton):
         # create a DB connection object
         self.db_connection = db_connection
 
-    def insert(self,new_user) -> ConnectedUser | None:
+    def insert(self,new_user:Dict) -> ConnectedUser | None:
         """insert a Connected User into the database"""
         try : 
             # User already exists
             query = """
                     SELECT COUNT(*)
                     FROM users
-                    WHERE id_user = %s;
+                    WHERE username = %s;
                 """
-            result = result = self.db_connection.sql_query(query, (new_user.id_user))
+            result = result = self.db_connection.sql_query(query, (new_user['username'],))
             user_exist = result["count"] > 0  # True si film, False sinon
 
             if not user_exist:
-                print(f"Inserting User : {new_user.username}")
+                print(f"Inserting User : {new_user['username']}")
                 insert_query = """
                             INSERT INTO users (username, hashed_password,
                                             date_of_birth, gender, first_name, last_name,
                                             email_address, phone_number, password_token) 
-                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """
                 values = (
                     new_user['username'],
@@ -46,7 +46,7 @@ class UserDao(metaclass=Singleton):
                     new_user['password_token']
                 )
                 self.db_connection.sql_query(insert_query, values )
-                print(f"Insertion user successful: {new_user.username}")
+                print(f"Insertion user successful: {new_user['username']}")
 
         except Exception as e:
             print(f"Insertion error: {str(e)}")
@@ -66,32 +66,29 @@ class UserDao(metaclass=Singleton):
         else:
             return None  # Aucun utilisateur trouvé
 
-############################################################################################################
-    def get_user_by_name(self, search_string, size=10) -> List[ConnectedUser]:
+    def get_user_by_name(self, search_string : str) -> List[ConnectedUser]:
         """
         Fetch some users by their name
         """
-        search_string = str(search_string).lower()
         try:
-            query = "SELECT * FROM users WHERE LOWER(username) LIKE %s OR LOWER(last_name) LIKE %s OR LOWER(first_name) LIKE %s"
-            with self.db_connection.connection as connection:
-                with connection.cursor() as cursor:
-                    cursor.execute(
-                        query,
-                        (
-                            "%" + search_string + "%",
-                            "%" + search_string + "%",
-                            "%" + search_string + "%",
-                        ),
-                    )
-                    results = cursor.fetchmany(size)
+            query = """
+                SELECT * FROM users 
+                WHERE username LIKE %s 
+            """
+            search_pattern = '%' + search_string + '%'
+            print(search_pattern)
+            # Utilisation de % pour un 'LIKE' avec des recherches partielles
+            results = self.db_connection.sql_query(query, 
+                                                    (search_pattern,))
         except Exception as e:
             print(f"Error while searching: {e}")
             return None
+        
         if results:
-            users_read = [ConnectedUser(**res) for res in results]
+            users_read = [ConnectedUser(**dict(user)) for user in results]
             return users_read
-        return None
+        else:
+            return None 
 
     # READ (Fetch all users)
     def get_all_users(self, limit: int = 10, offset: int = 0) -> List[ConnectedUser]:
@@ -221,3 +218,7 @@ class UserDao(metaclass=Singleton):
             print(f"Error while deleting FROM users: {e}")
             self.db_connection.connection.rollback()
             return None
+
+db_connection = DBConnector()
+my_object = UserDao(db_connection)
+print(my_object.get_user_by_name('johndoe'))
