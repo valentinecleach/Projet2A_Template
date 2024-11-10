@@ -11,7 +11,6 @@ import pytest
 from src.DAO.db_connection import DBConnection
 
 
-
 def mock_db_connection(mocker):
     """Fixture pour simuler la connexion à la base de données."""
     # Mock dotenv.load_dotenv pour ne pas lire les infos du .env
@@ -60,15 +59,15 @@ def test_initialization_config():
     }
 
     # WHEN
-    db = DBConnection(config=config)
+    db_connection = DBConnection(config=config)
 
     # THEN
-    assert db.host == "localhost"
-    assert db.port == "5432"
-    assert db.database == "test_db"
-    assert db.user == "test_user"
-    assert db.password == "test_password"
-    assert db.schema == "projet_info_test"
+    assert db_connection.host == "localhost"
+    assert db_connection.port == "5432"
+    assert db_connection.database == "test_db"
+    assert db_connection.user == "test_user"
+    assert db_connection.password == "test_password"
+    assert db_connection.schema == "projet_info_test"
 
 
 def test_set_search_path(mock_db_connection):
