@@ -1,5 +1,6 @@
-from typing import Dict, List, Optional
 from datetime import datetime
+from typing import Dict, List, Optional
+
 from psycopg2.extras import DictCursor
 
 from src.DAO.db_connection import DBConnection
@@ -14,7 +15,7 @@ class UserMovieCollectionDao(metaclass=Singleton):
         # Créer des tables si elles n'existent pas
         self.tables_creation = TablesCreation(db_connection)
 
-    def insert(self, id_user : int, id_movie: int):
+    def insert(self, id_user: int, id_movie: int):
         date = datetime.now()
         try:
             """
@@ -40,17 +41,20 @@ class UserMovieCollectionDao(metaclass=Singleton):
                             INSERT INTO user_movie_collection (id_user, id_movie,date)
                             VALUES (%s, %s)
                             """,
-                            (id_user, id_movie,date),
+                            (id_user, id_movie, date),
                         )
                         connection.commit()
                         print("Insertion successful : movie added.")
                     else:
-                        print(f"movie with id {id_movie} already exists in {id_user} collection.")
+                        print(
+                            f"movie with id {id_movie} already exists in {id_user} collection."
+                        )
         except Exception as e:
             print("Insertion error : ", str(e))
 
-
-    def get_all_collection(self,id_user: int, limit: int = 10, offset: int = 0) -> list:
+    def get_all_collection(
+        self, id_user: int, limit: int = 10, offset: int = 0
+    ) -> list:
         try:
             query = f"SELECT * FROM user_movie_collection WHERE id_user = %s LIMIT {max(0,limit)} OFFSET {max(offset,0)}"
             with self.db_connection.connection as connection:
@@ -62,14 +66,19 @@ class UserMovieCollectionDao(metaclass=Singleton):
             return None
         return results
 
-    def delete(self, id_user: int, id_movie:int):
+    def delete(self, id_user: int, id_movie: int):
         try:
-            query = "DELETE FROM user_movie_collection WHERE id_user = %s and id_movie = %s"
+            query = (
+                "DELETE FROM user_movie_collection WHERE id_user = %s and id_movie = %s"
+            )
             with self.db_connection.connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
                         query,
-                        (id_user,id_movie,),
+                        (
+                            id_user,
+                            id_movie,
+                        ),
                     )
                     connection.commit()
                     print("Record deleted successfully FROM user_movie_collection.")
@@ -77,4 +86,3 @@ class UserMovieCollectionDao(metaclass=Singleton):
             print(f"Error while deleting FROM user_movie_collection: {e}")
             self.db_connection.connection.rollback()
             return None
-

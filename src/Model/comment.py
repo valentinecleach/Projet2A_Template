@@ -28,3 +28,6 @@ class Comment:
         self.movie = movie
         self.date = date
         self.comment = comment
+
+    def __str__(self):
+        return f"{self.comment}"

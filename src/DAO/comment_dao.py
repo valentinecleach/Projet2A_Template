@@ -3,6 +3,7 @@ from typing import List  # , Optional
 
 from src.DAO.db_connection import DBConnector
 from src.DAO.movie_dao import MovieDAO
+from src.DAO.singleton import Singleton
 from src.DAO.user_dao import UserDao
 from src.Model.comment import Comment
 
@@ -11,9 +12,11 @@ class CommentDao(metaclass=Singleton):
     def __init__(self, db_connection: DBConnector):
         # create a DB connection object
         self.db_connection = db_connection
-
+        # Create tables if don't exist
+        self.tables_creation = TablesCreation(db_connection)
 
     # CREATE
+
     def insert(self, id_user: int, id_movie: int, comment: str):
         date = datetime.now()
         if comment:
@@ -24,8 +27,8 @@ class CommentDao(metaclass=Singleton):
                     cursor.execute(query, values)
                     self.db_connection.connection.commit()
 
-                user = UserDao().get_user_by_id(id_user)
-                movie = MovieDAO().get_by_id(id_movie)
+                user = UserDao(self.db_connection).get_user_by_id(id_user)
+                movie = MovieDAO(self.db_connection).get_by_id(id_movie)
                 return Comment(user=user, movie=movie, date=date, comment=comment)
 
             except Exception as e:
@@ -49,8 +52,8 @@ class CommentDao(metaclass=Singleton):
                     cursor.execute(query, (id_user, id_movie))
                     results = cursor.fetchall()
             if results:
-                user = UserDao().get_user_by_id(id_user)
-                movie = MovieDAO().get_by_id(id_movie)
+                user = UserDao(self.db_connection).get_user_by_id(id_user)
+                movie = MovieDAO(self.db_connection).get_by_id(id_movie)
                 com = [
                     Comment(
                         user=user, movie=movie, date=res["date"], comment=res["comment"]
@@ -96,8 +99,8 @@ class CommentDao(metaclass=Singleton):
 
     # DELETE
     def delete(self, com: Comment):
-        id_user = com.id_user
-        id_movie = com.id_movie
+        id_user = com.user.id_user
+        id_movie = com.movie.id_movie
         date = com.date
         try:
             query = "DELETE FROM  comment WHERE id_user = %s and id_movie = %s and date = %s"

@@ -1,6 +1,7 @@
 from src.DAO.db_connection import DBConnector
 from src.DAO.singleton import Singleton
 
+
 class TablesCreation(metaclass=Singleton):
     def __init__(self, db_connection: DBConnector):
         self.db_connection = db_connection
@@ -136,7 +137,7 @@ class TablesCreation(metaclass=Singleton):
         CREATE TABLE IF NOT EXISTS user_collection(
             id_user INTEGER NOT NULL,
             id_collection INTEGER NOT NULL,
-            date VARCHAR(255),
+            date DATE,
 
             FOREIGN KEY (id_user) REFERENCES user_collection(id_user),
             FOREIGN KEY (id_collection) REFERENCES movie(id_collection)
@@ -180,4 +181,3 @@ class TablesCreation(metaclass=Singleton):
             self.db_connection.sql_query(query)
 
         print("All tables created successfully.")
-        

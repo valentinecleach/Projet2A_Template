@@ -10,7 +10,7 @@ class TestUserDao(unittest.TestCase):
 
     def setUp(self):
         # Mock de DBConnector pour chaque test afin d'éviter d'affecter la vraie base de données
-        self.mock_db_connection = MagicMock(spec=DBConnector)
+        self.mock_db_connection = MagicMock()
         self.user_dao = UserDao(self.mock_db_connection)
 
     def test_insert_user(self):
@@ -36,15 +36,6 @@ class TestUserDao(unittest.TestCase):
 
         # Vérifie si les méthodes appropriées ont été appelées
         self.mock_db_connection.sql_query.assert_called()
-        insert_query = """
-                INSERT INTO users (username, hashed_password,
-                                    date_of_birth, gender, first_name, last_name,
-                                    email_address, phone_number, password_token) 
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """
-        # self.mock_db_connection.sql_query.assert_any_call(
-        #    insert_query, tuple(new_user.values())
-        # )
 
     def test_get_user_by_id(self):
         """Test la récupération d'un utilisateur par son ID."""

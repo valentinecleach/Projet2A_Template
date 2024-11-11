@@ -2,9 +2,9 @@ from datetime import datetime
 from typing import List  # , Optional
 
 from src.DAO.db_connection import DBConnection, Singleton
+from src.DAO.tables_creation import TablesCreation
 from src.DAO.user_dao import UserDao
 from src.Model.connected_user import ConnectedUser
-from src.DAO.tables_creation import TablesCreation
 
 
 class FollowDao(metaclass=Singleton):
@@ -45,7 +45,7 @@ class FollowDao(metaclass=Singleton):
             return None
         if results:
             id_read = [res["id_followed"] for res in results]
-            users = [UserDao().get_user_by_id(id) for id in id_read]
+            users = [UserDao(self.db_connection).get_user_by_id(id) for id in id_read]
         return users
 
     # DELETE

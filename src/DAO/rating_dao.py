@@ -1,11 +1,11 @@
 from datetime import datetime
 
-from src.DAO.tables_creation import TablesCreation
 from src.DAO.db_connection import DBConnection
 from src.DAO.movie_dao import MovieDAO
+from src.DAO.singleton import Singleton
+from src.DAO.tables_creation import TablesCreation
 from src.DAO.user_dao import UserDao
 from src.Model.rating import Rating
-from src.DAO.singleton import Singleton
 
 # from typing import List  # , Optional
 
@@ -33,8 +33,8 @@ class RatingDao(metaclass=Singleton):
                 self.db_connection.connection.rollback()
                 return None
         if res:
-            user = UserDao().get_user_by_id(id_user)
-            movie = MovieDao().get_by_id(id_movie)
+            user = UserDao(self.db_connection).get_user_by_id(id_user)
+            movie = MovieDAO(self.db_connection).get_by_id(id_movie)
             rate = Rating(user=user, movie=movie, date=date, rating=rate)
             return rate
 
@@ -52,8 +52,8 @@ class RatingDao(metaclass=Singleton):
                     cursor.execute(query, (id_user, id_movie))
                     res = cursor.fetchone()
             if res:
-                user = UserDao().get_user_by_id(id_user)
-                movie = MovieDao().get_by_id(id_movie)
+                user = UserDao(self.db_connection).get_user_by_id(id_user)
+                movie = MovieDAO(self.db_connection).get_by_id(id_movie)
                 rate = Rating(
                     user=user, movie=movie, date=res["date"], rating=res["rating"]
                 )
@@ -83,7 +83,7 @@ class RatingDao(metaclass=Singleton):
             self.db_connection.connection.rollback()
             return None
 
-    def get_overall_rating(id_movie: int):
+    def get_overall_rating(self, id_movie: int):
         try:
             query = "SELECT AVG(rate) as mean  FROM  rating WHERE id_movie = %s"
             with self.db_connection.connection as connection:
@@ -99,7 +99,7 @@ class RatingDao(metaclass=Singleton):
         if res:
             return res["mean"]
 
-    def count_rating(id_movie: int):
+    def count_rating(self, id_movie: int):
         try:
             query = "SELECT count(*) as number  FROM  rating WHERE id_movie = %s"
             with self.db_connection.connection as connection:
