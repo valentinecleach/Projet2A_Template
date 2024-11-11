@@ -147,9 +147,9 @@ class TablesCreation(metaclass=Singleton):
         create_table_KnownFor = """
         CREATE TABLE IF NOT EXISTS KnownFor (
             id_movie INTEGER,
-            id_movie INTEGER,
+            id_movie_maker INTEGER,
 
-            FOREIGN KEY (id_maker) REFERENCES movie_maker(id_movie_maker),
+            FOREIGN KEY (id_movie_maker) REFERENCES movie_maker(id_movie_maker),
             FOREIGN KEY (id_movie) REFERENCES movie(id_movie)
         );
         """
