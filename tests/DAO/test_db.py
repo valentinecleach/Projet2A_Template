@@ -11,6 +11,7 @@ import pytest
 # python -m pip install pytest-mock
 from src.DAO.db_connection import DBConnector
 
+#python -m pytest tests_directory/foo.py tests_directory/bar.py -k 'test_001'
 
 def mock_db_connection(mocker):
     """Fixture pour simuler la connexion à la base de données."""
@@ -97,21 +98,17 @@ def test_create_tables(mocker):
     """
     # GIVEN
     mock_connection, mock_cursor = mock_db_connection(mocker)
-    create_table_query = """
+  
+    create_table_query = """ 
     CREATE TABLE IF NOT EXISTS test_table_MovieMaker( 
-        id_movie_maker SERIAL PRIMARY KEY, 
-        adult BOOLEAN NOT NULL DEFAULT FALSE, 
-        name VARCHAR(255) NOT NULL, 
-        gender INTEGER NOT NULL, 
-        biography TEXT NOT NULL, 
-        birthday DATE, 
-        place_of_birth VARCHAR(255), 
-        deathday DATE, 
-        known_for_department VARCHAR(255), 
-        popularity FLOAT NOT NULL, 
-        known_for JSONB);
+        test_id_movie_maker SERIAL PRIMARY KEY, 
+        test_adult BOOLEAN NOT NULL DEFAULT FALSE, 
+        test_name VARCHAR(255) NOT NULL 
+        );
     """
-
+    
+    
+    # je ne trouves pas necessaire de garder un truc trop long?
     # WHEN
     mock_connection.sql_query(create_table_query)
 
@@ -123,10 +120,11 @@ def test_create_tables(mocker):
     #        "CREATE TABLE IF NOT EXISTS users (id_user SERIAL PRIMARY KEY, first_name VARCHAR(255) NOT NULL, last_name VARCHAR(255) NOT NULL, username VARCHAR(255) UNIQUE NOT NULL, hashed_password VARCHAR(255) NOT NULL, email VARCHAR(255) UNIQUE NOT NULL);"
     #    ),
     #]
-    calls = unittest.mock.call(create_table_query, None)
+    
 
     # THEN: Verify the calls were made to execute
-    mock_cursor.execute.assert_has_calls(calls, any_order=True)
+
+    mock_cursor.execute.assert_called_once_with(create_table_query, None)
 
     mock_connection.commit.assert_called_once()
 

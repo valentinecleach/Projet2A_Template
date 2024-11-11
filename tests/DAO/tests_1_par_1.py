@@ -7,7 +7,7 @@ from src.Model.connected_user import ConnectedUser
 
 # DAO
 from src.DAO.user_dao import UserDao
-from src.DAO.db_connection import DBConnection
+from src.DAO.db_connection import DBConnector
 from src.DAO.user_dao import UserDao
 
 

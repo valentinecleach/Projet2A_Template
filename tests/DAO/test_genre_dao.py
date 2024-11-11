@@ -1,8 +1,8 @@
 import pytest
 from psycopg2 import OperationalError, connect
 
-from src.DAO.db_connection import \
-    DBConnection  # Assure-toi que cette importation est correcte
+from src.DAO.db_connection import DBConnector
+
 from src.DAO.genre_dao import \
     GenreDao  # Assure-toi que cette importation est correcte
 from src.Model.genre import \
