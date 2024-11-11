@@ -1,6 +1,6 @@
-from typing import TYPE_CHECKING, Annotated
+from typing import TYPE_CHECKING, Annotated, List, Optional
 from datetime import date 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from fastapi.security import HTTPAuthorizationCredentials
 
 #from dotenv import load_dotenv
@@ -9,8 +9,7 @@ from fastapi.security import HTTPAuthorizationCredentials
 # Model
 from src.Model.api_user import APIUser 
 from src.Model.jwt_response import JWTResponse
-if TYPE_CHECKING:
-    from src.Model.connected_user import ConnectedUser
+from src.Model.connected_user import ConnectedUser
 
 # Service
 from src.Service.password_service import check_password_strenght, verify_password
@@ -23,15 +22,15 @@ from src.Webservice.jwt_bearer_webservice import JWTBearer
 user_router = APIRouter(prefix="/users", tags=["Users"])
 
 
-@user_router.post("/", status_code=status.HTTP_201_CREATED)
+@user_router.post("/creation", status_code=status.HTTP_201_CREATED)
 def create_user(first_name: str,
         last_name: str,
         username: str,
         password: str,
-        gender : int,
-        date_of_birth : date,
         email_address: str,
-        phone_number: str | None = None) -> APIUser:
+        date_of_birth : date = Query(..., description = "format : YYYY-MM-DD"),
+        gender : int = Query(..., description = "Put 1 for Man, 2 for a Woman"),       
+        phone_number: Optional[str] = Query(None)) -> APIUser:
     """
     Performs validation on the username and password
 
@@ -48,7 +47,7 @@ def create_user(first_name: str,
     api_user : APIUser
     """
     try:
-        user: User = user_service.sign_up(first_name = first_name, 
+        user = user_service.sign_up(first_name = first_name, 
                                           last_name = last_name,
                                           gender = gender,
                                           date_of_birth = date_of_birth,
@@ -58,15 +57,14 @@ def create_user(first_name: str,
                                           phone_number = phone_number
                                           )
     except Exception as error:
-        raise HTTPException(status_code=409, detail="Username already exists") from error
+        raise HTTPException(status_code=409, detail=str(error)) from error
 
-    return APIUser(id = user.id_user, 
-                   username = user.username, 
-                   )
+    return APIUser(username = username )
 
 
 # L'utilisateur se connecte en envoyant son nom d'utilisateur et son mot de passe. 
 # Si la combinaison est correcte, un token JWT est généré et renvoyé dans la réponse.
+
 
 @user_router.post("/jwt", status_code=status.HTTP_201_CREATED)
 def login(username: str, password: str) -> JWTResponse:
@@ -88,6 +86,21 @@ def login(username: str, password: str) -> JWTResponse:
     
     except Exception as error:
         raise HTTPException(status_code=403, detail="Invalid username or password") from error
+
+@user_router.post("/{username}", status_code=status.HTTP_201_CREATED)
+def find_a_user(username: str) -> list:
+    """
+    Find aa user registerred on the API.
+    """
+    try:
+        user = user_dao.get_user_by_name(username=username)       
+        if not user:
+            raise HTTPException(status_code=403, detail="Invalid username")
+
+        # Return the list with all the user matching
+        return user
+    except Exception as error:
+        raise HTTPException(status_code=403, detail="Invalid username") from error
 
 @user_router.get("/me", dependencies=[Depends(JWTBearer())])
 def get_user_own_profile(credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())]) -> APIUser:

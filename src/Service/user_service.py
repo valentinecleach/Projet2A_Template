@@ -143,16 +143,16 @@ class UserService:
         """Suppression du compte de l'utilisateur."""
 
 
-db_connection = DBConnector()
-my_object = UserService(db_connection)
-user = {
-    'first_name': 'John',
-    'last_name': 'Doe',
-    'username': 'johndoe',
-    'password': 'SecurePassword123!',
-    'gender': 1,  # Exemple de genre (1 pour masculin, 2 pour féminin, selon votre définition)
-    'date_of_birth': date(1990, 12, 25), 
-    'email_address': 'john.doe@example.com',
-    'phone_number': '123-456-7890' 
-}
-my_object.sign_up(**user)
+# db_connection = DBConnector()
+# my_object = UserService(db_connection)
+# user = {
+#     'first_name': 'John',
+#     'last_name': 'Doe',
+#     'username': 'johndoe',
+#     'password': 'SecurePassword123!',
+#     'gender': 1,  # Exemple de genre (1 pour masculin, 2 pour féminin, selon votre définition)
+#     'date_of_birth': date(1990, 12, 25), 
+#     'email_address': 'john.doe@example.com',
+#     'phone_number': '123-456-7890' 
+# }
+# my_object.sign_up(**user)
