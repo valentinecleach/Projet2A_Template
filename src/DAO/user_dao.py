@@ -66,7 +66,7 @@ class UserDao(metaclass=Singleton):
         else:
             return None  # Aucun utilisateur trouvé
 
-    def get_user_by_name(self, search_string : str) -> List[ConnectedUser]:
+    def get_user_by_name(self, username : str) -> List[ConnectedUser]:
         """
         Fetch some users by their name
         """
@@ -75,17 +75,16 @@ class UserDao(metaclass=Singleton):
                 SELECT * FROM users 
                 WHERE username LIKE %s 
             """
-            search_pattern = '%' + search_string + '%'
-            print(search_pattern)
+            search_pattern = '%' + username + '%'
             # Utilisation de % pour un 'LIKE' avec des recherches partielles
             results = self.db_connection.sql_query(query, 
-                                                    (search_pattern,))
+                                                    (search_pattern,), return_type= "all")
         except Exception as e:
             print(f"Error while searching: {e}")
             return None
         
         if results:
-            users_read = [ConnectedUser(**dict(user)) for user in results]
+            users_read = [ConnectedUser(**dict(user)).to_dict() for user in results]
             return users_read
         else:
             return None 
@@ -219,6 +218,8 @@ class UserDao(metaclass=Singleton):
             self.db_connection.connection.rollback()
             return None
 
+'''
 db_connection = DBConnector()
 my_object = UserDao(db_connection)
 print(my_object.get_user_by_name('johndoe'))
+'''

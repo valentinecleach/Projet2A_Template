@@ -46,13 +46,13 @@ def check_password_strenght(password: str):
         The password
     """
     if len(password) < 8:
-        raise Exception("Password length must be at least 8 characters")
+        raise ValueError("Password length must be at least 8 characters")
     number = False
     for char in password:
         if char.isdigit():
             number = True
     if number is False:
-        raise Exception("Password must contain at least one number")
+        raise ValueError("Password must contain at least one number")
 
 
 # def validate_username_password(username: str, password: str, user_dao: UserDao) -> User:

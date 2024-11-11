@@ -9,7 +9,7 @@ import unittest
 import pytest
 # python -m pip install mock
 # python -m pip install pytest-mock
-from src.DAO.db_connection import DBConnection
+from src.DAO.db_connection import DBConnector
 
 
 def mock_db_connection(mocker):
@@ -37,7 +37,7 @@ def mock_db_connection(mocker):
     mock_cursor.execute = MagicMock()
     
     # Retourne une instance de DBConnection pour les tests
-    mock_connection = DBConnection()
+    mock_connection = DBConnector()
     return mock_connection, mock_cursor
 
 
@@ -70,7 +70,7 @@ def test_initialization_config():
     }
 
     # WHEN
-    db_connection = DBConnection(config=config)
+    db_connection = DBConnector(config=config)
 
     # THEN
     assert db_connection.host == "localhost"
