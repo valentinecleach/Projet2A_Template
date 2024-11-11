@@ -6,7 +6,7 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 
 
-class DBConnection:
+class DBConnector:
     def __init__(self, config=None):
         if config is not None:
             self.host = config["host"]
