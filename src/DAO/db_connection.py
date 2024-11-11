@@ -28,7 +28,7 @@ class DBConnection:
         self,
         query: str,
         data: Optional[Union[tuple, list, dict]] = None,
-        return_type: Union[Literal["one"], Literal["all"]] = "one",
+        return_t+ype: Union[Literal["one"], Literal["all"]] = "one",
     ):
         try:
             with psycopg2.connect(
