@@ -1,8 +1,8 @@
-from typing import List, Dict
+from typing import Dict, List
 
 from src.DAO.db_connection import DBConnector
-from src.Model.connected_user import ConnectedUser
 from src.DAO.singleton import Singleton
+from src.Model.connected_user import ConnectedUser
 
 
 class UserDao(metaclass=Singleton):
@@ -14,16 +14,18 @@ class UserDao(metaclass=Singleton):
         # create a DB connection object
         self.db_connection = db_connection
 
-    def insert(self,new_user:Dict) -> ConnectedUser | None:
+    def insert(self, new_user: Dict) -> ConnectedUser | None:
         """insert a Connected User into the database"""
-        try : 
+        try:
             # User already exists
             query = """
                     SELECT COUNT(*)
                     FROM users
                     WHERE username = %s;
                 """
-            result = result = self.db_connection.sql_query(query, (new_user['username'],))
+            result = result = self.db_connection.sql_query(
+                query, (new_user["username"],)
+            )
             user_exist = result["count"] > 0  # True si film, False sinon
 
             if not user_exist:
@@ -35,22 +37,25 @@ class UserDao(metaclass=Singleton):
                             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """
                 values = (
-                    new_user['username'],
-                    new_user['hashed_password'],
-                    new_user['date_of_birth'],
-                    new_user['gender'],
-                    new_user['first_name'],
-                    new_user['last_name'],
-                    new_user['email_address'],
-                    new_user['phone_number'] if new_user['phone_number'] is not None else None,
-                    new_user['password_token']
+                    new_user["username"],
+                    new_user["hashed_password"],
+                    new_user["date_of_birth"],
+                    new_user["gender"],
+                    new_user["first_name"],
+                    new_user["last_name"],
+                    new_user["email_address"],
+                    (
+                        new_user["phone_number"]
+                        if new_user["phone_number"] is not None
+                        else None
+                    ),
+                    new_user["password_token"],
                 )
-                self.db_connection.sql_query(insert_query, values )
+                self.db_connection.sql_query(insert_query, values)
                 print(f"Insertion user successful: {new_user['username']}")
 
         except Exception as e:
             print(f"Insertion error: {str(e)}")
-
 
     def get_user_by_id(self, id_user: int) -> ConnectedUser | None:
         """Fetches a single user by its ID."""
@@ -66,7 +71,7 @@ class UserDao(metaclass=Singleton):
         else:
             return None  # Aucun utilisateur trouvé
 
-    def get_user_by_name(self, username : str) -> List[ConnectedUser]:
+    def get_user_by_name(self, username: str) -> List[ConnectedUser]:
         """
         Fetch some users by their name
         """
@@ -75,19 +80,20 @@ class UserDao(metaclass=Singleton):
                 SELECT * FROM users 
                 WHERE username LIKE %s 
             """
-            search_pattern = '%' + username + '%'
+            search_pattern = "%" + username + "%"
             # Utilisation de % pour un 'LIKE' avec des recherches partielles
-            results = self.db_connection.sql_query(query, 
-                                                    (search_pattern,), return_type= "all")
+            results = self.db_connection.sql_query(
+                query, (search_pattern,), return_type="all"
+            )
         except Exception as e:
             print(f"Error while searching: {e}")
             return None
-        
+
         if results:
             users_read = [ConnectedUser(**dict(user)).to_dict() for user in results]
             return users_read
         else:
-            return None 
+            return None
 
     # READ (Fetch all users)
     def get_all_users(self, limit: int = 10, offset: int = 0) -> List[ConnectedUser]:
@@ -218,8 +224,9 @@ class UserDao(metaclass=Singleton):
             self.db_connection.connection.rollback()
             return None
 
-'''
+
+"""
 db_connection = DBConnector()
 my_object = UserDao(db_connection)
 print(my_object.get_user_by_name('johndoe'))
-'''
+"""

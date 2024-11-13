@@ -117,14 +117,14 @@ class UserService:
         users = self.user_dao.get_user_by_name(username)
 
         if users:
-            return users 
+            return users
 
         print("Aucun utilisateur trouvé pour le nom :", username)
         return None
 
     # focntionne si correspondance exacte avec le pseudo
 
-    def follow_user(follower_id: int, followee_id: int) -> None:
+    def follow_user(self, follower_id: int, followee_id: int) -> None:
         """
             Allows a user to follow another user.
 
@@ -140,7 +140,7 @@ class UserService:
             raise ValueError("A user cannot follow themselves.")
 
         # Récupérer la liste des utilisateurs suivis
-        follow_dao = FollowDao(DBConnection())
+        follow_dao = FollowDao(self.db_connection)
         following_list = follow_dao.get_follow_list(follower_id)
 
         # Vérifier si l'utilisateur suit déjà le suivi
@@ -155,7 +155,7 @@ class UserService:
 
     # Dans user_service.py
 
-    def unfollow_user(follower_id: int, followee_id: int) -> None:
+    def unfollow_user(self, follower_id: int, followee_id: int) -> None:
         """
         Allows a user to unfollow another user.
 
@@ -171,7 +171,7 @@ class UserService:
             raise ValueError("A user cannot unfollow themselves.")
 
         # Initialiser FollowDao pour la suppression
-        follow_dao = FollowDao(DBConnection())
+        follow_dao = FollowDao(self.db_connection)
 
         # Vérifier si le lien de suivi existe
         following_list = follow_dao.get_follow_list(follower_id)
