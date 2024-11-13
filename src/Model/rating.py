@@ -21,7 +21,7 @@ class Rating:
         self.rating = rating
 
     def __str__(self):
-        s = f"{self.user.username} give"
+        s = f"{self.user.username} rated"
         s+ = f"{self.rating} over 10 to the movie {self.movie.title}"
         s+ = f" on {self.date}"
         return s

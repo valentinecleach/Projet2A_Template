@@ -4,6 +4,7 @@ from typing import List  # , Optional
 from src.DAO.db_connection import DBConnector
 from src.DAO.movie_dao import MovieDAO
 from src.DAO.singleton import Singleton
+from src.DAO.tables_creation import TablesCreation
 from src.DAO.user_dao import UserDao
 from src.Model.comment import Comment
 
@@ -120,7 +121,7 @@ class CommentDao(metaclass=Singleton):
             print(f"Error while deleting from comments: {e}")
             return None
 
-    def get_overall(id_movie: int):
+    def get_overall(self, id_movie: int):
         try:
             query = "SELECT COUNT(*) as number FROM  comment WHERE id_movie = %s"
             with self.db_connection.connection as connection:

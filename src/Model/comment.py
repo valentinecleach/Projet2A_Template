@@ -5,15 +5,7 @@ from src.Model.movie import Movie
 class Comment:
     """Comment
 
-    The comment of a movie. A user can comment a movie
-    it.
-
-    Parameters
-    ----------
-    overall_comment : int
-        The total number of comments
-    Examples:
-    --------
+    The comment of a movie. A user can comment a movie.
 
     """
 
@@ -30,4 +22,7 @@ class Comment:
         self.comment = comment
 
     def __str__(self):
-        return f"{self.comment}"
+        s = f"{self.user.username} commented"
+        s+ = f"{self.comment} on the movie {self.movie.title}"
+        s+ = f" on {self.date}"
+        return s
