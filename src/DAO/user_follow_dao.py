@@ -81,3 +81,4 @@ class UserFollowDAO:
             print(f"Error while deleting FROM follower: {e}")
             self.db_connection.connection.rollback()
             return None
+
