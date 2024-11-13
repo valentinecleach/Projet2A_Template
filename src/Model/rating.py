@@ -5,19 +5,7 @@ from src.Model.movie import Movie
 class Rating:
     """Rating
 
-    The rating of a movie. A user can rate a movie ou of ?? stars if they liked
-    it.
-
-    Parameters
-    ----------
-    overall_rating : int
-        The average rating
-
-    who_rated : list[Users]
-        The list of people who have rated the movie
-    Examples:
-    --------
-
+    The rating of a movie. A user can rate a movie.
     """
 
     def __init__(
@@ -25,7 +13,7 @@ class Rating:
         user: ConnectedUser,
         movie: Movie,
         date: str,
-        rating: str,
+        rating: int,
     ):
         self.user = user
         self.movie = movie
@@ -33,4 +21,7 @@ class Rating:
         self.rating = rating
 
     def __str__(self):
-        return f"{self.rating}"
+        s = f"{self.user.username} give"
+        s+ = f"{self.rating} over 10 to the movie {self.movie.title}"
+        s+ = f" on {self.date}"
+        return s

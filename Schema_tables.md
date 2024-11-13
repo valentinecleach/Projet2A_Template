@@ -11,7 +11,7 @@ title: Modèle Conceptuel des données CINEMAGIX
 classDiagram
 namespace MOVIE {
 class movie {
-            id_movie INTEGER PK
+            id_movie INTEGER [PK]
             title VARCHAR 255
             budget FLOAT
             origin_country VARCHAR 255
@@ -28,27 +28,27 @@ class movie {
         }
 
 class genre {
-            id_genre INTEGER PK
+            id_genre INTEGER [PK]
             name_genre VARCHAR 255
         }
 
 class movie_collection {
-            id_movie_collection INTEGER PK
+            id_movie_collection INTEGER [PK]
             name_movie_collection VARCHAR 255
         }
 class link_movie_movie_collection {
-            id_movie INTEGER FK
-            id_movie_collection INTEGER FK
+            id_movie INTEGER [FK]
+            id_movie_collection INTEGER [FK]
 }
 
 class link_movie_genre {
-            id_movie INTEGER FK
-            id_genre INTEGER FK}
+            id_movie INTEGER [FK]
+            id_genre INTEGER [FK]}
 
 }
 namespace MAKERS {
 class movie_maker {
-            id_movie_maker INTEGER PK
+            id_movie_maker INTEGER [PK]
             adult BOOLEAN
             name VARCHAR 255
             gender INTEGER
@@ -62,12 +62,12 @@ class movie_maker {
         }
 
 class KnownFor{
-            id_movie INTEGER FK
-            id_movie_maker INTEGER FK }
+            id_movie INTEGER [FK]
+            id_movie_maker INTEGER [FK] }
 }
 namespace USERS{
 class users {
-            id_user SERIAL PK
+            id_user SERIAL [PK]
             username VARCHAR 255 UNIQUE
             first_name VARCHAR 255
             last_name VARCHAR 255
@@ -80,31 +80,31 @@ class users {
         }
 
 class rating {
-            id_user INTEGER FK
-            id_movie INTEGER FK
+            id_user INTEGER [FK]
+            id_movie INTEGER [FK]
             rating INTEGER
             date VARCHAR 255}
 
 class comment {
-            id_user INTEGER FK
-            id_movie INTEGER FK
+            id_user INTEGER [FK]
+            id_movie INTEGER [FK]
             comment TEXT
-            date DATE FK}
+            date DATE [FK]}
 
 class follower {
-            id_user INTEGER FK
-            id_user_followed INTEGER FK
+            id_user INTEGER [FK]
+            id_user_followed INTEGER [FK]
             date DATE}
 
 %%class user_collection{
-            %%id_user INTEGER FK
-            %%id_collection INTEGER FK
+            %%id_user INTEGER [FK]
+            %%id_collection INTEGER [FK]
             %%date DATE
 %%}
 
 class user_movie_collection {
-            id_user INTEGER FK 
-            id_movie INTEGER FK
+            id_user INTEGER [FK] 
+            id_movie INTEGER [FK]
             date DATE
 }
 

@@ -9,7 +9,6 @@ from src.Model.movie_collection import MovieCollection
 from src.Model.rating import Rating
 
 
-
 class Movie(BaseModel):
     """Movie
 
@@ -56,9 +55,13 @@ class Movie(BaseModel):
 
     """
 
-    id_movie: int = Field(..., gt=0, description="The id needs to be a positive integer")
+    id_movie: int = Field(
+        ..., gt=0, description="The id needs to be a positive integer"
+    )
     title: str
-    belongs_to_collection: Optional[List[MovieCollection]] = None  # peut ne pas avoir de MovieCollection.
+    belongs_to_collection: Optional[List[MovieCollection]] = (
+        None  # peut ne pas avoir de MovieCollection.
+    )
     budget: Optional[int]
     genres: List[Genre]
     origin_country: Optional[List[str]]
@@ -84,4 +87,3 @@ class Movie(BaseModel):
         )
 
     # def __get_pydantic_core_schema__# ?,
-
