@@ -3,13 +3,13 @@ from typing import Dict, List, Optional
 
 from psycopg2.extras import DictCursor
 
-from src.DAO.db_connection import DBConnection
+from src.DAO.db_connection import DBConnector
 from src.DAO.singleton import Singleton
 from src.DAO.tables_creation import TablesCreation
 
 
 class UserMovieCollectionDao(metaclass=Singleton):
-    def __init__(self, db_connection: DBConnection):
+    def __init__(self, db_connection: DBConnector):
         # create a DB connection object
         self.db_connection = db_connection
         # Créer des tables si elles n'existent pas

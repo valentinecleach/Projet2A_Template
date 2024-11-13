@@ -49,7 +49,7 @@ class UserFollowDAO:
 
     def get_all_user_followed(
         self, id_user: int, limit: int = 10, offset: int = 0
-    ) -> list[connectedUser]:
+    ) -> list[ConnectedUser]:
         try:
             query = f"SELECT * FROM follower WHERE id_user = %s LIMIT {max(0,limit)} OFFSET {max(offset,0)}"
             with self.db_connection.connection as connection:
@@ -60,7 +60,7 @@ class UserFollowDAO:
             print(f"Error while fetching FROM follower: {e}")
             return None
         if results:
-            user_dao = UserDao(db_connection)
+            user_dao = UserDao(self.db_connection)
             return [user_dao.get_user_by_id(**res) for res in results]
 
     def delete(self, id_user: int, id_user_followed: int):
