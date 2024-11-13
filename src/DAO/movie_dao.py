@@ -38,7 +38,7 @@ class MovieDAO(metaclass=Singleton):
                 FROM movie
                 WHERE id_movie = %s;
             """
-            result = result = self.db_connection.sql_query(query, (new_movie.id_movie,))
+            result = self.db_connection.sql_query(query, (new_movie.id_movie,))
             movie_exist = result["count"] > 0  # True si film, False sinon
             
             if not movie_exist:

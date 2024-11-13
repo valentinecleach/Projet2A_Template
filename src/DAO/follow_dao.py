@@ -1,18 +1,17 @@
 from datetime import datetime
 from typing import List  # , Optional
 
-from src.DAO.db_connection import DBConnection, Singleton
+from src.DAO.db_connection import DBConnector
+from src.DAO.singleton import Singleton
 from src.DAO.tables_creation import TablesCreation
 from src.DAO.user_dao import UserDao
 from src.Model.connected_user import ConnectedUser
 
 
 class FollowDao(metaclass=Singleton):
-    def __init__(self, db_connection: DBConnection):
+    def __init__(self, db_connection: DBConnector):
         # create a DB connection object
         self.db_connection = db_connection
-        # Create tables if don't exist
-        self.tables_creation = TablesCreation(db_connection)
 
     # CREATE
     def insert(self, id_user: int, id_user_followed: int):

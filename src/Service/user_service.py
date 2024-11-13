@@ -114,16 +114,15 @@ class UserService:
             print("Le nom d'utilisateur est requis.")
             return None
 
-        # Appel à la méthode get_user_by_name de UserDao
         users = self.user_dao.get_user_by_name(username)
 
         if users:
-            return users  # Retourne une liste d'instances ConnectedUser correspondant à la recherche
+            return users 
 
         print("Aucun utilisateur trouvé pour le nom :", username)
         return None
 
-    # Dans user_service.py
+    # focntionne si correspondance exacte avec le pseudo
 
     def follow_user(follower_id: int, followee_id: int) -> None:
         """
