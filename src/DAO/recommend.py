@@ -1,6 +1,7 @@
 from typing import List
 
 from src.DAO.db_connection import DBConnector
+from src.DAO.movie_dao import MovieDAO
 from src.DAO.user_dao import UserDao
 
 # Model
@@ -30,7 +31,7 @@ class Recommend:
         """
         try:
             query = """
-                SELECT * FROM movie
+                SELECT id_movie FROM movie
                 WHERE id_movie not in (
                 select id_movie from user_movie_collection
                 where id_user = %s)
@@ -43,7 +44,8 @@ class Recommend:
             return None
 
         if results:
-            movies_read = [Movie(**dict(mov)).to_dict() for mov in results]
+            movie_dao = MovieDAO(self.db_connection)
+            movies_read = [movie_dao.get_by_id(mov["id_movie"]) for mov in results]
             return movies_read
         else:
             return None
@@ -65,12 +67,12 @@ class Recommend:
         # Sort users by the number of mutual films in their collections
         try:
             query = """
-                SELECT c2.id_user as id_user, COUNT(*) as similitude
+                SELECT c2.id_user as id_user, COUNT(*) as mutual
                 FROM user_movie_collection c1
                 JOIN user_movie_collection c2 using(id_movie)
                 WHERE c1.id_user = %s and c2.id_user <> %s
                 GROUP BY c2.id_user
-                ORDER BY similitude DESC
+                ORDER BY mutual DESC
                 LIMIT 20
                 """
             results = self.db_connection.sql_query(

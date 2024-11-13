@@ -1,4 +1,5 @@
 from typing import Dict, List, Optional
+
 from psycopg2.extras import DictCursor
 
 from src.DAO.db_connection import DBConnector
@@ -20,8 +21,9 @@ class MovieDAO(metaclass=Singleton):
         self.genre_dao = GenreDao(db_connection)
         self.movie_collection_dao = MovieCollectionDao(db_connection)
         self.link_movie_genre_dao = LinkMovieGenreDAO(db_connection)
-        self.link_movie_movie_collection_dao = LinkMovieMovieCollectionDAO(db_connection)
-
+        self.link_movie_movie_collection_dao = LinkMovieMovieCollectionDAO(
+            db_connection
+        )
 
     def insert(self, new_movie: Movie):
         try:
@@ -40,7 +42,7 @@ class MovieDAO(metaclass=Singleton):
             """
             result = self.db_connection.sql_query(query, (new_movie.id_movie,))
             movie_exist = result["count"] > 0  # True si film, False sinon
-            
+
             if not movie_exist:
                 print(f"Inserting movie: {new_movie.title}")
                 insert_query = """
@@ -54,11 +56,7 @@ class MovieDAO(metaclass=Singleton):
                 values = (
                     new_movie.id_movie,
                     new_movie.title,
-                    (
-                        new_movie.budget
-                        if new_movie.budget is not None
-                        else None
-                    ),
+                    (new_movie.budget if new_movie.budget is not None else None),
                     (
                         new_movie.origin_country
                         if new_movie.origin_country is not None
@@ -69,21 +67,15 @@ class MovieDAO(metaclass=Singleton):
                     new_movie.overview,
                     new_movie.popularity,
                     new_movie.release_date,
+                    (new_movie.revenue if new_movie.revenue is not None else None),
                     (
-                        new_movie.revenue
-                        if new_movie.revenue is not None
-                        else None
-                    ),
-                    (
-                        new_movie.runtime
-                        if new_movie.runtime is not None
-                        else None
+                        new_movie.runtime if new_movie.runtime is not None else None
                     ),  # Gérer runtime
                     new_movie.vote_average,
                     new_movie.vote_count,
                     new_movie.adult,
                 )
-                self.db_connection.sql_query(insert_query, values )
+                self.db_connection.sql_query(insert_query, values)
                 print(f"Insertion movie successful: {new_movie.title}")
 
             # Insertion des genres
@@ -124,7 +116,9 @@ class MovieDAO(metaclass=Singleton):
                     JOIN Genre g ON l.id_genre = g.id_genre
                     WHERE l.id_movie = %s;
                 """
-                genres_result = self.db_connection.sql_query(genres_query, (id_movie,), return_type="all")
+                genres_result = self.db_connection.sql_query(
+                    genres_query, (id_movie,), return_type="all"
+                )
 
                 # Récupérer les collections associées
                 collections_query = """
@@ -133,7 +127,9 @@ class MovieDAO(metaclass=Singleton):
                     JOIN Movie_Collection mc ON lm.id_movie_collection = mc.id_movie_collection
                     WHERE lm.id_movie = %s;
                 """
-                collections_result = self.db_connection.sql_query(collections_query, (id_movie,), return_type="all")
+                collections_result = self.db_connection.sql_query(
+                    collections_query, (id_movie,), return_type="all"
+                )
 
                 movie_data["genres"] = [
                     {"id": genre["id_genre"], "name": genre["name_genre"]}
@@ -156,10 +152,9 @@ class MovieDAO(metaclass=Singleton):
             print("Error during recovery by id: ", str(e))
             return None
 
-
     def update(self, movie: Movie):
         try:
-            with DBConnection(test).connection.cursor() as cursor:
+            with self.self.db_connection.connection.cursor() as cursor:
                 cursor.execute(
                     """
                     UPDATE Movie
@@ -187,7 +182,7 @@ class MovieDAO(metaclass=Singleton):
 
     def delete(self, id_movie: int):
         try:
-            with DBConnection(test).connection.cursor() as cursor:
+            with self.self.db_connection.connection.cursor() as cursor:
                 cursor.execute(
                     """
                     DELETE FROM Movie
@@ -210,8 +205,10 @@ class MovieDAO(metaclass=Singleton):
                 SELECT id_movie FROM movie
                 WHERE title ILIKE %s;
             """
-            results = self.db_connection.sql_query(query, (f"%{title}%",), return_type="all")
-            
+            results = self.db_connection.sql_query(
+                query, (f"%{title}%",), return_type="all"
+            )
+
             if results:  # Vérifiez si des résultats ont été trouvés
                 movies = []
                 for result in results:
@@ -226,7 +223,6 @@ class MovieDAO(metaclass=Singleton):
         except Exception as e:
             print("Error during recovery by title:", str(e))
             return None
-
 
 
 # my_object = MovieDAO()

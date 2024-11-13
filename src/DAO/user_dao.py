@@ -66,7 +66,7 @@ class UserDao(metaclass=Singleton):
             print(f"Error while fetching FROM users: {e}")
             return None
         if result:
-            user = dict(result)
+            user = result[0]
             return ConnectedUser(**user)  # Crée et retourne l'utilisateur connecté
         else:
             return None  # Aucun utilisateur trouvé
