@@ -11,6 +11,7 @@ from src.DAO.tables_creation import TablesCreation
 
 from src.Webservice.movie_controller import movie_router
 from src.Webservice.user_controller import user_router
+from src.Webservice.conected_user_interaction_controller import user_interaction_router
 
 db_connection = DBConnector()  
 creation_object = TablesCreation(db_connection) # creation of all table before start
@@ -26,7 +27,7 @@ def run_app():
 
     app.include_router(user_router)
     app.include_router(movie_router)
-
+    app.include_router(user_interaction_router)
     uvicorn.run(app, port=8000, host="localhost")
 
 

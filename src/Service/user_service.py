@@ -6,8 +6,6 @@ import psycopg2  # Assurez-vous d'avoir psycopg2 installé pour la connexion à 
 # DAO
 from src.DAO.db_connection import DBConnector
 from src.DAO.user_dao import UserDao
-from src.DAO.user_favorites_dao import UserFavoritesDAO
-from src.DAO.user_follow_dao import UserFollowDAO
 
 # Model
 from src.Model.connected_user import ConnectedUser
@@ -108,86 +106,6 @@ class UserService:
             print(f"Erreur lors de la connexion : {str(e)}")
             return User(ip_address="placeholder_ip")  # Retourne un User non connecté
 
-    def search_user(self, username: str):
-        """Permet de chercher le profil d'un autre utilisateur."""
-        if not username:
-            print("Le nom d'utilisateur est requis.")
-            return None
-
-        users = self.user_dao.get_user_by_name(username)
-
-        if users:
-            return users
-
-        print("Aucun utilisateur trouvé pour le nom :", username)
-        return None
-
-    # focntionne si correspondance exacte avec le pseudo
-
-    def follow_user(self, follower_id: int, followee_id: int) -> None:
-        """
-        Allows a user to follow another user.
-
-        Parameters
-        ----------
-        follower_id : int
-            The ID of the user who wants to follow.
-        followee_id : int
-            The ID of the user to be followed.
-        """
-        # Vérifier si l'utilisateur essaie de se suivre lui-même
-        if follower_id == followee_id:
-            raise ValueError("A user cannot follow themselves.")
-
-        # Ajouter le suivi en base de données si la relation n'existe pas déjà
-        follow_dao = UserFollowDAO(self.db_connection)
-        try:
-            follow_dao.insert(follower_id, followee_id)
-        except Exception as error:
-            raise ValueError(f"An error occurred while trying to follow: {error}")
-
-    # Dans user_service.py
-
-    def unfollow_user(self, follower_id: int, followee_id: int) -> None:
-        """
-        Allows a user to unfollow another user.
-
-        Parameters
-        ----------
-        follower_id : int
-            The ID of the user who wants to unfollow.
-        followee_id : int
-            The ID of the user to be unfollowed.
-        """
-        # Vérifier si l'utilisateur essaie de se désabonner de lui-même
-        if follower_id == followee_id:
-            raise ValueError("A user cannot unfollow themselves.")
-
-        # Initialiser FollowDao pour la suppression
-        follow_dao = UserFollowDAO(self.db_connection)
-
-        # Vérifier si le lien de suivi existe (ou utilisez une méthode comme follow_dao.is_following)
-        if not follow_dao.is_following(follower_id, followee_id):
-            raise ValueError("This user is not being followed.")
-
-        # Supprimer le suivi en base de données
-        try:
-            follow_dao.delete(follower_id, followee_id)
-        except Exception as error:
-            raise ValueError(f"An error occurred while unfollowing: {error}")
-
-    def rate_film(self, film, rating: int):
-        """Attribue une note à un film."""
-
-    def add_comment(self, film, comment: str):
-        """Ajoute un commentaire à un film."""
-
-    def log_out(self):
-        """Déconnexion de l'utilisateur."""
-
-    def delete_account(self):
-        """Suppression du compte de l'utilisateur."""
-
 
 # db_connection = DBConnector()
 # my_object = UserService(db_connection)
@@ -202,37 +120,3 @@ class UserService:
 #     'phone_number': '123-456-7890'
 # }
 # my_object.sign_up(**user)
-
-
-# doctest follow_user()
-# db_connection = DBConnector()
-# user_service = UserService(db_connection)
-# follower_id = 1
-# followee_id = 2
-# user_service.follow_user(follower_id, followee_id)
-# try:
-# user_service.follow_user(follower_id, followee_id)
-# except ValueError as e:
-# print(e)
-
-# try:
-# user_service.follow_user(follower_id, follower_id)
-# except ValueError as e:
-# print(e)
-
-# doctest pour unfollow_user()
-db_connection = DBConnector()
-user_service = UserService(db_connection)
-follower_id = 1
-followee_id = 2
-user_service.follow_user(follower_id, followee_id)
-user_service.unfollow_user(follower_id, followee_id)
-try:
-    user_service.unfollow_user(follower_id, followee_id)
-except ValueError as e:
-    print(e)
-
-try:
-    user_service.unfollow_user(follower_id, follower_id)
-except ValueError as e:
-    print(e)

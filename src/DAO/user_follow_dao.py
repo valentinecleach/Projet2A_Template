@@ -6,7 +6,7 @@ from src.DAO.user_dao import UserDao
 from src.Model.connected_user import ConnectedUser
 
 
-class UserFollowDAO:
+class UserFollowDao:
     def __init__(self, db_connection: DBConnector):
         self.db_connection = db_connection
 
@@ -32,7 +32,8 @@ class UserFollowDAO:
                     INSERT INTO follower (id_user, id_user_followed, date)
                     VALUES (%s, %s, %s);
                 """
-                values = (id_user, id_user_followed, datetime.now())
+                the_date = datetime.now().date()
+                values = (id_user, id_user_followed, the_date )
                 self.db_connection.sql_query(insert_query, values)
                 print("Insertion successful: Follow relationship added.")
             else:
@@ -85,3 +86,11 @@ class UserFollowDAO:
         except Exception as e:
             print(f"Error while checking follow relationship: {e}")
             return False
+
+
+# db_connection = DBConnector()
+# my_object = UserFollowDAO(db_connection)
+# #print(my_object.insert(1,2))  #works
+# print(my_object.get_all_user_followed(1,2))
+# #print(my_object.delete(1,2)) #works
+# #print(my_object.is_following(1,2)) #works
