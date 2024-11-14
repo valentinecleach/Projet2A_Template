@@ -164,7 +164,7 @@ class UserService:
             raise ValueError("A user cannot unfollow themselves.")
 
         # Initialiser FollowDao pour la suppression
-        follow_dao = FollowDao(self.db_connection)
+        follow_dao = UserFollowDAO(self.db_connection)
 
         # Vérifier si le lien de suivi existe
         following_list = follow_dao.get_follow_list(follower_id)
