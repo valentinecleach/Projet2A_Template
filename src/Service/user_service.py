@@ -5,9 +5,9 @@ import psycopg2  # Assurez-vous d'avoir psycopg2 installé pour la connexion à 
 
 # DAO
 from src.DAO.db_connection import DBConnector
-from src.DAO.follow_dao import FollowDao
 from src.DAO.user_dao import UserDao
-from src.DAO.user_favorites import UserFavoritesDAO
+from src.DAO.user_favorites_dao import UserFavoritesDAO
+from src.DAO.user_follow_dao import UserFollowDAO
 
 # Model
 from src.Model.connected_user import ConnectedUser
@@ -126,7 +126,7 @@ class UserService:
 
     def follow_user(self, follower_id: int, followee_id: int) -> None:
         """
-            Allows a user to follow another user.
+        Allows a user to follow another user.
 
         Parameters
         ----------
@@ -139,19 +139,12 @@ class UserService:
         if follower_id == followee_id:
             raise ValueError("A user cannot follow themselves.")
 
-        # Récupérer la liste des utilisateurs suivis
-        follow_dao = FollowDao(self.db_connection)
-        following_list = follow_dao.get_follow_list(follower_id)
-
-        # Vérifier si l'utilisateur suit déjà le suivi
-        if any(user.id == followee_id for user in following_list):
-            raise ValueError("Already following this user.")
-
-        # Ajouter le suivi en base de données
+        # Ajouter le suivi en base de données si la relation n'existe pas déjà
+        follow_dao = UserFollowDAO(self.db_connection)
         try:
             follow_dao.insert(follower_id, followee_id)
         except Exception as error:
-            raise ValueError(f"An error occurred while following: {error}")
+            raise ValueError(f"An error occurred while trying to follow: {error}")
 
     # Dans user_service.py
 
@@ -210,3 +203,26 @@ class UserService:
 #     'phone_number': '123-456-7890'
 # }
 # my_object.sign_up(**user)
+
+db_connection = DBConnector()
+user_service = UserService(db_connection)
+
+# Créons deux utilisateurs pour le test
+follower_id = 1  # Supposons que l'ID du premier utilisateur est 1
+followee_id = 2  # Supposons que l'ID du second utilisateur est 2
+
+# On commence par s'assurer que follower_id ne suit pas followee_id au début.
+# Maintenant on appelle la méthode `follow_user` pour les faire suivre.
+user_service.follow_user(follower_id, followee_id)
+
+# Si tout fonctionne bien, un appel supplémentaire doit lever une erreur car ils se suivent déjà.
+# try:
+#    user_service.follow_user(follower_id, followee_id)
+# except ValueError as e:
+#    print(e)  # Devrait afficher "Already following this user."
+
+# Test pour vérifier que l'utilisateur ne peut pas se suivre lui-même.
+try:
+    user_service.follow_user(follower_id, follower_id)
+except ValueError as e:
+    print(e)

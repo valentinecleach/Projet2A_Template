@@ -1,5 +1,8 @@
+from datetime import datetime
+from typing import List
+
 from src.DAO.db_connection import DBConnector
-from src.Dao.user_dao import UserDao
+from src.DAO.user_dao import UserDao
 from src.Model.connected_user import ConnectedUser
 
 
@@ -12,73 +15,58 @@ class UserFollowDAO:
         try:
             # Vérification de l'existence de la relation
             query = """
-                SELECT COUNT(*) as count FROM follower 
+                SELECT COUNT(*) as count FROM follower
                 WHERE id_user= %s AND id_user_followed = %s;
             """
             result = self.db_connection.sql_query(
                 query,
-                (
-                    id_user,
-                    id_user_followed,
-                ),
+                (id_user, id_user_followed),
                 return_type="one",
             )
 
-            # Vérifiez si la relation existe
             follow_exists = result["count"] > 0 if result else False
 
             if not follow_exists:
                 print("Inserting follow relationship.")
                 insert_query = """
-                    INSERT INTO follower (id_user, id_user_followed)
-                    VALUES (%s, %s);
+                    INSERT INTO follower (id_user, id_user_followed, date)
+                    VALUES (%s, %s, %s);
                 """
-                self.db_connection.sql_query(
-                    insert_query,
-                    (
-                        id_user,
-                        id_user_followed,
-                    ),
-                )
+                values = (id_user, id_user_followed, datetime.now())
+                self.db_connection.sql_query(insert_query, values)
                 print("Insertion successful: Follow relationship added.")
             else:
                 print("Follow relationship already exists, no insertion performed.")
-
         except Exception as e:
-            print("Insertion error: ", str(e))
+            print("Insertion error:", str(e))
 
     def get_all_user_followed(
         self, id_user: int, limit: int = 10, offset: int = 0
-    ) -> list[ConnectedUser]:
+    ) -> List[ConnectedUser]:
+        """Get all users followed by a specific user with pagination."""
         try:
-            query = f"SELECT * FROM follower WHERE id_user = %s LIMIT {max(0,limit)} OFFSET {max(offset,0)}"
-            with self.db_connection.connection as connection:
-                with connection.cursor() as cursor:
-                    cursor.execute(query, (id_user,))
-                    results = cursor.fetchall()
+            query = """
+                SELECT * FROM follower
+                WHERE id_user = %s
+                LIMIT %s OFFSET %s;
+            """
+            results = self.db_connection.sql_query(
+                query, (id_user, max(0, limit), max(0, offset)), return_type="all"
+            )
         except Exception as e:
-            print(f"Error while fetching FROM follower: {e}")
+            print(f"Error while fetching from follower: {e}")
             return None
+
         if results:
             user_dao = UserDao(self.db_connection)
-            return [user_dao.get_user_by_id(**res) for res in results]
+            return [user_dao.get_user_by_id(res["id_user_followed"]) for res in results]
+        return []
 
     def delete(self, id_user: int, id_user_followed: int):
+        """Delete a follow relationship between two users."""
         try:
-            query = "DELETE FROM follower WHERE id_user = %s and id_user_followed = %s"
-            with self.db_connection.connection as connection:
-                with connection.cursor() as cursor:
-                    cursor.execute(
-                        query,
-                        (
-                            id_user,
-                            id_user_followed,
-                        ),
-                    )
-                    connection.commit()
-                    print("Record deleted successfully FROM follower.")
+            query = "DELETE FROM follower WHERE id_user = %s AND id_user_followed = %s"
+            self.db_connection.sql_query(query, (id_user, id_user_followed))
+            print("Record deleted successfully from follower.")
         except Exception as e:
-            print(f"Error while deleting FROM follower: {e}")
-            self.db_connection.connection.rollback()
-            return None
-
+            print(f"Error while deleting from follower: {e}")
