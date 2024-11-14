@@ -70,3 +70,18 @@ class UserFollowDAO:
             print("Record deleted successfully from follower.")
         except Exception as e:
             print(f"Error while deleting from follower: {e}")
+
+    def is_following(self, id_user: int, id_user_followed: int) -> bool:
+        """Check if a follow relationship exists between two users."""
+        try:
+            query = """
+                SELECT COUNT(*) as count FROM follower
+                WHERE id_user = %s AND id_user_followed = %s;
+            """
+            result = self.db_connection.sql_query(
+                query, (id_user, id_user_followed), return_type="one"
+            )
+            return result["count"] > 0 if result else False
+        except Exception as e:
+            print(f"Error while checking follow relationship: {e}")
+            return False
