@@ -166,14 +166,13 @@ class UserService:
         # Initialiser FollowDao pour la suppression
         follow_dao = UserFollowDAO(self.db_connection)
 
-        # Vérifier si le lien de suivi existe
-        following_list = follow_dao.get_follow_list(follower_id)
-        if not any(user.id == followee_id for user in following_list):
+        # Vérifier si le lien de suivi existe (ou utilisez une méthode comme follow_dao.is_following)
+        if not follow_dao.is_following(follower_id, followee_id):
             raise ValueError("This user is not being followed.")
 
         # Supprimer le suivi en base de données
         try:
-            follow_dao.delete_followed(follower_id, followee_id)
+            follow_dao.delete(follower_id, followee_id)
         except Exception as error:
             raise ValueError(f"An error occurred while unfollowing: {error}")
 
@@ -204,18 +203,36 @@ class UserService:
 # }
 # my_object.sign_up(**user)
 
+
+# doctest follow_user()
+# db_connection = DBConnector()
+# user_service = UserService(db_connection)
+# follower_id = 1
+# followee_id = 2
+# user_service.follow_user(follower_id, followee_id)
+# try:
+# user_service.follow_user(follower_id, followee_id)
+# except ValueError as e:
+# print(e)
+
+# try:
+# user_service.follow_user(follower_id, follower_id)
+# except ValueError as e:
+# print(e)
+
+# doctest pour unfollow_user()
 db_connection = DBConnector()
 user_service = UserService(db_connection)
 follower_id = 1
 followee_id = 2
 user_service.follow_user(follower_id, followee_id)
-
-# try:
-#    user_service.follow_user(follower_id, followee_id)
-# except ValueError as e:
-#    print(e)
+user_service.unfollow_user(follower_id, followee_id)
+try:
+    user_service.unfollow_user(follower_id, followee_id)
+except ValueError as e:
+    print(e)
 
 try:
-    user_service.follow_user(follower_id, follower_id)
+    user_service.unfollow_user(follower_id, follower_id)
 except ValueError as e:
     print(e)
