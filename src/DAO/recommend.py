@@ -142,7 +142,6 @@ class Recommend:
                 ) as ge
                 ON ge.id_user = Mu.id_user
             ORDER BY mutual DESC, Mutual_genre DESC
-            LIMIT 20
                 
 
                 """
