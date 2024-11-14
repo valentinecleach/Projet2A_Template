@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from typing import Annotated
 from fastapi.security import HTTPAuthorizationCredentials
-from src.Webservice.init_app import user_follow_dao, user_interaction_service
+from src.Webservice.init_app import user_follow_dao, user_interaction_service,user_dao
 from src.Webservice.jwt_bearer_webservice import JWTBearer
 
 

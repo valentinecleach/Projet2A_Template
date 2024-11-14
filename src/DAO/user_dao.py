@@ -90,7 +90,7 @@ class UserDao(metaclass=Singleton):
             return None
 
         if results:
-            users_read = [ConnectedUser(**dict(user)).to_dict() for user in results]
+            users_read = [ConnectedUser(**dict(user)) for user in results] # .to_dict()
             return users_read
         else:
             return None
@@ -128,22 +128,6 @@ class UserDao(metaclass=Singleton):
         else:
             return 1
 
-    # check username
-    def check_username(self, username: str):
-        try:
-            query = f"SELECT * FROM users WHERE username = %s"
-            with self.db_connection.connection as connection:
-                with connection.cursor() as cursor:
-                    cursor.execute(query, (username,))
-                    results = cursor.fetchone()
-        except Exception as e:
-            print(f"Error while fetching FROM users: {e}")
-            return None
-        if results:
-            print(f"{username} already exist in our database")
-            return None
-        else:
-            return 1
 
     # UPDATE
     def update_user(

@@ -17,14 +17,14 @@ import bcrypt
 def hash_password(password: str, salt: Optional[str] = None) -> str:
     """Hashes the password"""
     salted_password = f"{salt[0]}{password}{salt[1]}".encode("utf-8")
-    hashed_password = bcrypt.hashpw(salted_password, bcrypt.gensalt())
+    hashed_password = hashlib.sha256(salted_password).hexdigest() 
     return hashed_password
 
 
-def create_salt(username: str) -> list[str]:
+def create_salt(username: str, password_token : Optional[str] = None) -> list[str]:
     """Creates a salt for the password to be hashed"""
     # Création des parties de sel
-    password_token = secrets.token_hex(16)
+    password_token = password_token if password_token else secrets.token_hex(16)
     start_salt = username[:3]  # Les trois premiers caractères du nom d'utilisateur
     end_salt = (
         username[3:] + password_token
@@ -32,8 +32,10 @@ def create_salt(username: str) -> list[str]:
     return [start_salt, end_salt, password_token]
 
 
-def verify_password(password_tried, hashed_paswword):
-    salt = create
+def verify_password(username, password_tried, user_password_token, hashed_password):
+    salt = create_salt(username, user_password_token)
+    hashed_password_tried = hash_password(password = password_tried, salt = salt)
+    return hashed_password_tried == hashed_password
 
 
 def check_password_strenght(password: str):

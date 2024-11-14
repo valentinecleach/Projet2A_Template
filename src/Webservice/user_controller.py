@@ -66,7 +66,7 @@ def create_user(
 
 
 @user_router.post("/jwt", status_code=status.HTTP_201_CREATED)
-def login(username: str, password: str) -> JWTResponse:
+def login(username: str, password_tried: str) -> JWTResponse:
     """
     Authenticate with username and password and obtain a token.
     """
@@ -75,13 +75,13 @@ def login(username: str, password: str) -> JWTResponse:
         if not user:
             raise HTTPException(status_code=403, detail="Invalid username")
 
-        if not password_service.verify_password(password, user.hashed_password):
+        elif user_service.log_in(username, password_tried) is not True:
             raise HTTPException(status_code=403, detail="Invalid password")
+        else:
+            token = jwt_service.encode_jwt(user[0].id_user)
 
-        token = jwt_service.encode_jwt(user.id_user)
-
-        # Retourner le token JWT dans la réponse
-        return JWTResponse(access_token=token)
+            # Retourner le token JWT dans la réponse
+            return JWTResponse(access_token=token)
 
     except Exception as error:
         raise HTTPException(

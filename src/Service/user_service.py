@@ -17,6 +17,7 @@ from src.Service.password_service import (
     check_password_strenght,
     create_salt,
     hash_password,
+    verify_password
 )
 
 
@@ -26,7 +27,7 @@ class UserService:
         self.user_dao = UserDao(db_connection)
 
     def check_valid_username(self, username):
-        if len(username) <= 5:
+        if len(username) < 5:
             raise ValueError("Username must contain at least 5 characters")
         existing_user = self.user_dao.get_user_by_name(username)
         print(existing_user)
@@ -51,7 +52,7 @@ class UserService:
         check_password_strenght(password)
 
         salt = create_salt(username)
-        hashed_password = hash_password(password, create_salt(username))
+        hashed_password = hash_password(password, salt)
 
         # Préparation des valeurs à insérer
         user = {
@@ -74,49 +75,42 @@ class UserService:
 
     ##### sign_up fonctionne
 
-    def log_in(self, username: str, password: str):
+    def log_in(self, username: str, password_tried: str):
         """Permet à un utilisateur de se connecter."""
-
-        # Hashage du mdp
-        salted_password = create_salt(username)
-        hashed_password = hash_password(password, salted_password)
-
+        user = self.user_dao.get_user_by_name(username)
+        user_password_token = user[0].password_token
         try:
-            with self.db_connection.connection.cursor() as cursor:
-                # Récupération de l'utilisateur de la base de données
-                cursor.execute(
-                    "SELECT hashed_password FROM users WHERE username = %s", (username,)
-                )
-                result = cursor.fetchone()
-
-                if result and bcrypt.checkpw(
-                    salted_password, result[0].encode("utf-8")
-                ):
+            query = """
+                SELECT hashed_password FROM users WHERE username = %s
+            """
+            value = (username,)
+            result = self.db_connection.sql_query(query, value, return_type= "one")
+            hashed_password = result['hashed_password']
+            if hashed_password :
+                verification = verify_password(username, password_tried, user_password_token, hashed_password)
+                if verification :
                     print(f"Utilisateur '{username}' connecté avec succès.")
                     # Retourner une instance de ConnectedUser avec les informations pertinentes
-                    return ConnectedUser(username=username, ip_address="placeholder_ip")
-                else:
-                    print(
-                        "Échec de la connexion : nom d'utilisateur ou mot de passe incorrect."
-                    )
-                    return User(
-                        ip_address="placeholder_ip"
-                    )  # Retourne un User non connecté
+                    return True
+            else:
+                print(
+                    "Échec de la connexion : nom d'utilisateur ou mot de passe incorrect."
+                )
         except Exception as e:
-            print(f"Erreur lors de la connexion : {str(e)}")
-            return User(ip_address="placeholder_ip")  # Retourne un User non connecté
+            print(f"Erreur : {str(e)}")
 
 
-# db_connection = DBConnector()
-# my_object = UserService(db_connection)
-# user = {
-#     'first_name': 'John',
-#     'last_name': 'Doe',
-#     'username': 'johndoe',
-#     'password': 'SecurePassword123!',
-#     'gender': 1,  # Exemple de genre (1 pour masculin, 2 pour féminin, selon votre définition)
-#     'date_of_birth': date(1990, 12, 25),
-#     'email_address': 'john.doe@example.com',
-#     'phone_number': '123-456-7890'
-# }
-# my_object.sign_up(**user)
+#db_connection = DBConnector()
+#my_object = UserService(db_connection)
+# # user = {
+# #     'first_name': 'John',
+# #     'last_name': 'Doe',
+# #     'username': 'johndoe',
+# #     'password': 'SecurePassword123!',
+# #     'gender': 1,  # Exemple de genre (1 pour masculin, 2 pour féminin, selon votre définition)
+# #     'date_of_birth': date(1990, 12, 25),
+# #     'email_address': 'john.doe@example.com',
+# #     'phone_number': '123-456-7890'
+# # }
+# # my_object.sign_up(**user)
+#print(my_object.log_in("user1", "passworduser1"))
