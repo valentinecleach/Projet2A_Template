@@ -38,17 +38,19 @@ def db_connection():
     except OperationalError as e:
         pytest.fail(f"Unable to connect to the database: {e}")
 
-@pytest.fixture(scope="module")
+
 def genre_dao(mocker):
     """fixture de GenreDao avec mock_db_connection"""
     mock_connection, mock_cursor = mock_db_connection(mocker)
     genre_dao_instance = GenreDao(db_connection = mock_connection)
     return genre_dao_instance
 
+
 def test_insert_genre(genre_dao):
     # GIVEN
     # Créer un nouvel objet Genre
     #new_genre = Genre(id=28, name="Test Genre")  # Assure-toi que la classe Genre est bien définie dans ton code
+    new_genre = genre_dao(mocker)
 
     # WHEN
     # Appel de la méthode insert

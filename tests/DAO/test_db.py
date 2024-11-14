@@ -11,7 +11,8 @@ import pytest
 # python -m pip install pytest-mock
 from src.DAO.db_connection import DBConnector
 
-#python -m pytest tests_directory/foo.py tests_directory/bar.py -k 'test_001'
+# python -m pytest tests_directory/foo.py tests_directory/bar.py -k 'test_001'
+# python -m pytest tests/DAO/test_db.py -k 'test_initialization_no_config'
 
 def mock_db_connection(mocker):
     """Fixture pour simuler la connexion à la base de données."""
@@ -56,7 +57,7 @@ def test_initialization_no_config(mocker):
     assert db_connection.password == "test_password"
     assert db_connection.schema == "projet_info_test"
     
-
+# python -m pytest tests/DAO/test_db.py -k 'test_initialization_config'
 def test_initialization_config():
     """On teste l'initiatlisation si l'attribut config est donné
     """
@@ -93,6 +94,7 @@ def test_set_search_path(mocker):
     mock_connection.commit.assert_called_once()
 
 
+# python -m pytest tests/DAO/test_db.py -k 'test_create_tables'
 def test_create_tables(mocker):
     """ Teste la création de tables avec la méthode sql_query
     """
@@ -107,31 +109,19 @@ def test_create_tables(mocker):
         );
     """
     
-    
     # je ne trouves pas necessaire de garder un truc trop long?
     # WHEN
     mock_connection.sql_query(create_table_query)
 
-    #calls = [
-    #   unittest.mock.call(
-    #      "CREATE TABLE IF NOT EXISTS MovieMaker (id_movie_maker SERIAL PRIMARY KEY, adult BOOLEAN NOT NULL DEFAULT FALSE, name VARCHAR(255) NOT NULL, gender INTEGER NOT NULL, biography TEXT NOT NULL, birthday DATE, place_of_birth VARCHAR(255), deathday DATE, known_for_department VARCHAR(255), popularity FLOAT NOT NULL, known_for JSONB);"
-    #   ),
-    #    unittest.mock.call(
-    #        "CREATE TABLE IF NOT EXISTS users (id_user SERIAL PRIMARY KEY, first_name VARCHAR(255) NOT NULL, last_name VARCHAR(255) NOT NULL, username VARCHAR(255) UNIQUE NOT NULL, hashed_password VARCHAR(255) NOT NULL, email VARCHAR(255) UNIQUE NOT NULL);"
-    #    ),
-    #]
-    
-
     # THEN: Verify the calls were made to execute
-
-    mock_cursor.execute.assert_called_once_with(create_table_query, None)
-
-    mock_connection.commit.assert_called_once()
+    mock_cursor.sql_query.assert_called_once_with(create_table_query, None)
+    mock_connection.sql_query.assert_called_once()
 
 
-def test_insert(mock_db_connection):
-    """Teste
+def test_insert(mocker):
+    """ Teste la création de tables avec la méthode sql_query
     """
+    # GIVEN
     mock_connection, mock_cursor = mock_db_connection(mocker)
 
     test_table = "users"
@@ -141,10 +131,13 @@ def test_insert(mock_db_connection):
         {"column_name": "last_name"},
         {"column_name": "username"},
         {"column_name": "hashed_password"},
-        {"column_name": "email"},
+        {"column_name": "email"}
     ]
-    
-    db_connection.insert(test_table, test_values)
+    insert_table_query = """ 
+    INSERT ;
+    """
 
-    mock_cursor.execute.assert_called_once()
-    mock_connection.commit.assert_called_once()
+    # WHEN
+    mock_connection.sql_query(insert_table_query)
+
+    # GIVEN

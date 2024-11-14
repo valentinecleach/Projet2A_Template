@@ -13,15 +13,15 @@ class GenreDao(metaclass=Singleton):
         self.db_connection = db_connection
 
     def insert(self, new_genre: Genre): 
-        try:
-            """
+        """
             Ajoute un genre dans la base de données.
 
             Paramètres:
             -----------
             new_genre : Genre
                 Le genre à ajouter dans le schéma.
-            """
+        """
+        try:
             # Vérification de l'existence du genre
             query = "SELECT id_genre FROM genre WHERE id_genre = %s;"
             genre_exists = self.db_connection.sql_query(query, (new_genre.id,), return_type="one")
