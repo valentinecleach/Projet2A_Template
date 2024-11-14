@@ -206,22 +206,15 @@ class UserService:
 
 db_connection = DBConnector()
 user_service = UserService(db_connection)
-
-# Créons deux utilisateurs pour le test
-follower_id = 1  # Supposons que l'ID du premier utilisateur est 1
-followee_id = 2  # Supposons que l'ID du second utilisateur est 2
-
-# On commence par s'assurer que follower_id ne suit pas followee_id au début.
-# Maintenant on appelle la méthode `follow_user` pour les faire suivre.
+follower_id = 1
+followee_id = 2
 user_service.follow_user(follower_id, followee_id)
 
-# Si tout fonctionne bien, un appel supplémentaire doit lever une erreur car ils se suivent déjà.
 # try:
 #    user_service.follow_user(follower_id, followee_id)
 # except ValueError as e:
-#    print(e)  # Devrait afficher "Already following this user."
+#    print(e)
 
-# Test pour vérifier que l'utilisateur ne peut pas se suivre lui-même.
 try:
     user_service.follow_user(follower_id, follower_id)
 except ValueError as e:
