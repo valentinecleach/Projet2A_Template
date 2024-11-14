@@ -2,7 +2,6 @@ from fastapi import HTTPException, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 import jwt 
-#from jwt import DecodeError, ExpiredSignatureError
 
 from src.Webservice.init_app import jwt_service
 
