@@ -28,16 +28,20 @@ class MockMovieDBConnector:
 def mock_db_connection():
     return MockMovieDBConnector()
 
+# NE MARCHE PAS
+# python -m pytest tests/DAO/test_movie_dao.py -k 'test_get_movie_by_id'
 def test_get_movie_by_id(mock_db_connection):
     movie_dao = MovieDAO(mock_db_connection)
     movie = movie_dao.get_by_id(19995)
     
-    assert movie is not None
+    assert movie is not None # -> assert None is not None
     assert movie.id_movie == 19995
     assert movie.title == "Avatar"
     assert movie.adult is False
     assert movie.budget == 237000000
 
+# MARCHE
+# python -m pytest tests/DAO/test_movie_dao.py -k 'test_get_movie_by_non_existent_id'
 def test_get_movie_by_non_existent_id(mock_db_connection):
     movie_dao = MovieDAO(mock_db_connection)
     movie = movie_dao.get_by_id(99999)  # ID qui n'existe pas

@@ -36,7 +36,8 @@ def insert_test_data(setup_db):
 
     return id_user, id_movie
 
-
+# python -m pytest tests/DAO/comment_dao_test.py -k "test_insert_comment"
+# NE MARCHE PAS
 def test_insert_comment(insert_test_data):
     """Test inserting a comment into the database."""
     id_user, id_movie = insert_test_data

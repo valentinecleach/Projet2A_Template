@@ -42,7 +42,7 @@ def mock_db_connection(mocker):
     mock_connection = DBConnector()
     return mock_connection, mock_cursor
 
-
+# OK
 def test_initialization_no_config(mocker):
     """On teste l'initiatlisation si l'attribut config n'est pas donné
     """
@@ -58,6 +58,7 @@ def test_initialization_no_config(mocker):
     assert db_connection.schema == "projet_info_test"
     
 # python -m pytest tests/DAO/test_db.py -k 'test_initialization_config'
+# OK
 def test_initialization_config():
     """On teste l'initiatlisation si l'attribut config est donné
     """
@@ -95,6 +96,7 @@ def test_set_search_path(mocker):
 
 
 # python -m pytest tests/DAO/test_db.py -k 'test_create_tables'
+# NE MARCHE PAS
 def test_create_tables(mocker):
     """ Teste la création de tables avec la méthode sql_query
     """
@@ -109,7 +111,6 @@ def test_create_tables(mocker):
         );
     """
     
-    # je ne trouves pas necessaire de garder un truc trop long?
     # WHEN
     mock_connection.sql_query(query = create_table_query)
 
@@ -117,7 +118,7 @@ def test_create_tables(mocker):
     mock_connection.sql_query.assert_called_with(query = create_table_query)
     mock_connection.sql_query.assert_called_once()
 
-
+# NE MARCHE PAS VRMT CAR IL NE TEST RIEN
 def test_insert(mocker):
     """ Teste la création de tables avec la méthode sql_query
     """

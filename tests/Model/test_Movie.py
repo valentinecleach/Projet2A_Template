@@ -35,6 +35,7 @@ from tests.conftest import avatar, titanic
         ({"adult": True}, ValueError, "The film can't be an adult film."),
     ],
 )
+#python -m pytest tests/Model/test_Movie.py -k "test_movie_init_echec"
 def test_movie_init_echec(titanic, kwargs, erreur, message_erreur):
     # Mettre à jour titanic avec les arguments testés
     test_kwargs = titanic.copy()  # Créer une copie pour éviter de modifier la fixture
@@ -42,7 +43,7 @@ def test_movie_init_echec(titanic, kwargs, erreur, message_erreur):
     with pytest.raises(erreur, match=message_erreur):
         Movie(**test_kwargs)
 
-
+# python -m pytest tests/Model/test_Movie.py -k "test_movie_constructor_ok"
 def test_movie_constructor_ok():
     the_shining = Movie(id_movie=12, original_title="The Shining")
     assert the_shining.id_movie == 12

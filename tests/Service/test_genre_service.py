@@ -13,7 +13,7 @@ def genre_data():
         {"id": 16, "name": "Animation"},
     ]
 
-
+#python -m pytest tests/Service/test_genre_service.py -k "test_create_list_of_genre_with_valid_data"
 def test_create_list_of_genre_with_valid_data(genre_data):
     """Teste la création d'une liste de genres à partir de données valides."""
     genres = GenreService.create_list_of_genre(genre_data)
