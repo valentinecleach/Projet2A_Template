@@ -85,9 +85,9 @@ class MovieService:
         """Filters the movie by the popularity"""
         pass
 
-# works from DAO ans from TMDB
-#db_connection = DBConnector()
-#my_object = MovieService(db_connection)
-#print(my_object.get_movie_by_id(1945))
+works from DAO ans from TMDB
+db_connection = DBConnector()
+my_object = MovieService(db_connection)
+print(my_object.get_movie_by_id(1945))
 #print(my_object.get_movie_by_title('Avatar'))
 
