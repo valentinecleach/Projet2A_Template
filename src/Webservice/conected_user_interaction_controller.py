@@ -1,8 +1,9 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from typing import Annotated
 from fastapi.security import HTTPAuthorizationCredentials
-from src.Webservice.init_app import user_follow_dao, user_interaction_service,user_dao
+from src.Webservice.init_app import user_follow_dao, user_interaction_service, user_dao
 from src.Webservice.jwt_bearer_webservice import JWTBearer
+from src.Webservice.user_controller import get_user_from_credentials
 
 
 user_interaction_router = APIRouter(prefix="/users_interactions", tags=["User Interactions"])
@@ -28,7 +29,7 @@ def find_a_user(username: str) -> list:
     status_code=status.HTTP_201_CREATED,
 )
 def follow_user(
-    user_id: int,
+    user_to_follow_id: int,
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
 ) -> str:
     """
@@ -36,8 +37,8 @@ def follow_user(
     """
     current_user = get_user_from_credentials(credentials)
     try:
-        user_service.follow_user(current_user.id, user_id)
-        return f"User {current_user.username} is now following user {user_id}"
+        user_interaction_service.follow_user(current_user.id, user_to_follow_id)
+        return f"User {current_user.username} is now following user {user_to_follow_id}"
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
 
@@ -48,7 +49,7 @@ def follow_user(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 def unfollow_user(
-    user_id: int,
+    user_to_unfollow_id: int,
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
 ) -> None:
     """
@@ -56,6 +57,7 @@ def unfollow_user(
     """
     current_user = get_user_from_credentials(credentials)
     try:
-        user_service.unfollow_user(current_user.id, user_id)
+        user_interaction_service.unfollow_user(current_user.id, user_to_unfollow_id)
+        return f"User {current_user.username} deosn't follow user {user_to_follow_id} anymore"
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
