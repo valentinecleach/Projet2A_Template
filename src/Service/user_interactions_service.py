@@ -112,7 +112,7 @@ class UserInteractionService:
 
         # Suppression du favori
         try:
-            self.user_favorites_dao.delete(user_id, movie_id)
+            self.user_favorites_dao.remove(user_id, movie_id)
         except Exception as error:
             raise ValueError(
                 f"An error occurred while trying to remove the favorite: {error}"
@@ -183,13 +183,13 @@ class UserInteractionService:
 #     user_service.unfollow_user(follower_id, follower_id)
 # except ValueError as e:
 #     print(e)
-db_connection = DBConnector()
-user_favorite_dao = UserFavoriteDao(db_connection)
-user_service = UserInteractionService(user_favorite_dao)
+# db_connection = DBConnector()
+# user_favorite_dao = UserFavoriteDao(db_connection)
+# user_service = UserInteractionService(db_connection)
 
-user_id = 1
-movie_id = 42
-user_service.add_favorite(user_id, movie_id)
+# user_id = 1
+# movie_id = 19995
+# user_service.add_favorite(user_id, movie_id)
 
 # user_service.remove_favorite(user_id, movie_id)
 
