@@ -79,14 +79,10 @@ def login(username: str, password_tried: str) -> JWTResponse:
             raise HTTPException(status_code=403, detail="Invalid password")
         else:
             token = jwt_service.encode_jwt(user[0].id_user)
-
             # Retourner le token JWT dans la réponse
             return JWTResponse(access_token=token)
-
     except Exception as error:
-        raise HTTPException(
-            status_code=403, detail="Invalid username or password"
-        ) from error
+        raise HTTPException(status_code=403, detail = "error during log_in") from error
 
 
 @user_router.get("/me", dependencies=[Depends(JWTBearer())])
