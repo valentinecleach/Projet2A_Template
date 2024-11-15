@@ -9,3 +9,6 @@ def _is_valid_date(date_str: str) -> bool:
         return True
     except ValueError:
         return False
+
+
+# c:\users\id2464\appdata\roaming\python\python310\Scripts
