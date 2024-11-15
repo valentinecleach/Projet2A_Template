@@ -53,7 +53,6 @@ class UserDao(metaclass=Singleton):
                 )
                 self.db_connection.sql_query(insert_query, values)
                 print(f"Insertion user successful: {new_user['username']}")
-
         except Exception as e:
             print(f"Insertion error: {str(e)}")
 
@@ -66,7 +65,8 @@ class UserDao(metaclass=Singleton):
             print(f"Error while fetching FROM users: {e}")
             return None
         if result:
-            user = result[0]
+            user = dict(result)
+            print(user)
             return ConnectedUser(**user)  # Crée et retourne l'utilisateur connecté
         else:
             return None  # Aucun utilisateur trouvé
@@ -209,8 +209,9 @@ class UserDao(metaclass=Singleton):
             return None
 
 
-"""
+
 db_connection = DBConnector()
 my_object = UserDao(db_connection)
-print(my_object.get_user_by_name('johndoe'))
-"""
+#print(my_object.get_user_by_name('johndoe'))
+print(my_object.get_user_by_id(2))
+

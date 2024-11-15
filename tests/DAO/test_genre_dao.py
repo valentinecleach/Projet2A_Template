@@ -45,7 +45,8 @@ def genre_dao(mock_db_connection):
     genre_dao_instance = GenreDao(db_connection = mock_connection)
     return genre_dao_instance
 
-
+# python -m pytest tests/DAO/test_genre_dao.py -k "test_insert_new_genre"
+# NE MARCHE PAS
 def test_insert_new_genre(genre_dao, mock_db_connection):
     """Test insert a genre
     """
@@ -75,7 +76,8 @@ def test_insert_new_genre(genre_dao, mock_db_connection):
             connection.commit()
 
 
-
+# python -m pytest tests/DAO/test_genre_dao.py -k "test_insert_existing_genre"
+# NE MARCHE PAS
 def test_insert_existing_genre(genre_dao, mock_db_connection):
     """Test insert a genre
     """

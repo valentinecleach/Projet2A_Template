@@ -58,7 +58,6 @@ def create_user(
     except Exception as error:
         raise HTTPException(status_code=409, detail=str(error)) from error
 
-    return APIUser(username=username)
 
 
 # L'utilisateur se connecte en envoyant son nom d'utilisateur et son mot de passe.
@@ -78,11 +77,10 @@ def login(username: str, password_tried: str) -> JWTResponse:
         elif user_service.log_in(username, password_tried) is not True:
             raise HTTPException(status_code=403, detail="Invalid password")
         else:
-            token = jwt_service.encode_jwt(user[0].id_user)
-            # Retourner le token JWT dans la réponse
-            return JWTResponse(access_token=token)
+            return(jwt_service.encode_jwt(user[0].id_user))
     except Exception as error:
-        raise HTTPException(status_code=403, detail = "error during log_in") from error
+        print(error)
+        raise HTTPException(status_code=403) from error
 
 
 @user_router.get("/me", dependencies=[Depends(JWTBearer())])
@@ -100,10 +98,12 @@ def get_user_from_credentials(credentials: HTTPAuthorizationCredentials) -> APIU
     Get a user from credentials
     """
     token = credentials.credentials
+    print(token)
     user_id = int(jwt_service.validate_user_jwt(token))
+    print(user_id)
     user: User | None = user_dao.get_user_by_id(user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    return APIUser(id=user.id, username=user.username)
+    return APIUser(id= user_id, username=user.username)
 
 
