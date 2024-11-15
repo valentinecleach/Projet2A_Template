@@ -8,6 +8,8 @@ from src.Model.connected_user import ConnectedUser
 
 class UserFollowDao:
     def __init__(self, db_connection: DBConnector):
+        if not isinstance(db_connection, DBConnector):
+            raise ValueError("db_connection must be an instance of DBConnector")
         self.db_connection = db_connection
 
     def insert(self, id_user: int, id_user_followed: int):
@@ -33,7 +35,7 @@ class UserFollowDao:
                     VALUES (%s, %s, %s);
                 """
                 the_date = datetime.now().date()
-                values = (id_user, id_user_followed, the_date )
+                values = (id_user, id_user_followed, the_date)
                 self.db_connection.sql_query(insert_query, values)
                 print("Insertion successful: Follow relationship added.")
             else:

@@ -17,7 +17,7 @@ from src.Service.password_service import (
     check_password_strenght,
     create_salt,
     hash_password,
-    verify_password
+    verify_password,
 )
 
 
@@ -84,11 +84,13 @@ class UserService:
                 SELECT hashed_password FROM users WHERE username = %s
             """
             value = (username,)
-            result = self.db_connection.sql_query(query, value, return_type= "one")
-            hashed_password = result['hashed_password']
-            if hashed_password :
-                verification = verify_password(username, password_tried, user_password_token, hashed_password)
-                if verification :
+            result = self.db_connection.sql_query(query, value, return_type="one")
+            hashed_password = result["hashed_password"]
+            if hashed_password:
+                verification = verify_password(
+                    username, password_tried, user_password_token, hashed_password
+                )
+                if verification:
                     print(f"Utilisateur '{username}' connecté avec succès.")
                     # Retourner une instance de ConnectedUser avec les informations pertinentes
                     return True
@@ -100,8 +102,8 @@ class UserService:
             print(f"Erreur : {str(e)}")
 
 
-#db_connection = DBConnector()
-#my_object = UserService(db_connection)
+# db_connection = DBConnector()
+# my_object = UserService(db_connection)
 # # user = {
 # #     'first_name': 'John',
 # #     'last_name': 'Doe',
@@ -113,4 +115,4 @@ class UserService:
 # #     'phone_number': '123-456-7890'
 # # }
 # # my_object.sign_up(**user)
-#print(my_object.log_in("user1", "passworduser1"))
+# print(my_object.log_in("user1", "passworduser1"))
