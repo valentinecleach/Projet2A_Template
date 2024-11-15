@@ -31,32 +31,39 @@ class Recommend:
         """
         try:
             query = """
-                SELECT tab.id_movie as id_movie, SUM(frequency_user) as score,
-                        popularity , vote_average
-                FROM
-                    (SELECT m.id_movie as id_movie,popularity, vote_average , id_genre
-                    FROM movie m JOIN link_movie_genre l using(id_genre)
-                    WHERE m.id_movie not in (
-                    select id_movie from user_movie_collection c
-                    where id_user = %s) as tab
-
-                    JOIN 
-
-                    (SELECT tab4.id_genre as id_genre, 
-                                    genre_count/total_genre as frequency_user
-                                FROM
-                                    (SELECT l3.id_genre as id_genre, 
-                                        COUNT(*) AS genre_count
-                                    From user_movie_collection c3
-                                            JOIN link_movie_genre l3 using(id_movie)
-                                        Where c3.id_user = %s
-                                        Group BY l3.id_genre
-                                    ) as tab4
-                    USING(id_genre)
-                GROUP BY id_movie
-                ORDER BY score DESC, popularity DESC, vote_average DESC
+            WITH PotentialMovies AS (
+                SELECT m.id_movie, m.popularity, m.vote_average, l.id_genre
+                FROM movie m
+                JOIN link_movie_genre l USING(id_genre)
+                WHERE m.id_movie NOT IN (
+                    SELECT id_movie 
+                    FROM user_movie_collection 
+                    WHERE id_user = %s
+                )
+            ),
+            UserGenreCounts AS (
+                SELECT l.id_genre, COUNT(*) AS genre_count
+                FROM user_movie_collection c
+                JOIN link_movie_genre l USING(id_movie)
+                WHERE c.id_user = %s
+                GROUP BY l.id_genre
+            )
+            SELECT p.id_movie, SUM(u.genre_count) AS score, p.popularity, p.vote_average
+            FROM PotentialMovies p
+            RIGHT JOIN UserGenreCounts u ON p.id_genre = u.id_genre
+            GROUP BY p.id_movie, p.popularity, p.vote_average
+            ORDER BY score DESC, p.popularity DESC, p.vote_average DESC
+            LIMIT 50;
             """
-            results = self.db_connection.sql_query(query, (id_user,), return_type="all")
+
+            results = self.db_connection.sql_query(
+                query,
+                (
+                    id_user,
+                    id_user,
+                ),
+                return_type="all",
+            )
         except Exception as e:
             print(f"Error while searching: {e}")
             return None
@@ -85,70 +92,50 @@ class Recommend:
         # Sort users by the number of mutual films in their collections
         try:
             query = """
-            SELECT Mu.id_user as id_user
-            FROM
-                (SELECT c2.id_user as id_user, COUNT(*) as mutual
-                FROM user_movie_collection c1
-                JOIN user_movie_collection c2 using(id_movie)
-                WHERE c1.id_user = %s and c2.id_user <> %s
-                GROUP BY c2.id_user) as Mu
+            --find users and count their movies
+            WITH UserMovies AS (
+            SELECT id_user, count(*) as nbmovies
+            FROM user_movie_collection
+            GROUP BY id_user
+            ),
+            --find users with mutual movies
+            WITH MutualMovies AS (
+            SELECT c2.id_user, nbmovies, COUNT(*) as mutual
+            FROM user_movie_collection c1
+            JOIN user_movie_collection c2 USING(id_movie)
+            INNER JOIN UserMovies u ON u.id_user = c2.id_user
+            WHERE c1.id_user = %s AND c2.id_user <> %s
+            GROUP BY c2.id_user
+            ),
+            GenreFrequencies AS (
+                SELECT c.id_user, l.id_genre, COUNT(*) * 1.0 / SUM(COUNT(*)) OVER (PARTITION BY c.id_user) as frequency
+                FROM user_movie_collection c
+                JOIN link_movie_genre l USING(id_movie)
+                GROUP BY c.id_user, l.id_genre
+            ),
+            UserGenreFrequencies AS (
+                SELECT l.id_genre, COUNT(*) * 1.0 / SUM(COUNT(*)) OVER () as frequency_user
+                FROM user_movie_collection c
+                JOIN link_movie_genre l USING(id_movie)
+                WHERE c.id_user = %s
+                GROUP BY l.id_genre
+            ),
+            MutualGenres AS (
+                SELECT g1.id_user, SUM(g1.frequency * g2.frequency_user) as Mutual_genre
+                FROM GenreFrequencies g1
+                JOIN UserGenreFrequencies g2 USING(id_genre)
+                GROUP BY g1.id_user
+            )
+            SELECT Mu.id_user as id_user,Mg.Mutual_genre, Mu.mutual/Mu.nbmovies as similar
+            FROM MutualGenres Mg
+            RIGHT JOIN  MutualMovies Mu ON Mu.id_user = Mg.id_user
+            ORDER BY Mg.Mutual_genre DESC,similar DESC
+            LIMIT 50;
 
-                FULL JOIN 
-
-                (SELECT tab3.id_user as id_user, 
-                        SUM(tab3.frequency * tab5.frequency_user) as Mutual_genre
-                FROM
-                       (SELECT tab1.id_user as id_user,
-                            tab1.id_genre as id_genre, 
-                            genre_count/total_genre as frequency
-                        FROM
-                            
-                            (SELECT c.id_user as id_user,
-                                l.id_genre as id_genre, 
-                                COUNT(*) AS genre_countdb
-                            From user_movie_collection c
-                                    JOIN link_movie_genre l using(id_movie)
-                                Group BY c.id_user, l.id_genre
-                            ) as tab1
-                            INNER JOIN
-                                (SELECT C2.id_user as id_user, COUNT(*) as total_genre
-                                From user_movie_collection c2
-                                JOIN link_movie_genre l2 using(id_movie)
-                                GROUP BY C2.id_user
-                                ) AS tab2
-                            ON tab1.id_genre = tab2.id_genre
-                        )AS tab3
-                        JOIN
-                            (SELECT tab4.id_genre as id_genre, 
-                                genre_count/total_genre as frequency_user
-                            FROM
-                                (SELECT l3.id_genre as id_genre, 
-                                    COUNT(*) AS genre_count
-                                From user_movie_collection c3
-                                        JOIN link_movie_genre l3 using(id_movie)
-                                    Where c3.id_user = %s
-                                    Group BY l3.id_genre
-                                ) as tab4
-                                INNER JOIN
-                                    (SELECT COUNT(*) as total_genre
-                                    From user_movie_collection c4
-                                    JOIN link_movie_genre l4 using(id_movie)
-                                    Where c4.id_user = %s
-                                    ) AS tab5
-                                ON tab4.id_genre = tab5.id_genre
-                            )AS tab6
-                        Using(id_genre)
-                Group by tab3.id_user
-                ) as ge
-                ON ge.id_user = Mu.id_user
-            ORDER BY mutual DESC, Mutual_genre DESC
-                
-
-                """
+            """
             results = self.db_connection.sql_query(
                 query,
                 (
-                    id_user,
                     id_user,
                     id_user,
                     id_user,
