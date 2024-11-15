@@ -34,7 +34,7 @@ class Recommend:
             WITH PotentialMovies AS (
                 SELECT m.id_movie, m.popularity, m.vote_average, l.id_genre
                 FROM movie m
-                JOIN link_movie_genre l USING(id_genre)
+                JOIN link_movie_genre l USING(id_movie)
                 WHERE m.id_movie NOT IN (
                     SELECT id_movie 
                     FROM user_movie_collection 
@@ -53,7 +53,7 @@ class Recommend:
             RIGHT JOIN UserGenreCounts u ON p.id_genre = u.id_genre
             GROUP BY p.id_movie, p.popularity, p.vote_average
             ORDER BY score DESC, p.popularity DESC, p.vote_average DESC
-            LIMIT 50;
+            LIMIT 10;
             """
 
             results = self.db_connection.sql_query(
@@ -92,45 +92,30 @@ class Recommend:
         # Sort users by the number of mutual films in their collections
         try:
             query = """
-            --find users and count their movies
-            WITH UserMovies AS (
-            SELECT id_user, count(*) as nbmovies
-            FROM user_movie_collection
-            GROUP BY id_user
-            ),
-            --find users with mutual movies
-            WITH MutualMovies AS (
-            SELECT c2.id_user, nbmovies, COUNT(*) as mutual
-            FROM user_movie_collection c1
-            JOIN user_movie_collection c2 USING(id_movie)
-            INNER JOIN UserMovies u ON u.id_user = c2.id_user
-            WHERE c1.id_user = %s AND c2.id_user <> %s
-            GROUP BY c2.id_user
-            ),
-            GenreFrequencies AS (
+            --find users and frequencies of their movies genre
+            WITH GenreFrequencies AS (
                 SELECT c.id_user, l.id_genre, COUNT(*) * 1.0 / SUM(COUNT(*)) OVER (PARTITION BY c.id_user) as frequency
                 FROM user_movie_collection c
                 JOIN link_movie_genre l USING(id_movie)
                 GROUP BY c.id_user, l.id_genre
             ),
+            --find the user's frequencies of his movies genre
             UserGenreFrequencies AS (
-                SELECT l.id_genre, COUNT(*) * 1.0 / SUM(COUNT(*)) OVER () as frequency_user
-                FROM user_movie_collection c
-                JOIN link_movie_genre l USING(id_movie)
-                WHERE c.id_user = %s
-                GROUP BY l.id_genre
+                SELECT id_genre, frequency as frequency_user
+                FROM GenreFrequencies
+                WHERE id_user = %s
             ),
             MutualGenres AS (
                 SELECT g1.id_user, SUM(g1.frequency * g2.frequency_user) as Mutual_genre
                 FROM GenreFrequencies g1
                 JOIN UserGenreFrequencies g2 USING(id_genre)
+                WHERE g1.id_user <> %s
                 GROUP BY g1.id_user
             )
-            SELECT Mu.id_user as id_user,Mg.Mutual_genre, Mu.mutual/Mu.nbmovies as similar
-            FROM MutualGenres Mg
-            RIGHT JOIN  MutualMovies Mu ON Mu.id_user = Mg.id_user
-            ORDER BY Mg.Mutual_genre DESC,similar DESC
-            LIMIT 50;
+            SELECT id_user
+            FROM  MutualGenres Mg
+            ORDER BY Mg.Mutual_genre DESC
+            LIMIT   10;
 
             """
             results = self.db_connection.sql_query(
@@ -138,13 +123,12 @@ class Recommend:
                 (
                     id_user,
                     id_user,
-                    id_user,
                 ),
                 return_type="all",
             )
 
         except Exception as e:
-            print(f"Error while searching: {e}")
+            print(f"Error while collecting: {e}")
             return None
 
         if results:
@@ -153,3 +137,10 @@ class Recommend:
             return users_read
         else:
             return None
+
+
+db_connection = DBConnector()
+dao = Recommend(db_connection)
+#print(dao.recommend_users_to_follow(24))
+print(dao.recommend_movies(24))
+
