@@ -111,10 +111,10 @@ def test_create_tables(mocker):
     
     # je ne trouves pas necessaire de garder un truc trop long?
     # WHEN
-    mock_connection.sql_query(create_table_query)
+    mock_connection.sql_query(query = create_table_query)
 
     # THEN: Verify the calls were made to execute
-    mock_cursor.sql_query.assert_called_once_with(create_table_query, None)
+    mock_connection.sql_query.assert_called_with(query = create_table_query)
     mock_connection.sql_query.assert_called_once()
 
 

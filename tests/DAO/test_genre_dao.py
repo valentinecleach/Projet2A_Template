@@ -38,19 +38,22 @@ def db_connection():
     except OperationalError as e:
         pytest.fail(f"Unable to connect to the database: {e}")
 
-
-def genre_dao(mocker):
+@pytest.fixture
+def genre_dao(mock_db_connection):
     """fixture de GenreDao avec mock_db_connection"""
-    mock_connection, mock_cursor = mock_db_connection(mocker)
+    mock_connection, mock_cursor = mock_db_connection
     genre_dao_instance = GenreDao(db_connection = mock_connection)
     return genre_dao_instance
 
-
-def test_insert_genre(genre_dao):
+# python -m pytest tests/DAO/test_genre_dao.py -k "test_insert_new_genre"
+# NE MARCHE PAS
+def test_insert_new_genre(genre_dao, mock_db_connection):
+    """Test insert a genre
+    """
     # GIVEN
     # Créer un nouvel objet Genre
-    #new_genre = Genre(id=28, name="Test Genre")  # Assure-toi que la classe Genre est bien définie dans ton code
-    new_genre = genre_dao(mocker)
+    test_genre = Genre(id=28, name="Test Genre")  # Assure-toi que la classe Genre est bien définie dans ton code
+    
 
     # WHEN
     # Appel de la méthode insert
@@ -72,6 +75,36 @@ def test_insert_genre(genre_dao):
             cursor.execute("DELETE FROM Genre WHERE id_genre = %s", (28,))
             connection.commit()
 
+
+# python -m pytest tests/DAO/test_genre_dao.py -k "test_insert_existing_genre"
+# NE MARCHE PAS
+def test_insert_existing_genre(genre_dao, mock_db_connection):
+    """Test insert a genre
+    """
+    # GIVEN
+    # Créer un nouvel objet Genre
+    test_genre = Genre(id=28, name="Test Genre")  # Assure-toi que la classe Genre est bien définie dans ton code
+    
+
+    # WHEN
+    # Appel de la méthode insert
+    genre_dao.insert(new_genre)
+
+    # THEN
+    # Vérifier que le genre a bien été inséré
+    with genre_dao.db_connection.connection.cursor() as cursor:
+        cursor.execute("SELECT name_genre FROM Genre WHERE id_genre = %s", (28,))
+        result = cursor.fetchone()
+
+    # Assert pour vérifier que le genre inséré est correct
+    assert result is not None, "Genre should have been inserted"
+    assert result[0] == "Test Genre", "Genre name should match"
+
+    # Nettoyage : supprimer le genre inséré
+    with genre_dao.db_connection.connection as connection:
+        with connection.cursor() as cursor:
+            cursor.execute("DELETE FROM Genre WHERE id_genre = %s", (28,))
+            connection.commit()
 
 
 

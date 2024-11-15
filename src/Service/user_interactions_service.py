@@ -1,6 +1,7 @@
-from src.DAO.user_dao import UserDao
 from src.DAO.db_connection import DBConnector
+from src.DAO.user_dao import UserDao
 from src.DAO.user_follow_dao import UserFollowDao
+
 
 class UserInteractionService:
     def __init__(self, db_connection: DBConnector):
@@ -24,7 +25,9 @@ class UserInteractionService:
 
     # focntionne si correspondance exacte avec le pseudo
 
-    def follow_user(self, follower_id: int, followee_id: int) -> None: ## follower_id doit être récupéré avec la connection 
+    def follow_user(
+        self, follower_id: int, followee_id: int
+    ) -> None:  ## follower_id doit être récupéré avec la connection
         """
         Allows a user to follow another user.
 
@@ -84,8 +87,8 @@ class UserInteractionService:
 
 
 # doctest follow_user()
-#db_connection = DBConnector()
-#user_interaction_service = UserInteractionService(db_connection)
+# db_connection = DBConnector()
+# user_interaction_service = UserInteractionService(db_connection)
 # print(user_interaction_service.search_user("johndoe")) # works
 # follower_id = 1
 # followee_id = 2
