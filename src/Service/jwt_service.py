@@ -31,7 +31,6 @@ class JwtService:
         """
         payload = {"user_id": user_id, "expiry_timestamp": time.time() + 600}
         token = jwt.encode(payload, self.secret, algorithm=self.algorithm)
-
         return JWTResponse(access_token=token)
 
     def decode_jwt(self, token: str) -> dict:
