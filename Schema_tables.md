@@ -58,7 +58,6 @@ class movie_maker {
             deathday DATE 
             known_for_department VARCHAR 255 
             popularity FLOAT 
-            known_for JSONB
         }
 
 class KnownFor{
