@@ -1,12 +1,16 @@
-from fastapi import APIRouter, HTTPException, status, Depends
 from typing import Annotated
+
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials
-from src.Webservice.init_app import user_follow_dao, user_interaction_service, user_dao
+
+from src.Webservice.init_app import user_dao, user_follow_dao, user_interaction_service
 from src.Webservice.jwt_bearer_webservice import JWTBearer
 from src.Webservice.user_controller import get_user_from_credentials
 
+user_interaction_router = APIRouter(
+    prefix="/users_interactions", tags=["User Interactions"]
+)
 
-user_interaction_router = APIRouter(prefix="/users_interactions", tags=["User Interactions"])
 
 @user_interaction_router.post("/{username}", status_code=status.HTTP_201_CREATED)
 def find_a_user(username: str) -> list:
@@ -22,6 +26,7 @@ def find_a_user(username: str) -> list:
         return user
     except Exception as error:
         raise HTTPException(status_code=403, detail="Invalid username") from error
+
 
 @user_interaction_router.post(
     "/{user_id}/follow",
@@ -59,5 +64,45 @@ def unfollow_user(
     try:
         user_interaction_service.unfollow_user(current_user.id, user_to_unfollow_id)
         return f"User {current_user.username} deosn't follow user {user_to_follow_id} anymore"
+    except Exception as error:
+        raise HTTPException(status_code=400, detail=str(error)) from error
+
+
+@user_interaction_router.post(
+    "/{user_id}/favorite",
+    dependencies=[Depends(JWTBearer())],
+    status_code=status.HTTP_201_CREATED,
+)
+def add_favorite(
+    user_to_follow_id: int,
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
+) -> str:
+    """
+    Allows the authenticated user to add a film to his favorite films.
+    """
+    current_user = get_user_from_credentials(credentials)
+    try:
+        user_interaction_service.add_favorite(current_user.id, user_to_follow_id)
+        return f"User {current_user.username} is now having film {user_to_follow_id} in favorite"
+    except Exception as error:
+        raise HTTPException(status_code=400, detail=str(error)) from error
+
+
+@user_interaction_router.delete(
+    "/{user_id}/favorite",
+    dependencies=[Depends(JWTBearer())],
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+def delete_favorite(
+    user_to_unfollow_id: int,
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
+) -> None:
+    """
+    Allows the authenticated user to delete a film favorite.
+    """
+    current_user = get_user_from_credentials(credentials)
+    try:
+        user_interaction_service.delete_favorite(current_user.id, user_to_unfollow_id)
+        return f"User {current_user.username} doesn't have in favorite film {user_to_follow_id} anymore"
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
