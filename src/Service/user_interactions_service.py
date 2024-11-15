@@ -167,7 +167,7 @@ class UserInteractionService:
 # except ValueError as e:
 # print(e)
 
-# # doctest pour unfollow_user()
+# doctest pour unfollow_user()
 # db_connection = DBConnector()
 # user_service = UserService(db_connection)
 # follower_id = 1
