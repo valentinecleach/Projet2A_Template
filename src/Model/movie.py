@@ -53,7 +53,6 @@ class Movie(BaseModel):
     --------
 
     """
-
     id_movie: int = Field(
         ..., gt=0, description="The id needs to be a positive integer"
     )
@@ -68,7 +67,7 @@ class Movie(BaseModel):
     original_title: str
     overview: str
     popularity: float
-    release_date: date  # pydantic convertit automatiuqement str en date.
+    release_date: Optional[date]  # pydantic convertit automatiuqement str en date.
     revenue: Optional[int]
     runtime: Optional[int]
     vote_average: float

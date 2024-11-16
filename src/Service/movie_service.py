@@ -58,7 +58,8 @@ class MovieService:
         """
         list_movies = []
         for item in known_for_data:
-            movie = Movie(**item)
+            id_movie = item['id']
+            movie = self.get_movie_by_id(id_movie)
             list_movies.append(movie)
         return list_movies
 
@@ -85,11 +86,9 @@ class MovieService:
         """Filters the movie by the popularity"""
         pass
 
-# works from DAO ans from TMDB
 # db_connection = DBConnector()
 # my_object = MovieService(db_connection)
-# for i in range(300,700):
-#     print(my_object.get_movie_by_id(345))
-#print(my_object.get_movie_by_title('Avatar'))
-#pdm run python src/Service/movie_service.py
+# print(my_object.get_movie_by_id(1252415))
+# #print(my_object.get_movie_by_title('Avatar'))
+
 
