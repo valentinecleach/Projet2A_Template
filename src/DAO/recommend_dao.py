@@ -10,7 +10,7 @@ from src.Model.connected_user import ConnectedUser
 from src.Model.movie import Movie
 
 
-class Recommend:
+class RecommendDao:
 
     def __init__(self, db_connection: DBConnector):
         # create a DB connection object
@@ -103,27 +103,29 @@ class Recommend:
                 GROUP BY l.id_genre
             ),
             AgeGender AS ( --movie popular in user's age and gender group
-                SELECT c.id_movie, COUNT(*) AS Score
-                FROM user_movie_collection c
+                SELECT m.id_movie, COUNT(*) AS Score
+                FROM PotentialMovies m
+                JOIN user_movie_collection c using(id_movie)
                 JOIN users u USING(id_user)
                 WHERE {condition}
-                GROUP BY c.id_movie
+                GROUP BY m.id_movie
                 ORDER BY Score DESC
             ),
             Forward AS (--movie popular in user's social network
-                SELECT c.id_movie, COUNT(*) AS Score
+                SELECT c.id_movie
                 FROM follower f1
                 INNER JOIN follower f2 ON f1.id_user_followed = f2.id_user
                 INNER JOIN user_movie_collection c 
                 ON (c.id_user = f2.id_user_followed OR c.id_user = f2.id_user)
                 WHERE f1.id_user = %s
-                GROUP BY c.id_movie
-                ORDER BY Score DESC
             )
             SELECT DISTINCT id_movie
             FROM (
-                (SELECT id_movie, Score
-                FROM Forward
+                (SELECT m.id_movie, COUNT(*) AS Score
+                FROM PotentialMovies m
+                JOIN Forward f using(id_movie)
+                GROUP BY m.id_movie
+                ORDER BY Score DESC
                 LIMIT 5)
                 UNION
                 (SELECT id_movie, Score
@@ -318,13 +320,13 @@ class Recommend:
             return [user_dao.get_user_by_id(res["id_user_followed"]) for res in result]
 
 
-db_connection = DBConnector()
+# db_connection = DBConnector()
 # # u = UserDao(db_connection)
-dao = Recommend(db_connection)
+# dao = RecommendDao(db_connection)
 # # #user = u.get_user_by_id(24)
 # # # #print(user)
 # # #print(dao.get_popular_users(24))
 # dao.recommend_users_to_follow(24)
-print(len(dao.recommend_movies(24)))
+# print(len(dao.recommend_movies(24)))
 # date_of_birth = user.date_of_birth
 # print(isinstance(date_of_birth, date))
