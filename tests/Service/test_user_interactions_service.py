@@ -11,7 +11,7 @@ def test_search_user_found():
     db_connection = DBConnector()
     user_interaction_service = UserInteractionService(db_connection)
 
-    result = user_interaction_service.search_user("user001")
+    result = user_interaction_service.search_user("garrettmercer")
     print(result)
     assert result is not None  # Vérifie que l'utilisateur est trouvé
 
@@ -113,11 +113,16 @@ def test_add_favorite_success():
     db_connection = DBConnector()
     user_interaction_service = UserInteractionService(db_connection)
 
-    user_id = 1
-    movie_id = 19995
-    result = user_interaction_service.add_favorite(user_id, movie_id)
+    user_id = 217
+    movie_id = 19965
+    user_interaction_service.add_favorite(user_id, movie_id)
     print(f"Movie {movie_id} added to User {user_id}'s favorites.")
-    assert result is True  # Vérifie que l'ajout a réussi
+
+    # Vérification si le film a bien été ajouté
+    favorites = user_interaction_service.get_user_favorites(user_id)
+    assert any(
+        fav["id_movie"] == movie_id for fav in favorites
+    ), "Le film n'a pas été ajouté aux favoris."
 
 
 def test_add_favorite_duplicate():
@@ -136,3 +141,30 @@ def test_add_favorite_duplicate():
     except ValueError as e:
         print(e)  # Attendu: "This movie is already in favorites."
         assert str(e) == "This movie is already in favorites."
+
+
+def test_get_user_favorites():
+    """
+    Teste la récupération des favoris d'un utilisateur.
+    """
+    db_connection = DBConnector()
+    user_interaction_service = UserInteractionService(db_connection)
+
+    # ID de l'utilisateur
+    user_id = 217
+
+    # Ajouter deux films aux favoris
+    user_interaction_service.add_favorite(user_id, 19965)
+    user_interaction_service.add_favorite(user_id, 19995)
+
+    # Récupérer les favoris
+    favorites = user_interaction_service.get_user_favorites(user_id)
+    print(f"Favorites for user {user_id}: {favorites}")
+
+    # Vérifie que la liste contient les films ajoutés
+    assert any(
+        fav["id_movie"] == 19965 for fav in favorites
+    ), "Le film 19965 n'est pas dans les favoris."
+    assert any(
+        fav["id_movie"] == 19995 for fav in favorites
+    ), "Le film 29985 n'est pas dans les favoris."
