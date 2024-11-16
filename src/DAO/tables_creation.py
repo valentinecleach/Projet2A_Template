@@ -181,3 +181,4 @@ class TablesCreation(metaclass=Singleton):
             self.db_connection.sql_query(query)
 
         print("All tables created successfully.")
+

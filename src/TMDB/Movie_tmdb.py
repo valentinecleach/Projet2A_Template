@@ -61,10 +61,10 @@ class MovieTMDB:
                     "vote_count": data["vote_count"],
                     "adult": data["adult"],
                 }
-                print("Movie get from TMDB")
+                print(f"Movie {data['title']} get from TMDB")
                 return Movie(**my_movie)
             else:
-                print(f"No Movie found with the ID : {id_movie}.")
+                print(f"No Movie found from TMDB with the ID : {id_movie}.")
                 return None
         except requests.exceptions.RequestException as e:
             print("Error while fetching Movie from TMDB: ", str(e))

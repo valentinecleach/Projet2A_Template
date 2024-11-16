@@ -146,7 +146,7 @@ class MovieDAO(metaclass=Singleton):
 
                 return Movie(**movie_data)
             else:
-                print("No movie with this ID.")
+                print("No movie found with this ID in the database.")
                 return None
 
         except Exception as e:
