@@ -108,7 +108,6 @@ class MovieMakerTMDB:
                     result2 = self.get_some_movie_maker_infos_by_id(id_movie_maker) 
                     if result2:
                         data.update(result2)
-                        print(data)
                         movie_maker_results.append(MovieMaker(**data))  
             return movie_maker_results
         else:
