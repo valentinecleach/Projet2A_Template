@@ -1,9 +1,9 @@
+from datetime import date, datetime, timedelta
 from typing import List
 
 from src.DAO.db_connection import DBConnector
 from src.DAO.movie_dao import MovieDAO
 from src.DAO.user_dao import UserDao
-from datetime import datetime, timedelta, date
 
 # Model
 from src.Model.connected_user import ConnectedUser
@@ -22,17 +22,11 @@ class Recommend:
 
         This algorithm recommends movies to a user by considering the following steps:
         1. **Collect User Information**:
-            - Retrieve the user's gender and date of birth.
-        2. **Calculate Age Range**:
-            - Calculate an age range around the user's date of birth to find users of similar age.
-        3. **Identify Potential Movies**:
-            - Select movies that the user has not yet watched.
-        4. **Calculate Genre Frequencies**:
-            - Calculate the frequency of each movie genre in the collections of all users.
-        5. **Calculate User's Genre Frequencies**:
-            - Calculate the frequency of each movie genre in the current user's collection.
+        2. **Calculate Age Range around the user's date of birth to find users of similar age**:
+        3. **Identify Potential Movies has not yet watched**:
+        4. **Calculate Genre Frequencies of each movie genre in the collections of all users**:
+        5. **Calculate the current user's Genre Frequencies**:
         6. **Calculate Genre Similarity**:
-            - Compute the similarity between the current user and other users based on their genre frequencies.
         7. **Combine Results**:
             - Combine the results from the genre similarity and age/gender analysis to recommend movies.
 
@@ -46,7 +40,7 @@ class Recommend:
         List[Movie]
             A list of recommended movies.
         """
-        #provide movies using his age and his gender
+        # provide movies using his age and his gender
 
         try:
             dao = UserDao(self.db_connection)
@@ -61,19 +55,29 @@ class Recommend:
                 values.append(gender)
             if date_of_birth:
                 if isinstance(date_of_birth, str):
-                    date_of_birth_obj = datetime.strptime(date_of_birth, '%Y-%m-%d').date()
+                    date_of_birth_obj = datetime.strptime(
+                        date_of_birth, "%Y-%m-%d"
+                    ).date()
                 elif isinstance(date_of_birth, datetime):
                     date_of_birth_obj = date_of_birth.date()
                 elif isinstance(date_of_birth, date):
                     date_of_birth_obj = date_of_birth
                 else:
-                    raise TypeError("date_of_birth must be a string, datetime, or date object")
-            
+                    raise TypeError(
+                        "date_of_birth must be a string, datetime, or date object"
+                    )
+
                 updates.append("date_of_birth BETWEEN %s AND %s")
-                values.append((date_of_birth_obj - timedelta(days=2.5*365)).strftime('%Y-%m-%d'))
-                values.append((date_of_birth_obj + timedelta(days=2.5*365)).strftime('%Y-%m-%d'))
-            
-            condition = " AND ".join(updates) if updates else "1=1"  # Default condition to avoid syntax error
+                values.append(
+                    (date_of_birth_obj - timedelta(days=3 * 365)).strftime("%Y-%m-%d")
+                )
+                values.append(
+                    (date_of_birth_obj + timedelta(days=3 * 365)).strftime("%Y-%m-%d")
+                )
+
+            condition = (
+                " AND ".join(updates) if updates else "1=1"
+            )  # Default condition to avoid syntax error
 
         except (TypeError, ValueError) as e:
             print(f"Error while collecting date_of_birth and gender: {e}")
@@ -89,7 +93,7 @@ class Recommend:
                     SELECT id_movie 
                     FROM user_movie_collection 
                     WHERE id_user = %s
-                )
+                )ORDER BY popularity DESC, vote_average DESC
             ),
             UserGenreCounts AS (
                 SELECT l.id_genre, COUNT(*) AS genre_count
@@ -98,43 +102,51 @@ class Recommend:
                 WHERE c.id_user = %s
                 GROUP BY l.id_genre
             ),
-            NeighborGenre AS (
-                SELECT l.id_genre, COUNT(*) AS genre_count
+            AgeGender AS ( --movie popular in user's age and gender group
+                SELECT c.id_movie, COUNT(*) AS Score
                 FROM user_movie_collection c
-                JOIN link_movie_genre l USING(id_movie)
                 JOIN users u USING(id_user)
                 WHERE {condition}
-                GROUP BY l.id_genre
+                GROUP BY c.id_movie
+                ORDER BY Score DESC
+            ),
+            Forward AS (--movie popular in user's social network
+                SELECT c.id_movie, COUNT(*) AS Score
+                FROM follower f1
+                INNER JOIN follower f2 ON f1.id_user_followed = f2.id_user
+                INNER JOIN user_movie_collection c 
+                ON (c.id_user = f2.id_user_followed OR c.id_user = f2.id_user)
+                WHERE f1.id_user = %s
+                GROUP BY c.id_movie
+                ORDER BY Score DESC
             )
             SELECT DISTINCT id_movie
             FROM (
-                (SELECT p.id_movie, SUM(u.genre_count) AS score, p.popularity, p.vote_average
+                (SELECT id_movie, Score
+                FROM Forward
+                LIMIT 5)
+                UNION
+                (SELECT id_movie, Score
+                FROM AgeGender
+                LIMIT 10)
+                UNION
+                (SELECT p.id_movie, SUM(u.genre_count) AS score
                 FROM PotentialMovies p
                 LEFT JOIN UserGenreCounts u ON p.id_genre = u.id_genre
-                GROUP BY p.id_movie, p.popularity, p.vote_average
-                ORDER BY score DESC, p.popularity DESC, p.vote_average DESC
-                LIMIT 10)
-
-                UNION
-
-                (SELECT p.id_movie, SUM(n.genre_count) AS score, p.popularity, p.vote_average
-                FROM PotentialMovies p
-                LEFT JOIN NeighborGenre n ON p.id_genre = n.id_genre
-                GROUP BY p.id_movie, p.popularity, p.vote_average
-                ORDER BY score DESC, p.popularity DESC, p.vote_average DESC
+                GROUP BY p.id_movie
+                ORDER BY score DESC
                 LIMIT 15)
             ) as f;
             """
 
             results = self.db_connection.sql_query(
                 query,
-                (id_user, id_user, *values),
+                (id_user, id_user, *values, id_user),
                 return_type="all",
             )
         except Exception as e:
             print(f"Error while searching: {e}")
             return None
-
 
         if results:
             movie_dao = MovieDAO(self.db_connection)
@@ -148,18 +160,12 @@ class Recommend:
         Recommend users to follow based on the user's movie genre preferences and their social network.
 
         This algorithm identifies potential users to follow by considering the following steps:
-        1. **Identification of Potential Users**: 
-            - Select users who are not already followed by the current user.
-        2. **Calculation of Genre Frequencies**:
-            - Calculate the frequency of each movie genre in the collections of all users.
+        1. **Identification of Potential Users**:
+        2. **Calculation of Genre Frequencies all users**:
         3. **User's Genre Frequencies**:
-            - Calculate the frequency of each movie genre in the current user's collection.
         4. **Calculation of Genre Similarity**:
-            - Compute the similarity between the current user and other users based on their genre frequencies.
-        5. **Identification of Users Followed by Friends**:
-            - Identify users who are followed by the friends of the current user.
-        6. **Combination of Results**:
-            - Combine the results from the genre similarity and social network analysis to recommend users.
+        5. **Identification of users who are followed by the friends of the current user**:
+        6. **Combination of Results from the genre similarity and social network analysis to recommend users**:
 
         Parameters:
         -----------
@@ -198,7 +204,7 @@ class Recommend:
                 WHERE id_user = %s
             ),
             MutualGenres AS (
-                SELECT g1.id_user, SUM(g1.frequency * g2.frequency_user) AS Mutual_genre
+                SELECT g1.id_user, SUM(POWER((g1.frequency - g2.frequency_user),2)) AS Mutual_genre
                 FROM GenreFrequencies g1
                 JOIN UserGenreFrequencies g2 USING(id_genre)
                 WHERE g1.id_user <> %s
@@ -217,7 +223,7 @@ class Recommend:
                 (SELECT id_user , Mg.Mutual_genre  as Score
                 FROM MutualGenres Mg
                 JOIN Potentialusers p USING(id_user)
-                ORDER BY Mg.Mutual_genre DESC
+                ORDER BY Mg.Mutual_genre ASC
                 LIMIT 10)
 
                 UNION
@@ -313,13 +319,12 @@ class Recommend:
 
 
 db_connection = DBConnector()
-# u = UserDao(db_connection)
+# # u = UserDao(db_connection)
 dao = Recommend(db_connection)
-# #user = u.get_user_by_id(24)
-# # #print(user)
-# #print(dao.get_popular_users(24))
-dao.recommend_users_to_follow(24)
-#print(dao.recommend_movies(24))
+# # #user = u.get_user_by_id(24)
+# # # #print(user)
+# # #print(dao.get_popular_users(24))
+# dao.recommend_users_to_follow(24)
+print(len(dao.recommend_movies(24)))
 # date_of_birth = user.date_of_birth
 # print(isinstance(date_of_birth, date))
-
