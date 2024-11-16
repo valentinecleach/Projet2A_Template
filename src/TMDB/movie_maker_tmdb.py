@@ -5,15 +5,17 @@ import requests
 from dotenv import load_dotenv
 from src.Model.movie_maker import MovieMaker
 from src.Service.movie_service import MovieService
+from src.DAO.db_connection import DBConnector
 from typing import List
 
 
 class MovieMakerTMDB:
-    def __init__(self):
+    def __init__(self, db_conection: DBConnector):
         load_dotenv(override=True)
         self.api_key = os.environ.get("TMDB_API_KEY")
         self.base_url = "https://api.themoviedb.org/3"
-        self.movie_service = MovieService(None)
+        self.db_connection = db_conection
+        self.movie_service = MovieService(db_conection)
 
     def get_some_movie_maker_infos_by_id(self, tmdb_id: int) -> List | None:
         # Reamarque : insomnia does not return the known_for with this request.
@@ -82,11 +84,12 @@ class MovieMakerTMDB:
                 results = data['results'] 
                 movie_maker_results = []
                 for result in results :
-                    movie_maker_results.append({
-                        "id_movie_maker" : result['id'],
-                        "known_for" : self.movie_service.create_movies(result['known_for'])
-                    }
-                    )
+                    if result['known_for']:
+                        movie_maker_results.append({
+                            "id_movie_maker" : result['id'],
+                            "known_for" : self.movie_service.create_movies(result['known_for'])
+                        }
+                        )
                 return movie_maker_results
             else:
                 print(f"No MovieMaker found with name : {name}.")
@@ -124,8 +127,8 @@ class MovieMakerTMDB:
             return MovieMaker(**result)
         return None
 
-#tmdb = MovieMakerTMDB()
-#print(tmdb.get_some_movie_maker_infos_by_name("james cameron"))
+# tmdb = MovieMakerTMDB()
+# print(tmdb.get_some_movie_maker_infos_by_name("james cameron")) # peut pas être executer sans instance de db_connection
 #print(tmdb.get_some_movie_maker_infos_by_id(2710))
 #name = "James   Cameron"
 #print(urllib.parse.quote(name))

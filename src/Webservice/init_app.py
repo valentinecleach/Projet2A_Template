@@ -7,6 +7,7 @@ from src.DAO.user_follow_dao import UserFollowDao
 from src.Service.jwt_service import JwtService
 from src.Service.user_service import UserService
 from src.Service.movie_service import MovieService
+from src.Service.movie_maker_service import MovieMakerService
 from src.Service.user_interactions_service import UserInteractionService
 
 load_dotenv()
@@ -17,4 +18,5 @@ user_follow_dao = UserFollowDao(db_connection)
 jwt_service = JwtService()
 user_service = UserService(db_connection)
 movie_service = MovieService(db_connection)
+movie_maker_service = MovieMakerService(db_connection)
 user_interaction_service = UserInteractionService(db_connection)

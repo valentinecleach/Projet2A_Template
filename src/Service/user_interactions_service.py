@@ -185,12 +185,12 @@ class UserInteractionService:
 #     user_service.unfollow_user(follower_id, follower_id)
 # except ValueError as e:
 #     print(e)
-db_connection = DBConnector()
-user_service = UserInteractionService(db_connection)
+# db_connection = DBConnector()
+# user_service = UserInteractionService(db_connection)
 
-user_id = 1
-movie_id = 19995
-user_service.add_favorite(user_id, movie_id)
+# user_id = 1
+# movie_id = 19995
+# user_service.add_favorite(user_id, movie_id)
 
 
 # invalid_movie_id = 999

@@ -21,7 +21,7 @@ class MovieService:
             movie_from_tmdb = self.movie_tmdb.get_movie_by_id(movie_id)
             if movie_from_tmdb:
                 self.movie_dao.insert(movie_from_tmdb)
-                print("Movie get from TMDB")
+                print(f"Movie with id {movie_id} get from TMDB and inserted")
                 return movie_from_tmdb
             else:
                 print(f"No Movie found with id :{movie_id}.")
@@ -60,7 +60,8 @@ class MovieService:
         for item in known_for_data:
             id_movie = item['id']
             movie = self.get_movie_by_id(id_movie)
-            list_movies.append(movie)
+            if movie:
+                list_movies.append(movie)
         return list_movies
 
     #################################################################################################

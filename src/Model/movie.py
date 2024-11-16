@@ -63,15 +63,15 @@ class Movie(BaseModel):
     budget: Optional[int]
     genres: List[Genre]
     origin_country: Optional[List[str]]
-    original_language: str
-    original_title: str
-    overview: str
-    popularity: float
+    original_language: Optional[str]
+    original_title: Optional[str]
+    overview: Optional[str]
+    popularity: Optional[float]
     release_date: Optional[date]  # pydantic convertit automatiuqement str en date.
     revenue: Optional[int]
     runtime: Optional[int]
-    vote_average: float
-    vote_count: int
+    vote_average: Optional[float]
+    vote_count: Optional[int]
     adult: bool = False
 
     def __str__(self):

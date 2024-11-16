@@ -92,7 +92,6 @@ class MovieTMDB:
             response = requests.get(url)
             response.raise_for_status()  # Raises an exception for HTTP error codes.
             data = response.json()
-            # Si des résultats sont trouvés
             if "results" in data and len(data["results"]) > 0:
                 movies = []
                 for result in data["results"]:
@@ -174,5 +173,5 @@ class MovieTMDB:
 
 
 # data2 = MovieTMDB()
-# print(data2.get_movie_by_id(56570))
-#print(data2.get_movies_by_title("The Matrix"))
+# #print(data2.get_movie_by_id(7317))
+# print(data2.get_movies_by_title("Between Worlds"))
