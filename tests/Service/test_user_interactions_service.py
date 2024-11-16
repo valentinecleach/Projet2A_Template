@@ -5,22 +5,22 @@ from src.Service.user_interactions_service import UserInteractionService
 def test_search_user_found():
     """
     Test de la recherche d'un utilisateur.
-    Cette fonction cherche un utilisateur qui existe et vérifie si l'utilisateur est bien retrouvé.
+    Cette fonction cherche un utilisateur qui existe et vérifie
+    si l'utilisateur est bien retrouvé.
     """
-    db_connection = (
-        DBConnector()
-    )  # Assurez-vous que DBConnector est correctement initialisé
+    db_connection = DBConnector()
     user_interaction_service = UserInteractionService(db_connection)
 
     result = user_interaction_service.search_user("user001")
-    print(result)  # Affiche le résultat pour vérifier la recherche d'utilisateur
+    print(result)
     assert result is not None  # Vérifie que l'utilisateur est trouvé
 
 
 def test_search_user_not_found():
     """
     Test de la recherche d'un utilisateur qui n'existe pas.
-    Cette fonction cherche un utilisateur qui n'existe pas et vérifie si la recherche échoue.
+    Cette fonction cherche un utilisateur qui n'existe pas
+    et vérifie si la recherche échoue.
     """
     db_connection = DBConnector()
     user_interaction_service = UserInteractionService(db_connection)
@@ -81,12 +81,6 @@ def test_unfollow_user_success():
     # Étape 1: L'utilisateur 1 suit l'utilisateur 2
     user_service.follow_user(follower_id, followee_id)
 
-    # Étape 2: L'utilisateur 1 annule son suivi de l'utilisateur 2
-    user_service.unfollow_user(follower_id, followee_id)
-    print(
-        f"User {follower_id} is no longer following {followee_id}"
-    )  # Vérification de l'annulation du suivi
-
     # Étape 3: Tentative de désabonnement une deuxième fois (doit lever une exception)
     try:
         user_service.unfollow_user(follower_id, followee_id)
@@ -110,3 +104,35 @@ def test_unfollow_user_not_following():
         assert (
             str(e) == "This user is not being followed."
         )  # Vérifie que l'erreur attendue est levée
+
+
+def test_add_favorite_success():
+    """
+    Test de l'ajout d'un film à la liste des favoris avec succès.
+    """
+    db_connection = DBConnector()
+    user_interaction_service = UserInteractionService(db_connection)
+
+    user_id = 1
+    movie_id = 19995
+    result = user_interaction_service.add_favorite(user_id, movie_id)
+    print(f"Movie {movie_id} added to User {user_id}'s favorites.")
+    assert result is True  # Vérifie que l'ajout a réussi
+
+
+def test_add_favorite_duplicate():
+    """
+    Test où un utilisateur essaie d'ajouter un film déjà présent dans ses favoris.
+    Cela devrait lever une exception.
+    """
+    db_connection = DBConnector()
+    user_interaction_service = UserInteractionService(db_connection)
+
+    user_id = 1
+    movie_id = 100
+    user_interaction_service.add_favorite(user_id, movie_id)  # Premier ajout réussi
+    try:
+        user_interaction_service.add_favorite(user_id, movie_id)  # Deuxième ajout
+    except ValueError as e:
+        print(e)  # Attendu: "This movie is already in favorites."
+        assert str(e) == "This movie is already in favorites."
