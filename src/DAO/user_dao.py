@@ -210,8 +210,8 @@ class UserDao(metaclass=Singleton):
 
 
 
-db_connection = DBConnector()
-my_object = UserDao(db_connection)
-#print(my_object.get_user_by_name('johndoe'))
-print(my_object.get_user_by_id(2))
+# db_connection = DBConnector()
+# my_object = UserDao(db_connection)
+# #print(my_object.get_user_by_name('johndoe'))
+# print(my_object.get_user_by_id(2))
 

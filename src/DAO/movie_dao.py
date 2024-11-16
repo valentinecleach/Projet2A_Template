@@ -1,4 +1,5 @@
 from typing import Dict, List, Optional
+from datetime import date
 
 from psycopg2.extras import DictCursor
 
@@ -223,10 +224,6 @@ class MovieDAO(metaclass=Singleton):
         except Exception as e:
             print("Error during recovery by title:", str(e))
             return None
-
-
-# my_object = MovieDAO()
-# print(my_object.get_by_title('The Matrix'))
 """
 tout ceci est inclu si on utilisedes with
 conn.commit()
