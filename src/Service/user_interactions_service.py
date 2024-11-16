@@ -135,7 +135,7 @@ class UserInteractionService:
             A list of favorite movies for the user.
         """
         try:
-            return self.user_favorite_dao.get_favorites(user_id)
+            return self.user_favorites_dao.get_favorites(user_id)
         except Exception as error:
             raise ValueError(f"An error occurred while retrieving favorites: {error}")
 
@@ -188,9 +188,9 @@ class UserInteractionService:
 # db_connection = DBConnector()
 # user_service = UserInteractionService(db_connection)
 
-# user_id = 1
-# movie_id = 19995
-# user_service.add_favorite(user_id, movie_id)
+user_id = 217
+movie_id = 19995
+user_service.add_favorite(user_id, movie_id)
 
 
 # invalid_movie_id = 999
