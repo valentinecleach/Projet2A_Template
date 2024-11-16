@@ -111,27 +111,34 @@ class MovieDAO(metaclass=Singleton):
                 movie_data = dict(result)
 
                 # Récupérer les genres associés
-                genres_query = """
-                    SELECT g.id_genre, g.name_genre
-                    FROM link_movie_genre l
-                    JOIN Genre g ON l.id_genre = g.id_genre
-                    WHERE l.id_movie = %s;
-                """
-                genres_result = self.db_connection.sql_query(
-                    genres_query, (id_movie,), return_type="all"
-                )
+                try:
+                    genres_query = """
+                        SELECT g.id_genre, g.name_genre
+                        FROM link_movie_genre l
+                        JOIN Genre g ON l.id_genre = g.id_genre
+                        WHERE l.id_movie = %s;
+                    """
+                    genres_result = self.db_connection.sql_query(
+                        genres_query, (id_movie,), return_type="all"
+                    )
+                except Exception as e:
+                    print("Error during recovery associated genre: ", str(e))
+                    
 
                 # Récupérer les collections associées
-                collections_query = """
-                    SELECT mc.id_movie_collection, mc.name_movie_collection
-                    FROM link_movie_movie_collection lm
-                    JOIN Movie_Collection mc ON lm.id_movie_collection = mc.id_movie_collection
-                    WHERE lm.id_movie = %s;
-                """
-                collections_result = self.db_connection.sql_query(
-                    collections_query, (id_movie,), return_type="all"
-                )
-
+                try:
+                    collections_query = """
+                        SELECT mc.id_movie_collection, mc.name_movie_collection
+                        FROM link_movie_movie_collection lm
+                        JOIN Movie_Collection mc ON lm.id_movie_collection = mc.id_movie_collection
+                        WHERE lm.id_movie = %s;
+                    """
+                    collections_result = self.db_connection.sql_query(
+                        collections_query, (id_movie,), return_type="all"
+                    )
+                except Exception as e:
+                    print("Error during recovery associated collection: ", str(e))
+                    
                 movie_data["genres"] = [
                     {"id": genre["id_genre"], "name": genre["name_genre"]}
                     for genre in genres_result
@@ -143,7 +150,6 @@ class MovieDAO(metaclass=Singleton):
                     }
                     for collection in collections_result
                 ]
-
                 return Movie(**movie_data)
             else:
                 print("No movie found with this ID in the database.")

@@ -52,9 +52,9 @@ class MovieTMDB:
                     "origin_country": data["origin_country"],
                     "original_language": data["original_language"],
                     "original_title": data["original_title"],
-                    "overview": data["overview"],
+                    "overview": data["overview"] if data["overview"] != "" else None,
                     "popularity": data["popularity"],
-                    "release_date": data["release_date"],
+                    "release_date": data["release_date"] if data["release_date"] != "" else None,
                     "revenue": data["revenue"],
                     "runtime": data["runtime"],
                     "vote_average": data["vote_average"],
@@ -173,6 +173,6 @@ class MovieTMDB:
             return None
 
 
-#data2 = MovieTMDB()
-#print(data2.get_movie_by_id(19995))
+# data2 = MovieTMDB()
+# print(data2.get_movie_by_id(56570))
 #print(data2.get_movies_by_title("The Matrix"))
