@@ -52,19 +52,19 @@ class MovieTMDB:
                     "origin_country": data["origin_country"],
                     "original_language": data["original_language"],
                     "original_title": data["original_title"],
-                    "overview": data["overview"],
+                    "overview": data["overview"] if data["overview"] != "" else None,
                     "popularity": data["popularity"],
-                    "release_date": data["release_date"],
+                    "release_date": data["release_date"] if data["release_date"] != "" else None,
                     "revenue": data["revenue"],
                     "runtime": data["runtime"],
                     "vote_average": data["vote_average"],
                     "vote_count": data["vote_count"],
                     "adult": data["adult"],
                 }
-                print("Movie get from TMDB")
+                print(f"Movie {data['title']} get from TMDB")
                 return Movie(**my_movie)
             else:
-                print(f"No Movie found with the ID : {id_movie}.")
+                print(f"No Movie found from TMDB with the ID : {id_movie}.")
                 return None
         except requests.exceptions.RequestException as e:
             print("Error while fetching Movie from TMDB: ", str(e))
@@ -92,7 +92,6 @@ class MovieTMDB:
             response = requests.get(url)
             response.raise_for_status()  # Raises an exception for HTTP error codes.
             data = response.json()
-            # Si des résultats sont trouvés
             if "results" in data and len(data["results"]) > 0:
                 movies = []
                 for result in data["results"]:
@@ -173,6 +172,6 @@ class MovieTMDB:
             return None
 
 
-#data2 = MovieTMDB()
-#print(data2.get_movie_by_id(19995))
-#print(data2.get_movies_by_title("The Matrix"))
+# data2 = MovieTMDB()
+# #print(data2.get_movie_by_id(7317))
+# print(data2.get_movies_by_title("Between Worlds"))

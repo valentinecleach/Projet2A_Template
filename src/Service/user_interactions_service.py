@@ -41,9 +41,11 @@ class UserInteractionService:
             The ID of the user to be followed.
         """
         # Vérifier si l'utilisateur essaie de se suivre lui-même
-        if follower_id == followee_id:
-            raise ValueError("A user cannot follow themselves.")
-
+        try:
+            if follower_id == followee_id:
+                raise ValueError("A user cannot follow themselves.")
+        except ValueError as ve:
+            print(f"Erreur : {ve}")
         # Ajouter le suivi en base de données si la relation n'existe pas déjà
         try:
             self.user_follow_dao.insert(follower_id, followee_id)
@@ -133,7 +135,7 @@ class UserInteractionService:
             A list of favorite movies for the user.
         """
         try:
-            return self.user_favorite_dao.get_favorites(user_id)
+            return self.user_favorites_dao.get_favorites(user_id)
         except Exception as error:
             raise ValueError(f"An error occurred while retrieving favorites: {error}")
 
@@ -167,7 +169,7 @@ class UserInteractionService:
 # except ValueError as e:
 # print(e)
 
-# # doctest pour unfollow_user()
+# doctest pour unfollow_user()
 # db_connection = DBConnector()
 # user_service = UserService(db_connection)
 # follower_id = 1
@@ -184,19 +186,12 @@ class UserInteractionService:
 # except ValueError as e:
 #     print(e)
 # db_connection = DBConnector()
-# user_favorite_dao = UserFavoriteDao(db_connection)
 # user_service = UserInteractionService(db_connection)
 
-# user_id = 1
+# user_id = 217
 # movie_id = 19995
 # user_service.add_favorite(user_id, movie_id)
 
-# user_service.remove_favorite(user_id, movie_id)
-
-# try:
-#    user_service.remove_favorite(user_id, movie_id)
-# except ValueError as e:
-#    print(e)
 
 # invalid_movie_id = 999
 # try:

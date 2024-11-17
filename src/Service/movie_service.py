@@ -21,7 +21,7 @@ class MovieService:
             movie_from_tmdb = self.movie_tmdb.get_movie_by_id(movie_id)
             if movie_from_tmdb:
                 self.movie_dao.insert(movie_from_tmdb)
-                print("Movie get from TMDB")
+                print(f"Movie with id {movie_id} get from TMDB and inserted")
                 return movie_from_tmdb
             else:
                 print(f"No Movie found with id :{movie_id}.")
@@ -58,8 +58,10 @@ class MovieService:
         """
         list_movies = []
         for item in known_for_data:
-            movie = Movie(**item)
-            list_movies.append(movie)
+            id_movie = item['id']
+            movie = self.get_movie_by_id(id_movie)
+            if movie:
+                list_movies.append(movie)
         return list_movies
 
     #################################################################################################
@@ -85,9 +87,9 @@ class MovieService:
         """Filters the movie by the popularity"""
         pass
 
-works from DAO ans from TMDB
-db_connection = DBConnector()
-my_object = MovieService(db_connection)
-print(my_object.get_movie_by_id(1945))
-#print(my_object.get_movie_by_title('Avatar'))
+# db_connection = DBConnector()
+# my_object = MovieService(db_connection)
+# print(my_object.get_movie_by_id(1252415))
+# #print(my_object.get_movie_by_title('Avatar'))
+
 

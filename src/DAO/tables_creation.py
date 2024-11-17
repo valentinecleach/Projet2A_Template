@@ -68,17 +68,16 @@ class TablesCreation(metaclass=Singleton):
 
         create_table_movie_maker = """
         CREATE TABLE IF NOT EXISTS movie_maker (
-            id_movie_maker INTEGER PRIMARY KEY,
-            adult BOOLEAN NOT NULL DEFAULT FALSE,
-            name VARCHAR(255) NOT NULL,
+            id_movie_maker INTEGER PRIMARY KEY, 
+            adult BOOLEAN NOT NULL DEFAULT FALSE, 
+            name VARCHAR(255) NOT NULL, 
             gender INTEGER NOT NULL,
-            biography TEXT NOT NULL,
-            birthday DATE,
+            biography TEXT NOT NULL, 
+            birthday DATE, 
             place_of_birth VARCHAR(255),
             deathday DATE,
-            known_for_department VARCHAR(255),
-            popularity FLOAT NOT NULL,
-            known_for JSONB
+            known_for_department VARCHAR(255), 
+            popularity FLOAT NOT NULL
         );
         """
 
@@ -130,18 +129,6 @@ class TablesCreation(metaclass=Singleton):
             FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE,
             FOREIGN KEY (id_user_followed) REFERENCES users(id_user) ON DELETE CASCADE
         );
-
-        """
-
-        create_table_user_collection = """
-        CREATE TABLE IF NOT EXISTS user_collection(
-            id_user INTEGER NOT NULL,
-            id_collection INTEGER NOT NULL,
-            date DATE,
-
-            FOREIGN KEY (id_user) REFERENCES user_collection(id_user),
-            FOREIGN KEY (id_collection) REFERENCES movie(id_collection)
-        );
         """
 
         create_table_KnownFor = """
@@ -166,6 +153,17 @@ class TablesCreation(metaclass=Singleton):
         );
         """
 
+        create_table_User_MovieMaker_collection = """
+        CREATE TABLE IF NOT EXISTS user_movie_maker_collection(
+            id_user INTEGER NOT NULL,
+            id_movie_maker INTEGER NOT NULL,
+            date DATE,
+
+            FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE,
+            FOREIGN KEY (id_movie_maker) REFERENCES movie_maker(id_movie_maker) ON DELETE CASCADE
+        );
+        """
+
         create_queries = [
             create_table_Genre,
             create_table_Movie,
@@ -176,8 +174,13 @@ class TablesCreation(metaclass=Singleton):
             create_table_comment,
             create_table_Follower,
             create_table_User_Movie_Collection,
+            create_table_movie_maker,
+            create_table_KnownFor,
+            create_table_User_MovieMaker_collection
+
         ]
         for query in create_queries:
             self.db_connection.sql_query(query)
 
         print("All tables created successfully.")
+

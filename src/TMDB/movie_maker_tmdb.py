@@ -5,17 +5,19 @@ import requests
 from dotenv import load_dotenv
 from src.Model.movie_maker import MovieMaker
 from src.Service.movie_service import MovieService
+from src.DAO.db_connection import DBConnector
 from typing import List
 
 
 class MovieMakerTMDB:
-    def __init__(self):
+    def __init__(self, db_conection: DBConnector):
         load_dotenv(override=True)
         self.api_key = os.environ.get("TMDB_API_KEY")
         self.base_url = "https://api.themoviedb.org/3"
-        self.movie_service = MovieService(None)
+        self.db_connection = db_conection
+        self.movie_service = MovieService(db_conection)
 
-    def get_movie_maker_by_id(self, tmdb_id: int) -> List | None:
+    def get_some_movie_maker_infos_by_id(self, tmdb_id: int) -> List | None:
         # Reamarque : insomnia does not return the known_for with this request.
         """
             Retrieve a MovieMaker by name or ID, combining the information from both sources if necessary.
@@ -38,17 +40,17 @@ class MovieMakerTMDB:
             response.raise_for_status()  # Raises an exception for HTTP error codes.
             data = response.json()
             if 'id' in data:  # check if id is in response
-                return [data['id'],
-                        data['adult'],
-                        data['name'],
-                        data['gender'],
-                        data['biography'],
-                        data['birthday'],
-                        data['place_of_birth'],
-                        data['known_for_department'],
-                        data['popularity'],
-                        data['deathday']
-                ]
+                return {"id_movie_maker": data['id'],
+                        "adult" : data['adult'],
+                        "name": data['name'],
+                        "gender" : data['gender'],
+                        "biography" : data['biography'],
+                        "birthday" : data['birthday'],
+                        "place_of_birth" : data['place_of_birth'],
+                        "known_for_department" : data['known_for_department'],
+                        "popularity" : data['popularity'],
+                        "deathday" : data['deathday']
+                }
             else:
                 print(f"No MovieMaker found with TMDB ID : {tmdb_id}.")
                 return None
@@ -56,10 +58,11 @@ class MovieMakerTMDB:
             print("Error while fetching MovieMaker from TMDB: ", str(e))
             return None
 
-    def get_movie_maker_by_name(self, name: str) -> list[List] | None:
+    def get_some_movie_maker_infos_by_name(self, name: str) -> list[List] | None:
         # Reamarque : insomnia does not return thebiography, birthday, place of birth, deathday with this request.
         """
                 Intermediate function that retrieves the information we are interested in for a movie maker on TMDB using its name. 
+                Return a list with the id of the movie_maker an then a list of his know_for Movie.
 
                 Parameters:
                 -----------
@@ -77,18 +80,16 @@ class MovieMakerTMDB:
             response = requests.get(url)
             response.raise_for_status()  # Raises an exception for HTTP error codes.
             data = response.json()
-
-            # Si des résultats sont trouvés
             if 'results' in data and len(data['results']) > 0:
                 results = data['results'] 
                 movie_maker_results = []
                 for result in results :
-                    print(result['known_for'])
-                    movie_maker_results.append([
-                        result['id'],
-                        self.movie_service.create_movies(result['known_for'])
-                        ]
-                    )
+                    if result['known_for']:
+                        movie_maker_results.append({
+                            "id_movie_maker" : result['id'],
+                            "known_for" : self.movie_service.create_movies(result['known_for'])
+                        }
+                        )
                 return movie_maker_results
             else:
                 print(f"No MovieMaker found with name : {name}.")
@@ -97,56 +98,52 @@ class MovieMakerTMDB:
             print("Error while fetching MovieMaker from TMDB: ", str(e))
             return None
 
-    def get_movie_maker_by_name_or_by_id(self, name: str | None = None, id_movie_maker: int | None = None) -> list[MovieMaker] | None:
-        """
-            function 
-
-            Parameters :
-            ---------------
-
-
-            Returns :
-            --------------
-
-        """
-        if name and id_movie_maker:
-            raise ValueError("You cannot provide both 'name' and 'id_movie_maker'. Please provide only one.")
-
-        movie_maker_results = []
-
+    def get_movie_maker_by_name(self, name: str) -> list[MovieMaker] | None:
         if name:
-            results = self.get_movie_maker_by_name(name)
+            movie_maker_results = []
+            results = self.get_some_movie_maker_infos_by_name(name)
             if results:
                 for data in results:
-                    id_r = data[0]  # get the ID
-                    result2 = self.get_movie_maker_by_id(id_r) 
+                    id_movie_maker = data["id_movie_maker"]  # get the ID
+                    result2 = self.get_some_movie_maker_infos_by_id(id_movie_maker) 
                     if result2:
-                        attributes = result2[:-1] + [data[1]] + result2[-1:]  # Concateante result2 with "known_for"
-                        print(attributes)
-                        movie_maker_results.append(MovieMaker(*attributes))  
+                        data.update(result2)
+                        movie_maker_results.append(MovieMaker(**data))  
             return movie_maker_results
+        else:
+            print("You have to enter a name")
 
+    def get_movie_maker_by_id(self, id_movie_maker: int) -> MovieMaker | None:
         if id_movie_maker:
-            result = self.get_movie_maker_by_id(id_movie_maker)
+            result = self.get_some_movie_maker_infos_by_id(id_movie_maker)
             if result:
-                name_r = result[2]  # name is index 2
-                result2 = self.get_movie_maker_by_name(name_r)
-                if result2:
-                    known_for = result2[0][-1]  
-                    movie_maker_results.append(MovieMaker(*(result[:-1] + [known_for] + result[-1:]))) 
-            return movie_maker_results
+                name_movie_maker = result['name']
+                result2 = self.get_some_movie_maker_infos_by_name(name_movie_maker)  # pb de requete sql NONE
+                for infos in result2 :
+                    if infos['id_movie_maker'] == id_movie_maker:
+                        result.update(infos) 
+                        break
+            return MovieMaker(**result)
         return None
 
+# tmdb = MovieMakerTMDB()
+# print(tmdb.get_some_movie_maker_infos_by_name("james cameron")) # peut pas être executer sans instance de db_connection
+#print(tmdb.get_some_movie_maker_infos_by_id(2710))
+#name = "James   Cameron"
+#print(urllib.parse.quote(name))
+#print(tmdb.get_movie_maker_by_name(name))
+#print(tmdb.get_movie_maker_by_id(2710))
 
-# Ajouter ce bloc pour tester la recherche de "James Cameron"
-if __name__ == "__main__":
-    tmdb = MovieMakerTMDB()
-    movie_makers = tmdb.get_movie_maker_by_name_or_by_id("James Cameron")
-    if movie_makers:
-        for maker in movie_makers:
-            print(f"Found: {maker.name}, ID: {maker.id_movie_maker}")
-    else:
-        print("No movie makers found.")
+
+# # Ajouter ce bloc pour tester la recherche de "James Cameron"
+# if __name__ == "__main__":
+#     tmdb = MovieMakerTMDB()
+#     movie_makers = tmdb.get_movie_maker_by_name_or_by_id("James Cameron")
+#     if movie_makers:
+#         for maker in movie_makers:
+#             print(f"Found: {maker.name}, ID: {maker.id_movie_maker}")
+#     else:
+#         print("No movie makers found.")
 
 """ known_for after request : look if it is possible to Movie()
 

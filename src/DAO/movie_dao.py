@@ -1,4 +1,5 @@
 from typing import Dict, List, Optional
+from datetime import date
 
 from psycopg2.extras import DictCursor
 
@@ -57,22 +58,16 @@ class MovieDAO(metaclass=Singleton):
                     new_movie.id_movie,
                     new_movie.title,
                     (new_movie.budget if new_movie.budget is not None else None),
-                    (
-                        new_movie.origin_country
-                        if new_movie.origin_country is not None
-                        else None
-                    ),
-                    new_movie.original_language,
-                    new_movie.original_title,
-                    new_movie.overview,
-                    new_movie.popularity,
-                    new_movie.release_date,
+                    (new_movie.origin_country if new_movie.origin_country is not None else None),
+                    (new_movie.original_language if new_movie.original_language is not None else None),
+                    (new_movie.original_title if new_movie.original_title is not None else None),
+                    (new_movie.overview if new_movie.overview is not None else None),
+                    (new_movie.popularity if new_movie.popularity is not None else None),
+                    (new_movie.release_date if new_movie.release_date is not None else None),
                     (new_movie.revenue if new_movie.revenue is not None else None),
-                    (
-                        new_movie.runtime if new_movie.runtime is not None else None
-                    ),  # Gérer runtime
-                    new_movie.vote_average,
-                    new_movie.vote_count,
+                    (new_movie.runtime if new_movie.runtime is not None else None),
+                    (new_movie.vote_average if new_movie.vote_average is not None else None),
+                    (new_movie.vote_count if new_movie.vote_count is not None else None),
                     new_movie.adult,
                 )
                 self.db_connection.sql_query(insert_query, values)
@@ -101,7 +96,7 @@ class MovieDAO(metaclass=Singleton):
         try:
             # Récupérer le film
             query = """
-                SELECT * FROM Movie
+                SELECT * FROM movie
                 WHERE id_movie = %s;
             """
             result = self.db_connection.sql_query(query, (id_movie,), return_type="one")
@@ -110,46 +105,51 @@ class MovieDAO(metaclass=Singleton):
                 movie_data = dict(result)
 
                 # Récupérer les genres associés
-                genres_query = """
-                    SELECT g.id_genre, g.name_genre
-                    FROM link_movie_genre l
-                    JOIN Genre g ON l.id_genre = g.id_genre
-                    WHERE l.id_movie = %s;
-                """
-                genres_result = self.db_connection.sql_query(
-                    genres_query, (id_movie,), return_type="all"
-                )
-
-                # Récupérer les collections associées
-                collections_query = """
-                    SELECT mc.id_movie_collection, mc.name_movie_collection
-                    FROM link_movie_movie_collection lm
-                    JOIN Movie_Collection mc ON lm.id_movie_collection = mc.id_movie_collection
-                    WHERE lm.id_movie = %s;
-                """
-                collections_result = self.db_connection.sql_query(
-                    collections_query, (id_movie,), return_type="all"
-                )
-
-                movie_data["genres"] = [
+                try:
+                    genres_query = """
+                        SELECT g.id_genre, g.name_genre
+                        FROM link_movie_genre l
+                        JOIN Genre g ON l.id_genre = g.id_genre
+                        WHERE l.id_movie = %s;
+                    """
+                    genres_result = self.db_connection.sql_query(
+                        genres_query, (id_movie,), return_type="all"
+                    )
+                    movie_data["genres"] = [
                     {"id": genre["id_genre"], "name": genre["name_genre"]}
                     for genre in genres_result
-                ]
-                movie_data["belongs_to_collection"] = [
+                    ]
+                except Exception as e:
+                    print("Error during recovery associated genre: ", str(e))
+                    
+
+                # Récupérer les collections associées
+                try:
+                    collections_query = """
+                        SELECT mc.id_movie_collection, mc.name_movie_collection
+                        FROM link_movie_movie_collection lm
+                        JOIN Movie_Collection mc ON lm.id_movie_collection = mc.id_movie_collection
+                        WHERE lm.id_movie = %s;
+                    """
+                    collections_result = self.db_connection.sql_query(
+                        collections_query, (id_movie,), return_type="all"
+                    )
+                    movie_data["belongs_to_collection"] = [
                     {
                         "id": collection["id_movie_collection"],
                         "name": collection["name_movie_collection"],
                     }
                     for collection in collections_result
-                ]
-
+                    ]
+                except Exception as e:
+                    print("Error during recovery associated collection: ", str(e))             
                 return Movie(**movie_data)
             else:
-                print("No movie with this ID.")
+                print("No movie found with this ID in the database.")
                 return None
 
         except Exception as e:
-            print("Error during recovery by id: ", str(e))
+            print("Error during get by id: ", str(e))
             return None
 
     def update(self, movie: Movie):
@@ -224,9 +224,9 @@ class MovieDAO(metaclass=Singleton):
             print("Error during recovery by title:", str(e))
             return None
 
-
-# my_object = MovieDAO()
-# print(my_object.get_by_title('The Matrix'))
+# db_connection = DBConnector()
+# my_object = MovieDAO(db_connection)
+# print(my_object.get_by_id(19995))
 """
 tout ceci est inclu si on utilisedes with
 conn.commit()
