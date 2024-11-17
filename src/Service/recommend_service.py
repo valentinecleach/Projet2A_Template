@@ -56,10 +56,10 @@ class RecommendService:
 
 
 # db_connection = DBConnector()
-# # # u = UserDao(db_connection)
+# # # # # u = UserDao(db_connection)
 # service = RecommendService(db_connection)
-# print(len(service.find_users_to_follow(24)))
-# print(len(dao.recommend_movies(24)))
+# # # print(len(service.find_users_to_follow(24)))
+# print(service.find_movie_to_collect(224)[1])
 # date_of_birth = user.date_of_birth
 # print(isinstance(date_of_birth, date))
 # python src/Service/recommend_service.py
