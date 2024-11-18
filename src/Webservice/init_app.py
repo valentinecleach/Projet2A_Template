@@ -25,3 +25,4 @@ movie_maker_service = MovieMakerService(db_connection)
 user_interaction_service = UserInteractionService(db_connection)
 user_movie_service = UserMovieService(db_connection)
 recommend_service = RecommendService(db_connection)
+
