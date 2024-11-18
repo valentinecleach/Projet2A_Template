@@ -119,14 +119,14 @@ def delete_favorite(
     status_code=status.HTTP_201_CREATED,
 )
 def view_users(
-    user_id: int,
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
 ) -> str:
     """
     Allows the authenticated user to see a recommended list of user.
     """
+    current_user = get_user_from_credentials(credentials)
     try:
-        users = recommend_service.find_users_to_follow(user_id)
+        users = recommend_service.find_users_to_follow(current_user.id)
         return users
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
@@ -137,14 +137,14 @@ def view_users(
     status_code=status.HTTP_201_CREATED,
 )
 def view_movies(
-    user_id: int,
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
 ) -> str:
     """
     Allows the authenticated user to see a recommended list of user.
     """
+    current_user = get_user_from_credentials(credentials)
     try:
-        movies = recommend_service.find_movie_to_collect(user_id)
+        movies = recommend_service.find_movie_to_collect(current_user.id)
         return movies
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error

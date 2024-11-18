@@ -83,7 +83,7 @@ class RatingDao(metaclass=Singleton):
 
     def get_overall_rating(self, id_movie: int):
         try:
-            query = "SELECT AVG(rate) as mean  FROM  rating WHERE id_movie = %s"
+            query = "SELECT AVG(rating) as mean  FROM  rating WHERE id_movie = %s"
             res = self.db_connection.sql_query(query, (id_movie,), return_type="one")
         except Exception as e:
             print(f"Error while averaging ratings of movie {id_movie}: {e}")

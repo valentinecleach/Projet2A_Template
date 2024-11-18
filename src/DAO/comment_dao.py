@@ -16,15 +16,18 @@ class CommentDao(metaclass=Singleton):
     # CREATE
 
     def insert(self, id_user: int, id_movie: int, comment: str):
+        try:
+            user = UserDao(self.db_connection).get_user_by_id(id_user)
+            movie = MovieDAO(self.db_connection).get_by_id(id_movie)
+        except Exception as e:
+            print(f"Erreur lors de la recherche du film: {str(e)}")
+            return None
         date = datetime.now()
         if comment:
             values = (id_user, id_movie, comment, date)
             try:
                 query = "INSERT INTO comment(id_user, id_movie, comment, date) VALUES (%s, %s, %s, %s)"
                 self.db_connection.sql_query(query, values, return_type="one")
-
-                user = UserDao(self.db_connection).get_user_by_id(id_user)
-                movie = MovieDAO(self.db_connection).get_by_id(id_movie)
                 return Comment(user=user, movie=movie, date=date, comment=comment)
 
             except Exception as e:
@@ -42,7 +45,7 @@ class CommentDao(metaclass=Singleton):
     ) -> List[Comment]:
 
         try:
-            query = "SELECT * FROM  comment" "WHERE id_user = %s and id_movie = %s"
+            query = "SELECT * FROM  comment WHERE id_user = %s and id_movie = %s"
             results = self.db_connection.sql_query(
                 query, (id_user, id_movie), return_type="all"
             )
@@ -75,10 +78,10 @@ class CommentDao(metaclass=Singleton):
                 query, (id_movie,), return_type="all"
             )
             if results:
-                movie = MovieDAO().get_by_id(id_movie)
+                movie = MovieDAO(self.db_connection).get_by_id(id_movie)
                 com = [
                     Comment(
-                        user=UserDao().get_user_by_id(res["id_user"]),
+                        user=UserDao(self.db_connection).get_user_by_id(res["id_user"]),
                         movie=movie,
                         date=res["date"],
                         comment=res["comment"],

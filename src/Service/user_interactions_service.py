@@ -1,8 +1,10 @@
+<<<<<<< HEAD
 import datetime
 
 from src.DAO.comment_dao import CommentDao
+=======
+>>>>>>> 95a9b3c4368901df74919be2bca915faaa2f76a4
 from src.DAO.db_connection import DBConnector
-from src.DAO.rating_dao import RatingDao
 from src.DAO.user_dao import UserDao
 from src.DAO.user_favorites_dao import UserFavoriteDao
 from src.DAO.user_follow_dao import UserFollowDao
@@ -16,10 +18,13 @@ class UserInteractionService:
         self.user_dao = UserDao(db_connection)
         self.user_follow_dao = UserFollowDao(db_connection)
         self.user_favorites_dao = UserFavoriteDao(db_connection)
+<<<<<<< HEAD
         self.rating_dao = RatingDao(db_connection)
         self.comment_dao = CommentDao(db_connection)
         self.rating_dao = RatingDao(db_connection)
         self.movie_service = MovieService(db_connection)
+=======
+>>>>>>> 95a9b3c4368901df74919be2bca915faaa2f76a4
 
     def search_user(self, username: str):
         """Permet de chercher le profil d'un autre utilisateur."""
