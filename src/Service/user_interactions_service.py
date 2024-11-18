@@ -1,9 +1,13 @@
-from src.DAO.comment_dao import db_connection
+import datetime
+
+from src.DAO.comment_dao import CommentDao
 from src.DAO.db_connection import DBConnector
 from src.DAO.rating_dao import RatingDao
 from src.DAO.user_dao import UserDao
 from src.DAO.user_favorites_dao import UserFavoriteDao
 from src.DAO.user_follow_dao import UserFollowDao
+from src.DAO.rating_dao import RatingDao
+from src.Service.movie_service import MovieService
 
 
 class UserInteractionService:
@@ -14,6 +18,8 @@ class UserInteractionService:
         self.user_favorites_dao = UserFavoriteDao(db_connection)
         self.rating_dao = RatingDao(db_connection)
         self.comment_dao = CommentDao(db_connection)
+        self.rating_dao = RatingDao(db_connection)
+        self.movie_service = MovieService(db_connection)
 
     def search_user(self, username: str):
         """Permet de chercher le profil d'un autre utilisateur."""
@@ -143,7 +149,7 @@ class UserInteractionService:
         except Exception as error:
             raise ValueError(f"An error occurred while retrieving favorites: {error}")
 
-    def rate_film(self, id_user: int, id_movie: int, rating: int):
+    def rate_film(self, id_user: int, id_movie: int, rate: int):
         """
         Rate a specific movie by providing a score between 0 and 10.
 
@@ -159,10 +165,14 @@ class UserInteractionService:
         Returns
         -------
         """
-        if rating > 10 or rating < 0:
-            raise ValueError("the rating must be between 0-10")
+        if rate > 10 or rate < 0:
+            raise ValueError("the rating must be an integer between 0-10")
         try:
-            self.rating_dao.insert(id_user, id_movie, rating)
+            movie = self.movie_service.get_movie_by_id(id_movie)
+            date = datetime.now().date()
+            connected_user = user_dao.get_user_by_id(id_user)
+            the_rate = Rating(user = connected_user, movie = movie, date = date, rate = rate)
+            self.rating_dao.insert(the_rate)
         except Exception as error:
             raise ValueError(f"An error occurred while rating the movie: {error}")
 

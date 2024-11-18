@@ -9,6 +9,7 @@ from src.Service.movie_maker_service import MovieMakerService
 from src.Service.movie_service import MovieService
 from src.Service.user_interactions_service import UserInteractionService
 from src.Service.user_service import UserService
+from src.Service.recommend_service import RecommendService
 
 load_dotenv()
 db_connection = DBConnector()

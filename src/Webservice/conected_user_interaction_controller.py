@@ -114,7 +114,7 @@ def delete_favorite(
 
 
 @user_interaction_router.post(
-    "/{user_id}/recommendation",
+    "/{user_id}/recommendation_user",
     dependencies=[Depends(JWTBearer())],
     status_code=status.HTTP_201_CREATED,
 )
@@ -131,7 +131,11 @@ def view_users(
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
 
-
+@user_interaction_router.post(
+    "/{user_id}/recommendation_movies",
+    dependencies=[Depends(JWTBearer())],
+    status_code=status.HTTP_201_CREATED,
+)
 def view_movies(
     user_id: int,
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
@@ -142,5 +146,18 @@ def view_movies(
     try:
         movies = recommend_service.find_movie_to_collect(user_id)
         return movies
+    except Exception as error:
+        raise HTTPException(status_code=400, detail=str(error)) from error
+
+@user_interaction_router.post(
+    "/{user_id}/rating_movie",
+    dependencies=[Depends(JWTBearer())],
+    status_code=status.HTTP_201_CREATED,
+)
+def rate_movie(movie_id : int, rate:int, credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],):
+    current_user = get_user_from_credentials(credentials)
+    try:
+        user_interaction_service.rate_film(current_user.id, id_movie, rate)
+        return f"User {current_user.username} put the rate : {rate} for movie with id : {movie_id}"
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
