@@ -76,8 +76,8 @@ class RatingDao(metaclass=Singleton):
 
     # DELETE
     def delete(self, rating: Rating):
-        id_user = rating.user
-        id_movie = rating.movie
+        id_user = rating.user.id_user
+        id_movie = rating.movie.id_movie
         try:
             query = "DELETE FROM  rating WHERE id_user = %s and id_movie = %s"
             self.db_connection.sql_query(
