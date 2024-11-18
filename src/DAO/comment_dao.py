@@ -15,13 +15,10 @@ class CommentDao(metaclass=Singleton):
 
     # CREATE
 
-    def insert(self, id_user: int, id_movie: int, comment: str):
-        try:
-            user = UserDao(self.db_connection).get_user_by_id(id_user)
-            movie = MovieDAO(self.db_connection).get_by_id(id_movie)
-        except Exception as e:
-            print(f"Erreur lors de la recherche du film: {str(e)}")
-            return None
+    def insert(self, comments: Comment):
+        id_user = comments.user.id_user
+        id_movie = comments.movie.id_movie
+        comment = comments.comment
         date = datetime.now()
         if comment:
             values = (id_user, id_movie, comment, date)

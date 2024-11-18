@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from src.DAO.db_connection import DBConnector
 from src.DAO.movie_dao import MovieDAO
 from src.DAO.singleton import Singleton
@@ -16,7 +17,7 @@ class RatingDao(metaclass=Singleton):
     # CREATE
     def insert(self, rating: Rating):
         try:
-                    # Vérification de l'existence de la relation
+            # Vérification de l'existence de la relation
             query = """
                 SELECT COUNT(*) as count FROM rating
                 WHERE id_user = %s AND id_movie = %s;
@@ -33,9 +34,16 @@ class RatingDao(metaclass=Singleton):
                     INSERT INTO rating (id_user, id_movie, rating, date)
                     VALUES (%s, %s, %s, %s);
                 """
-                values = (rating.user.id_user, rating.movie.id_movie, rating.rate, rating.date)
+                values = (
+                    rating.user.id_user,
+                    rating.movie.id_movie,
+                    rating.rate,
+                    rating.date,
+                )
                 self.db_connection.sql_query(insert_query, values)
-                print(f"Insertion successful: Rating relationship between {rating.user.username} and {rating.movie.title} added.")
+                print(
+                    f"Insertion successful: Rating relationship between {rating.user.username} and {rating.movie.title} added."
+                )
             else:
                 print(f"Rating relationship between {rating.user.username} and {rating.movie.title} already exist. Try an update")
         except Exception as e:
