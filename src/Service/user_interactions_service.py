@@ -1,6 +1,4 @@
-from src.DAO.comment_dao import db_connection
 from src.DAO.db_connection import DBConnector
-from src.DAO.rating_dao import RatingDao
 from src.DAO.user_dao import UserDao
 from src.DAO.user_favorites_dao import UserFavoriteDao
 from src.DAO.user_follow_dao import UserFollowDao
@@ -12,8 +10,6 @@ class UserInteractionService:
         self.user_dao = UserDao(db_connection)
         self.user_follow_dao = UserFollowDao(db_connection)
         self.user_favorites_dao = UserFavoriteDao(db_connection)
-        self.rating_dao = RatingDao(db_connection)
-        self.comment_dao = CommentDao(db_connection)
 
     def search_user(self, username: str):
         """Permet de chercher le profil d'un autre utilisateur."""
@@ -142,50 +138,6 @@ class UserInteractionService:
             return self.user_favorites_dao.get_favorites(user_id)
         except Exception as error:
             raise ValueError(f"An error occurred while retrieving favorites: {error}")
-
-    def rate_film(self, id_user: int, id_movie: int, rating: int):
-        """
-        Rate a specific movie by providing a score between 0 and 10.
-
-        Parameters
-        ----------
-        id_user : int
-            The ID of the user who is rating.
-        id_movie : int
-            The ID of the movie to rate.
-        rating : int
-            The score of the movie 0-10.
-
-        Returns
-        -------
-        """
-        if rating > 10 or rating < 0:
-            raise ValueError("the rating must be between 0-10")
-        try:
-            self.rating_dao.insert(id_user, id_movie, rating)
-        except Exception as error:
-            raise ValueError(f"An error occurred while rating the movie: {error}")
-
-    def add_comment(self, id_user: int, id_movie: int, comment: str):
-        """
-        provide a comment to a specific movie.
-
-        Parameters
-        ----------
-        id_user : int
-            The ID of the user who is rating.
-        id_movie : int
-            The ID of the movie to rate.
-        comment : str
-
-        Returns
-            None
-        -------
-        """
-        try:
-            self.comment_dao.insert(id_user, id_movie, rating)
-        except Exception as error:
-            raise ValueError(f"An error occurred while commenting the movie: {error}")
 
     def log_out(self):
         """Déconnexion de l'utilisateur."""

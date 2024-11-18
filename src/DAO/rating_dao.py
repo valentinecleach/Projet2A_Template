@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from src.DAO.db_connection import DBConnection
+from src.DAO.db_connection import DBConnector
 from src.DAO.movie_dao import MovieDAO
 from src.DAO.singleton import Singleton
 from src.DAO.tables_creation import TablesCreation
@@ -11,7 +11,7 @@ from src.Model.rating import Rating
 
 
 class RatingDao(metaclass=Singleton):
-    def __init__(self, db_connection: DBConnection):
+    def __init__(self, db_connection: DBConnector):
         # create a DB connection object
         self.db_connection = db_connection
         # Create tables if don't exist
@@ -30,7 +30,7 @@ class RatingDao(metaclass=Singleton):
             values = (id_user, id_movie, rate, date)
             date = datetime.now()
             try:
-                query = f"INSERT INTO rating(id_user, id_movie, rate, date) VALUES ({', '.join(['%s'] * len(values))})"
+                query = f"INSERT INTO rating(id_user, id_movie, rating, date) VALUES ({', '.join(['%s'] * len(values))})"
                 res = self.db_connection.sql_query(query, values)
             except Exception as e:
                 print(f"Erreur lors de l'insertion dans rating: {str(e)}")
@@ -82,7 +82,7 @@ class RatingDao(metaclass=Singleton):
 
     def get_overall_rating(self, id_movie: int):
         try:
-            query = "SELECT AVG(rate) as mean  FROM  rating WHERE id_movie = %s"
+            query = "SELECT AVG(rating) as mean  FROM  rating WHERE id_movie = %s"
             res = self.db_connection.sql_query(query, (id_movie,), return_type="one")
         except Exception as e:
             print(f"Error while averaging ratings of movie {id_movie}: {e}")
