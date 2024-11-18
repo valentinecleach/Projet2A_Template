@@ -24,10 +24,10 @@ def hash_password(password: str, salt: Optional[List[str]] = None) -> str:
     return hashed_password
 
 
-def create_salt(username: str, ) -> list[str]:
+def create_salt(username: str, user_password_token) -> list[str]:
     """Creates a salt for the password to be hashed"""
     # Création des parties de sel
-    password_token = secrets.token_hex(16)
+    password_token = user_password_token if user_password_token else secrets.token_hex(16)
     start_salt = username[:3]  # Les trois premiers caractères du nom d'utilisateur
     end_salt = (
         username[3:] + password_token

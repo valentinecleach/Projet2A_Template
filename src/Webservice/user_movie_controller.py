@@ -16,21 +16,15 @@ user_movie_router = APIRouter(prefix="/users_movie", tags=["User Movie"])
 
 
 @user_movie_router.post(
-    "/{user_id}/rate",
+    "/{user_id}/rating_movie",
     dependencies=[Depends(JWTBearer())],
     status_code=status.HTTP_201_CREATED,
 )
-def rate_movie(
-    id_movie: int,
-    credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
-) -> str:
-    """
-    Allows the authenticated user to follow another user.
-    """
+def rate_movie(id_movie : int, rate:int, credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],):
     current_user = get_user_from_credentials(credentials)
     try:
-        user_movie_service.rate_movie(current_user.id, id_movie)
-        return f"You have sucessfully rated this movie"
+        user_movie_service.rate_film(current_user.id, id_movie, rate)
+        return f"User {current_user.username} put the rate : {rate} for movie with id : {id_movie}"
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
 

@@ -1,9 +1,6 @@
-<<<<<<< HEAD
-import datetime
+from datetime import datetime
 
 from src.DAO.comment_dao import CommentDao
-=======
->>>>>>> 95a9b3c4368901df74919be2bca915faaa2f76a4
 from src.DAO.db_connection import DBConnector
 from src.DAO.user_dao import UserDao
 from src.DAO.user_favorites_dao import UserFavoriteDao
@@ -18,13 +15,10 @@ class UserInteractionService:
         self.user_dao = UserDao(db_connection)
         self.user_follow_dao = UserFollowDao(db_connection)
         self.user_favorites_dao = UserFavoriteDao(db_connection)
-<<<<<<< HEAD
         self.rating_dao = RatingDao(db_connection)
         self.comment_dao = CommentDao(db_connection)
         self.rating_dao = RatingDao(db_connection)
         self.movie_service = MovieService(db_connection)
-=======
->>>>>>> 95a9b3c4368901df74919be2bca915faaa2f76a4
 
     def search_user(self, username: str):
         """Permet de chercher le profil d'un autre utilisateur."""
@@ -153,33 +147,6 @@ class UserInteractionService:
             return self.user_favorites_dao.get_favorites(user_id)
         except Exception as error:
             raise ValueError(f"An error occurred while retrieving favorites: {error}")
-
-    def rate_film(self, id_user: int, id_movie: int, rate: int):
-        """
-        Rate a specific movie by providing a score between 0 and 10.
-
-        Parameters
-        ----------
-        id_user : int
-            The ID of the user who is rating.
-        id_movie : int
-            The ID of the movie to rate.
-        rating : int
-            The score of the movie 0-10.
-
-        Returns
-        -------
-        """
-        if rate > 10 or rate < 0:
-            raise ValueError("the rating must be an integer between 0-10")
-        try:
-            movie = self.movie_service.get_movie_by_id(id_movie)
-            date = datetime.now().date()
-            connected_user = user_dao.get_user_by_id(id_user)
-            the_rate = Rating(user = connected_user, movie = movie, date = date, rate = rate)
-            self.rating_dao.insert(the_rate)
-        except Exception as error:
-            raise ValueError(f"An error occurred while rating the movie: {error}")
 
     def add_comment(self, id_user: int, id_movie: int, comment: str):
         """
