@@ -1,8 +1,9 @@
 from datetime import datetime
+
 from src.DAO.db_connection import DBConnector
-#from src.DAO.movie_dao import MovieDAO
+from src.DAO.movie_dao import MovieDAO
 from src.DAO.singleton import Singleton
-#from src.DAO.user_dao import UserDao
+from src.DAO.user_dao import UserDao
 from src.Model.rating import Rating
 
 # from typing import List  # , Optional
@@ -15,7 +16,7 @@ class RatingDao(metaclass=Singleton):
     # CREATE
     def insert(self, rating: Rating):
         try:
-                    # Vérification de l'existence de la relation
+            # Vérification de l'existence de la relation
             query = """
                 SELECT COUNT(*) as count FROM rating
                 WHERE id_user = %s AND id_movie = %s;
@@ -32,11 +33,20 @@ class RatingDao(metaclass=Singleton):
                     INSERT INTO rating (id_user, id_movie, rating, date)
                     VALUES (%s, %s, %s, %s);
                 """
-                values = (rating.user.id_user, rating.movie.id_movie, rating.rate, rating.date)
+                values = (
+                    rating.user.id_user,
+                    rating.movie.id_movie,
+                    rating.rate,
+                    rating.date,
+                )
                 self.db_connection.sql_query(insert_query, values)
-                print(f"Insertion successful: Rating relationship between {rating.user.username} and {rating.movie.title} added.")
+                print(
+                    f"Insertion successful: Rating relationship between {rating.user.username} and {rating.movie.title} added."
+                )
             else:
-                print(f"Rating relationship between {rating.user.username} and {rating.movie.title} already exist.")
+                print(
+                    f"Rating relationship between {rating.user.username} and {rating.movie.title} already exist."
+                )
         except Exception as e:
             print("Insertion error:", str(e))
 
@@ -65,7 +75,9 @@ class RatingDao(metaclass=Singleton):
             return None
 
     # DELETE
-    def delete(self, id_user: int, id_movie: int):
+    def delete(self, rating: Rating):
+        id_user = rating.user
+        id_movie = rating.movie
         try:
             query = "DELETE FROM  rating WHERE id_user = %s and id_movie = %s"
             self.db_connection.sql_query(
