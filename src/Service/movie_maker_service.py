@@ -43,9 +43,6 @@ class MovieMakerService:
             print(f"No MovieMaker found with name: {name}.")
             return None
 
-    def get_movie_maker_by_id(self, id : int, test) -> MovieMaker | None :
-        pass
-
 # db_connection = DBConnector()
 # my_object = MovieMakerService(db_connection)
-# my_object.get_movie_maker_by_name("Brian de palma")
+# print(my_object.get_movie_maker_by_name("alain chabat"))
