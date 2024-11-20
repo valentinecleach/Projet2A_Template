@@ -35,7 +35,7 @@ class JwtService:
 
     def decode_jwt(self, token: str) -> dict:
         """
-        Unciphers an authentication token
+        Reads an authentication token
         """
         return jwt.decode(token, self.secret, algorithms=[self.algorithm])
 

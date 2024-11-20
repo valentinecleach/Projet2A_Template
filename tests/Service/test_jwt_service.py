@@ -8,7 +8,7 @@ from jwt import ExpiredSignatureError
 from src.Model.jwt_response import JWTResponse
 from src.Service.jwt_service import JwtService
 
-
+# python -m pytest tests/Service/test_jwt_service.py
 @pytest.fixture
 def jwt_service():
     """Fixture qui fournit une instance de JwtService avec une clé secrète pour les tests."""
