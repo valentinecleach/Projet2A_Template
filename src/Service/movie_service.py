@@ -28,11 +28,7 @@ class MovieService:
                 print(f"No Movie found with id :{movie_id}.")
                 return None
 
-<<<<<<< HEAD
-    def get_movie_by_title(self, movie_title : str) -> List[Movie] | None :
-=======
     def get_movie_by_title(self, movie_title: str) -> List[Movie] | None:
->>>>>>> 0bb2906108f36bb96a9e038bf8400d975591e5ec
         """find movie by title"""
         movie = self.movie_dao.get_by_title(movie_title)
         if movie:
@@ -73,12 +69,6 @@ class MovieService:
 
 # db_connection = DBConnector()
 # my_object = MovieService(db_connection)
-<<<<<<< HEAD
-# #print(my_object.get_movie_by_id(118))
-# print(my_object.get_movie_by_title('Comedian'))
 
-
-=======
 # #print(my_object.get_movie_by_id(1252415))
 # print(my_object.get_movie_by_title('Aladin'))
->>>>>>> 0bb2906108f36bb96a9e038bf8400d975591e5ec

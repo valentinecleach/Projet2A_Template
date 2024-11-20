@@ -168,3 +168,29 @@ def test_get_user_favorites():
     assert any(
         fav["id_movie"] == 19995 for fav in favorites
     ), "Le film 29985 n'est pas dans les favoris."
+
+
+def test_add_comment():
+    """
+    Teste l'ajout d'un commentaire à un film par un utilisateur.
+    """
+    db_connection = DBConnector()
+    user_interaction_service = UserInteractionService(db_connection)
+
+    # ID de l'utilisateur et du film
+    user_id = 217
+    movie_id = 19965
+    comment = "Super film, vraiment captivant !"
+
+    # Utilisation de la méthode add_comment qui elle, utilise l'insertion via CommentDao
+    user_interaction_service.add_comment(user_id, movie_id, comment)
+
+    # Vérifier que le commentaire a bien été ajouté
+    # Récupérer les commentaires du film
+    comments = user_interaction_service.comment_dao.get_comments_by_movie(movie_id)
+    print(f"Comments for Movie {movie_id}: {comments}")
+
+    # Vérifie que le commentaire est dans la liste des commentaires du film
+    assert any(
+        com["comment"] == comment for com in comments
+    ), "Le commentaire n'a pas été ajouté correctement."
