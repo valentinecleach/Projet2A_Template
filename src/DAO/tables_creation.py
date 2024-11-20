@@ -115,7 +115,7 @@ class TablesCreation(metaclass=Singleton):
             date DATE NOT NULL, -- ajouter NOT NULL pour la date
 
             FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE, -- pour gérer la suppression d'utilisateurs
-            FOREIGN KEY (id_movie) REFERENCES movie(id_movie) ON DELETE CASCADE -- pour gérer la suppression de films
+            FOREIGN KEY (id_movie) REFERENCES movie(id_movie) ON DELETE CASCADE 
         );
         """
 
@@ -136,8 +136,8 @@ class TablesCreation(metaclass=Singleton):
             id_movie INTEGER,
             id_movie_maker INTEGER,
 
-            FOREIGN KEY (id_movie_maker) REFERENCES movie_maker(id_movie_maker),
-            FOREIGN KEY (id_movie) REFERENCES movie(id_movie)
+            FOREIGN KEY (id_movie_maker) REFERENCES movie_maker(id_movie_maker) ON DELETE CASCADE,
+            FOREIGN KEY (id_movie) REFERENCES movie(id_movie) ON DELETE CASCADE
         );
         """
 

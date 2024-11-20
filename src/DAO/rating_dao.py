@@ -82,7 +82,7 @@ class RatingDao(metaclass=Singleton):
                     )
                     return rating
                 else:
-                    print(f"Erreur: Error while fetching user or Movie (id_user={id_user}, id_movie={id_movie}).")
+                    print(f" Error while fetching user or Movie (id_user={id_user}, id_movie={id_movie}).")
                     return None
             else:
                 print(f"No existing rating beetween {id_user} and Movie {id_movie}.")
@@ -97,7 +97,6 @@ class RatingDao(metaclass=Singleton):
             # Requête DELETE pour supprimer un enregistrement basé sur id_user et id_movie
             query = "DELETE FROM rating WHERE id_user = %s AND id_movie = %s"
             values = (rating.user.id_user, rating.movie.id_movie)
-            print(values)
             self.db_connection.sql_query(
                 query,
                 values)

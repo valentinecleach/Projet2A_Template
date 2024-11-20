@@ -186,7 +186,7 @@ class UserDao(metaclass=Singleton):
         try:
             query = "DELETE FROM users WHERE id_user = %s"
             self.db_connection.sql_query(query, (id_user,))
-            print("The user with id {id_user} was succesfully deleted.")
+            print(f"The user with id {id_user} was succesfully deleted.")
         except Exception as e:
             print(f"Error while deleting FROM users: {e}")
             return None

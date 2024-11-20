@@ -3,6 +3,7 @@ from typing import Optional
 
 import pytest
 
+from src.DAO.db_connection import DBConnector
 from src.DAO.movie_dao import MovieDAO
 from src.Model.genre import Genre
 from src.Model.movie import Movie
@@ -17,7 +18,7 @@ from tests.DAO.test_db import MockDBConnection
 def test_get_movie_by_id_found_in_db():
 
     # GIVEN
-    mockmovieservice = MovieService(MockDBConnection)
+    movieservice = MovieService(DBConnector)
 
     # Configuration du mock pour retourner un film de la base de données
     mock_movie = Movie(
@@ -45,7 +46,7 @@ def test_get_movie_by_id_found_in_db():
     )
 
     # WHEN
-    result = mockmovieservice.get_movie_by_id(19995)
+    result = movieservice.get_movie_by_id(19995)
 
     # THEN
     assert result == mock_movie

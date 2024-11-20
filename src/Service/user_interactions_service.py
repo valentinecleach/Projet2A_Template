@@ -104,7 +104,7 @@ class UserInteractionService:
         except Exception as error:
             raise ValueError(f"An error occurred while adding favorite: {error}")
 
-    def remove_favorite(self, user_id: int, movie_id: int) -> None:
+    def delete_favorite(self, user_id: int, id_movie: int) -> None:
         """
         Removes a movie from the user's favorites.
 
@@ -119,12 +119,12 @@ class UserInteractionService:
         favorites = self.user_favorites_dao.get_favorites(user_id)
         favorite_ids = [fav["id_movie"] for fav in favorites]
 
-        if movie_id not in favorite_ids:
+        if id_movie not in favorite_ids:
             raise ValueError("This movie is not in the user's favorites.")
 
         # Suppression du favori
         try:
-            self.user_favorites_dao.remove(user_id, movie_id)
+            self.user_favorites_dao.remove(user_id, id_movie)
         except Exception as error:
             raise ValueError(
                 f"An error occurred while trying to remove the favorite: {error}"
