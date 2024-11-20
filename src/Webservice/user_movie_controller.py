@@ -138,7 +138,7 @@ def get_last_comments_movie(
     """
     current_user = get_user_from_credentials(credentials)
     try:
-        comments = comment_dao.get_recent_comments_for_a_movie(id_movie = id_movie, limit = 10)
+        comments = user_movie_service.comment_dao.get_recent_comments_for_a_movie(id_movie = id_movie, limit = 10)
         if comments :
             return comments
         else:
