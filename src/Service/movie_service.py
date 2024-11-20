@@ -1,9 +1,10 @@
 from typing import Dict, List
 
+from src.DAO.db_connection import DBConnector
 from src.DAO.movie_dao import MovieDAO
 from src.Model.movie import Movie
 from src.TMDB.movie_tmdb import MovieTMDB
-from src.DAO.db_connection import DBConnector
+
 
 class MovieService:
     def __init__(self, db_connection: DBConnector):
@@ -27,8 +28,7 @@ class MovieService:
                 print(f"No Movie found with id :{movie_id}.")
                 return None
 
-
-    def get_movie_by_title(self, movie_title : str) -> List[Movie] | None :
+    def get_movie_by_title(self, movie_title: str) -> List[Movie] | None:
         """find movie by title"""
         movie = self.movie_dao.get_by_title(movie_title)
         if movie:
@@ -47,7 +47,6 @@ class MovieService:
                 print(f"No Movie found with title :{movie_title}.")
                 return None
 
-
     def create_movies(self, known_for_data: List[Dict]) -> List[Movie]:
         """
         Transforms a list of dictionaries into a list of Movie objects.
@@ -61,7 +60,7 @@ class MovieService:
         """
         list_movies = []
         for item in known_for_data:
-            id_movie = item['id']
+            id_movie = item["id"]
             movie = self.get_movie_by_id(id_movie)
             if movie:
                 list_movies.append(movie)
@@ -90,9 +89,8 @@ class MovieService:
         """Filters the movie by the popularity"""
         pass
 
+
 # db_connection = DBConnector()
 # my_object = MovieService(db_connection)
 # #print(my_object.get_movie_by_id(1252415))
 # print(my_object.get_movie_by_title('Aladin'))
-
-

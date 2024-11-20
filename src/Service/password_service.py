@@ -1,6 +1,6 @@
 import hashlib
 import secrets
-from typing import Optional, List
+from typing import List, Optional
 
 import bcrypt
 
@@ -17,17 +17,19 @@ import bcrypt
 def hash_password(password: str, salt: Optional[List[str]] = None) -> str:
     """Hashes the password. The salt is optional"""
     if salt is None:
-        hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
+        hashed_password = hashlib.sha256(password.encode("utf-8")).hexdigest()
     else:
         salted_password = f"{salt[0]}{password}{salt[1]}".encode("utf-8")
-        hashed_password = hashlib.sha256(salted_password).hexdigest() 
+        hashed_password = hashlib.sha256(salted_password).hexdigest()
     return hashed_password
 
 
 def create_salt(username: str, user_password_token) -> list[str]:
     """Creates a salt for the password to be hashed"""
     # Création des parties de sel
-    password_token = user_password_token if user_password_token else secrets.token_hex(16)
+    password_token = (
+        user_password_token if user_password_token else secrets.token_hex(16)
+    )
     start_salt = username[:3]  # Les trois premiers caractères du nom d'utilisateur
     end_salt = (
         username[3:] + password_token
@@ -37,7 +39,7 @@ def create_salt(username: str, user_password_token) -> list[str]:
 
 def verify_password(username, password_tried, user_password_token, hashed_password):
     salt = create_salt(username, user_password_token)
-    hashed_password_tried = hash_password(password = password_tried, salt = salt)
+    hashed_password_tried = hash_password(password=password_tried, salt=salt)
     return hashed_password_tried == hashed_password
 
 
@@ -58,7 +60,6 @@ def check_password_strenght(password: str):
             number = True
     if number is False:
         raise ValueError("Password must contain at least one number")
-
 
 
 # def validate_username_password(username: str, password: str, user_dao: UserDao) -> User:
