@@ -12,7 +12,7 @@ class RecommendService:
         self.db_connection = db_connection
         self.recommend_dao = RecommendDao(db_connection)
 
-    def find_users_to_follow(self, id_user: int):
+    def find_users_to_follow(self, id_user: int, filter: dict = {}):
         """
         Finds users to follow for a given user.
 
@@ -22,7 +22,7 @@ class RecommendService:
         if not id_user:
             print("User ID is required")
             return None
-        users = self.recommend_dao.recommend_users_to_follow(id_user)
+        users = self.recommend_dao.recommend_users_to_follow(id_user, filter)
         if users:
             return users
         else:

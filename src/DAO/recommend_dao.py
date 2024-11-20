@@ -17,30 +17,30 @@ class RecommendDao:
         self.db_connection = db_connection
 
     def recommend_movies(
-        self, id_user: int, filter: dict = {}, limit: int = 25
+        self, id_user: int, filter: dict = {}, limit: int = 50
     ) -> List[Movie]:
         """
-        Recommend movies to a user based on their own film collection, age, and gender.
+        Description
+        -----------------------
+        This function recommends movies to a user based on their own film collection, age, and gender. The algorithm follows several steps to generate personalized recommendations.
 
-        This algorithm recommends movies to a user by considering the following steps:
-        1. **Collect User Information**:
-        2. **Calculate Age Range around the user's date of birth to find users of similar age**:
-        3. **Identify Potential Movies has not yet watched**:
-        4. **Calculate Genre Frequencies of each movie genre in the collections of all users**:
-        5. **Calculate the current user's Genre Frequencies**:
-        6. **Calculate Genre Similarity**:
-        7. **Combine Results**:
-            - Combine the results from the genre similarity and age/gender analysis to recommend movies.
-
-        Parameters:
-        -----------
-        id_user : int
-            The user to whom we are recommending movies.
-
-        Returns:
-        --------
-        List[Movie]
-            A list of recommended movies.
+        Algorithm Steps
+        -----------------------
+        1. Collect User Information: Retrieves the user's gender and date of birth.
+        2. Calculate Age Range: Determines an age range around the user's date of birth to find users of similar age.
+        3. Identify Potential Movies: Identifies movies that the user has not yet watched.
+        4. Calculate Genre Frequencies: Calculates the frequency of each movie genre in the collections of all users.
+        5. Calculate User's Genre Frequencies: Calculates the frequency of genres in the user's collection.
+        6. Calculate Genre Similarity: Compares the user's genre frequencies with those of other users.
+        7. Combine Results: Combines the results from genre similarity and age/gender analysis to recommend movies.
+        Parameters
+        ----------------------
+        id_user (int): The ID of the user to whom movies are being recommended.
+        filter (dict, optional): A dictionary of additional filters to apply to the movies.
+        limit (int, optional): The maximum number of movies to recommend. Defaults to 50.
+        Returns
+        ----------------------
+        List[Movie]: A list of recommended movies.
         """
         # provide movies using his age and his gender
 
@@ -95,7 +95,8 @@ class RecommendDao:
             WITH PotentialMovies AS (
                 SELECT m.id_movie, m.popularity, m.vote_average, l.id_genre
                 FROM movie m
-                JOIN link_movie_genre l USING(id_movie)
+                JOIN link_movie_genre l USING( id_movie)
+                JOIN genre g USING( id_genre)
                 WHERE m.id_movie NOT IN (
                     SELECT id_movie 
                     FROM user_movie_collection 
@@ -111,10 +112,10 @@ class RecommendDao:
                 GROUP BY l.id_genre
             ),
             UserGenreScore AS (
-                SELECT id_movie, p.id_genre,SUM(u.genre_count) AS Score
+                SELECT id_movie,SUM(u.genre_count) AS Score
                 FROM PotentialMovies p
                 LEFT JOIN UserGenreCounts u USING(id_genre)
-                GROUP BY id_movie, p.id_genre, popularity, vote_average
+                GROUP BY id_movie
             ),
             Forward AS (
                 SELECT c.id_movie, COUNT(*) AS Score
@@ -161,7 +162,7 @@ class RecommendDao:
             return None
 
     def recommend_users_to_follow(
-        self, id_user: int, limit: int = 25
+        self, id_user: int, limit: int = 50
     ) -> List[ConnectedUser]:
         """
         Recommend users to follow based on the user's movie genre preferences and their social network.
@@ -277,7 +278,7 @@ class RecommendDao:
                 GROUP BY u.id_user
             )
             SELECT id_user,
-                (-0.2 * COALESCE(MutualGenres.Mutual_genre, 0) / NULLIF((SELECT MAX(Mutual_genre) FROM MutualGenres), 0) +
+                (-0.25 * COALESCE(MutualGenres.Mutual_genre, 0) / NULLIF((SELECT MAX(Mutual_genre) FROM MutualGenres), 0) +
                 0.5 * COALESCE(ForwardScores.Score, 0) / NULLIF((SELECT MAX(Score) FROM ForwardScores), 0) +
                 0.5 * COALESCE(AgeGender.Score, 0) / NULLIF((SELECT MAX(Score) FROM AgeGender), 0)) AS final_score
             FROM Potentialusers p
@@ -305,7 +306,7 @@ class RecommendDao:
         else:
             return None
 
-    def get_popular_movies(self) -> list[Movie]:
+    def get_popular_movies(self, limit: int = 50) -> list[Movie]:
         """
         Description: Fetches the most popular movies based on their average rating and popularity.
 
@@ -317,7 +318,7 @@ class RecommendDao:
             query = """
                 SELECT id_movie FROM Movie
                 ORDER BY vote_average DESC, popularity DESC
-                LIMIT 25
+                LIMIT {limit}
             """
             result = self.db_connection.sql_query(query, (), return_type="all")
 
@@ -351,7 +352,7 @@ class RecommendDao:
                 where id_user <> %s
                 GROUP BY id_user_followed
                 ORDER BY popularity DESC
-                LIMIT 25
+                LIMIT 50
             """
             result = self.db_connection.sql_query(query, (id_user,), return_type="all")
 
@@ -369,7 +370,7 @@ dao = RecommendDao(db_connection)
 # user = u.check_email_address("cmitchell@example.net")
 # print(user)
 # # #print(dao.get_popular_users(24))
-print(dao.recommend_users_to_follow(224))
+print(dao.recommend_movies(224, filter={"name_genre": "Drama"}))
 # print(len(dao.recommend_movies(24)))
 # date_of_birth = user.date_of_birth
 # print(isinstance(date_of_birth, date))

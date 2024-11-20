@@ -137,14 +137,25 @@ def view_users(
     status_code=status.HTTP_201_CREATED,
 )
 def view_movies(
+    genre: str=None,
+    origin_country: str=None,
+    original_language: str=None,
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
 ) -> str:
     """
     Allows the authenticated user to see a recommended list of user.
     """
+    filter = {}
+    if genre:
+        filter["name_genre"] = genre
+    if origin_country:
+        filter["origin_country"] = origin_country
+    if origin_country:
+        filter["original_language"] = original_language
     current_user = get_user_from_credentials(credentials)
+
     try:
-        movies = recommend_service.find_movie_to_collect(current_user.id)
+        movies = recommend_service.find_movie_to_collect(current_user.id,filter)
         return movies
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
