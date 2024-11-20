@@ -1,17 +1,22 @@
 from datetime import datetime
-from src.Model.rating import Rating
+from typing import List
+
 from src.DAO.comment_dao import CommentDao
 from src.DAO.db_connection import DBConnector
-from src.Service.movie_service import MovieService
+from src.DAO.movie_dao import MovieDAO
 from src.DAO.rating_dao import RatingDao
 from src.DAO.user_dao import UserDao
-from src.Model.movie import Movie 
+from src.Model.comment import Comment
+from src.Model.movie import Movie
+from src.Model.rating import Rating
+from src.Service.movie_service import MovieService
 
 
 class UserMovieService:
     def __init__(self, db_connection: DBConnector):
         self.db_connection = db_connection
         self.user_dao = UserDao(db_connection)
+        self.movie_dao = MovieDAO(db_connection)
         self.movie_service = MovieService(db_connection)
         self.rating_dao = RatingDao(db_connection)
         self.comment_dao = CommentDao(db_connection)
@@ -28,42 +33,48 @@ class UserMovieService:
         else:
             return None
 
-    def get_ratings_user(self, id_user: int):
-        try :
+    def get_ratings_user(self, id_user: int) -> List[Rating]:
+        try:
             connected_user = self.user_dao.get_user_by_id(id_user)
             query = "SELECT id_movie, date, rating FROM rating where id_user = %s"
             res = self.db_connection.sql_query(query, (id_user,), return_type="all")
             ratings = []
             for result in res:
                 rate = dict(result)
-                movie = self.movie_service.get_movie_by_id(rate['id_movie'])
-                rating = Rating(user = connected_user, movie = movie, date = result['date'], rate = result['rating'])
+                movie = self.movie_service.get_movie_by_id(rate["id_movie"])
+                rating = Rating(
+                    user=connected_user,
+                    movie=movie,
+                    date=result["date"],
+                    rate=result["rating"],
+                )
                 ratings.append(rating)
             if ratings != []:
                 return ratings
             else:
-                print(f" The user {connected_user} hasn't rate any moovie for the moment.")
+                print(
+                    f" The user {connected_user} hasn't rate any moovie for the moment."
+                )
                 return None
         except Exception as e:
             print(f"Error while finding user {id_user} ratings: {e}")
 
-    def delete_user_and_update_ratings(self,id_user:int):
-        try :
+    def delete_user_and_update_ratings(self, id_user: int):
+        try:
             ratings = self.get_ratings_user(id_user)
-            for rating in ratings :
+            for rating in ratings:
                 self.delete_a_user_rating(rating)
             self.user_dao.delete_user(id_user)
         except Exception as e:
             print(f"Error while deleting user {id_user}: {e}")
 
     def delete_a_user_rating(self, rating: Rating):
-        try : 
+        try:
             movie = rating.movie
-            self.rating_dao.delete(Rating)
+            self.rating_dao.delete(rating)
             self.updating_rating_of_movie(movie)
         except Exception as error:
             raise ValueError(f"An error occurred while commenting the movie: {error}")
-            
 
     def count_rating(self, id_movie: int):
         try:
@@ -77,11 +88,10 @@ class UserMovieService:
         else:
             return None
 
-    def updating_rating_of_movie(self, movie : Movie):
+    def updating_rating_of_movie(self, movie: Movie):
         movie.vote_average = self.get_overall_rating(movie.id_movie)
-        movie.vote_count = self.count_rating(movie.id_movie)   
+        movie.vote_count = self.count_rating(movie.id_movie)
         self.movie_service.movie_dao.update(movie)
-
 
     def rate_film_or_update(self, id_user: int, id_movie: int, rate: int):
         """
@@ -105,7 +115,7 @@ class UserMovieService:
             movie = self.movie_service.get_movie_by_id(id_movie)
             date = datetime.now().date()
             connected_user = self.user_dao.get_user_by_id(id_user)
-            rating = Rating(user = connected_user, movie = movie, date = date, rate = rate)
+            rating = Rating(user=connected_user, movie=movie, date=date, rate=rate)
             query = """
                 SELECT COUNT(*) as count FROM rating
                 WHERE id_user = %s AND id_movie = %s;
@@ -121,7 +131,9 @@ class UserMovieService:
                 self.rating_dao.update(rating)
                 self.updating_rating_of_movie(movie)
             else:
-                print(f"Rating relationship between {rating.user.username} and {rating.movie.title} does not exist, so we add it.")
+                print(
+                    f"Rating relationship between {rating.user.username} and {rating.movie.title} does not exist, so we add it."
+                )
                 self.rating_dao.insert(rating)
                 self.updating_rating_of_movie(movie)
             # changer la moyenne du film et le nombre de votant (Clément s'en occupe)
@@ -131,7 +143,6 @@ class UserMovieService:
 
         except Exception as error:
             raise ValueError(f"An error occurred while rating the movie: {error}")
-
 
     def add_comment(self, id_user: int, id_movie: int, comment: str):
         """
@@ -149,8 +160,14 @@ class UserMovieService:
             None
         -------
         """
+        comments = Comment(
+            self.user_dao.get_user_by_id(id_user),
+            self.movie_dao.get_by_id(id_movie),
+            datetime.now().date(),
+            comment,
+        )
         try:
-            self.comment_dao.insert(id_user, id_movie, comment)
+            self.comment_dao.insert(comments)
         except Exception as error:
             raise ValueError(f"An error occurred while commenting the movie: {error}")
 
@@ -159,7 +176,9 @@ class UserMovieService:
 
 # # u = CommentDao(db_connection)
 # service = UserMovieService(db_connection)
-# #service.add_comment(224, 321, "j'adore ce film")
-# #service.rate_film_or_update(305, 217, 10)
-# # print(service.get_ratings_user(417))
-# service.delete_user_and_update_ratings(305)
+# # service.add_comment(224, 321, "j'aime plus ce film")
+# service.rate_film_or_update(417, 111, 5)
+# # print(type(service.get_ratings_user(305)[0])) # on obtient bien une liste d'objet Rating
+# #service.delete_user_and_update_ratings(305)
+# #rating = service.get_ratings_user(305)[0]
+# # service.delete_a_user_rating(rating)
