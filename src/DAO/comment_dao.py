@@ -19,17 +19,19 @@ class CommentDao(metaclass=Singleton):
         id_user = comments.user.id_user
         id_movie = comments.movie.id_movie
         comment = comments.comment
-        date = datetime.now()
+        date = comments.date
         if comment:
             values = (id_user, id_movie, comment, date)
             try:
                 query = "INSERT INTO comment(id_user, id_movie, comment, date) VALUES (%s, %s, %s, %s)"
                 self.db_connection.sql_query(query, values, return_type="one")
-                return Comment(user=user, movie=movie, date=date, comment=comment)
+                print(
+                    "Insertion successful: Comment relationship between "
+                    + f"{comments.user.username} and {comments.movie.title} added."
+                )
 
             except Exception as e:
                 print(f"Erreur lors de l'insertion dans comment: {str(e)}")
-                self.db_connection.connection.rollback()
                 return None
 
         return None

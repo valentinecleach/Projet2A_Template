@@ -6,6 +6,7 @@ from src.DAO.rating_dao import RatingDao
 from src.DAO.user_dao import UserDao
 from src.DAO.user_favorites_dao import UserFavoriteDao
 from src.DAO.user_follow_dao import UserFollowDao
+from src.Model.comment import Comment
 from src.Service.movie_service import MovieService
 
 
@@ -148,7 +149,7 @@ class UserInteractionService:
         except Exception as error:
             raise ValueError(f"An error occurred while retrieving favorites: {error}")
 
-    def add_comment(self, id_user: int, id_movie: int, comment: str):
+    def add_comment(self, comment: Comment):
         """
         provide a comment to a specific movie.
 
@@ -165,7 +166,7 @@ class UserInteractionService:
         -------
         """
         try:
-            self.comment_dao.insert(id_user, id_movie, comment)
+            self.comment_dao.insert(comment)
         except Exception as error:
             raise ValueError(f"An error occurred while commenting the movie: {error}")
 
