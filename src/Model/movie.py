@@ -53,6 +53,7 @@ class Movie(BaseModel):
     --------
 
     """
+
     id_movie: int = Field(
         ..., gt=0, description="The id needs to be a positive integer"
     )
@@ -83,5 +84,10 @@ class Movie(BaseModel):
             f"Release Date: {self.release_date}, Popularity: {self.popularity}, "
             f"Vote Average: {self.vote_average}, Vote Count: {self.vote_count}"
         )
+
+    def __eq__(self, other):
+        if isinstance(other, Movie):
+            return self.__dict__ == other.__dict__
+        return False
 
     # def __get_pydantic_core_schema__# ?,
