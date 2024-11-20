@@ -142,7 +142,7 @@ def view_movies(
     genre: str = None,
     origin_country: str = None,
     original_language: str = None,
-) -> str:
+) -> list[Movie]:
     """
     Allows the authenticated user to see a recommended list of user.
     """

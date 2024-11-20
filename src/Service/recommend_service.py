@@ -12,7 +12,7 @@ class RecommendService:
         self.db_connection = db_connection
         self.recommend_dao = RecommendDao(db_connection)
 
-    def find_users_to_follow(self, id_user: int, filter: dict = {}):
+    def find_users_to_follow(self, id_user: int):
         """
         Finds users to follow for a given user.
 
@@ -22,18 +22,18 @@ class RecommendService:
         if not id_user:
             print("User ID is required")
             return None
-        users = self.recommend_dao.recommend_users_to_follow(id_user, filter)
+        users = self.recommend_dao.recommend_users_to_follow(id_user)
         if users:
             return users
         else:
-            popular = self.recommend_dao.get_popular_users(id_user, filter)
+            popular = self.recommend_dao.get_popular_users(id_user)
             if popular:
                 return popular
             else:
                 print("No users found at the moment:")
                 return None
 
-    def find_movie_to_collect(self, id_user: int):
+    def find_movie_to_collect(self, id_user: int,, filter: dict = {}):
         """
         Finds movies to collect for a given user.
 
@@ -43,11 +43,11 @@ class RecommendService:
         if not id_user:
             print("User ID is required")
             return None
-        movies = self.recommend_dao.recommend_movies(id_user)
+        movies = self.recommend_dao.recommend_movies(id_user,filter)
         if movies:
             return movies
         else:
-            popular = self.recommend_dao.get_popular_movies(id_user)
+            popular = self.recommend_dao.get_popular_movies(id_user,filter)
             if popular:
                 return popular
             else:
