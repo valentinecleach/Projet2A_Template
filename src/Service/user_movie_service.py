@@ -165,25 +165,25 @@ class UserMovieService:
             movie = self.movie_service.get_movie_by_id(id_movie)
             date = datetime.now().date()
             connected_user = self.user_dao.get_user_by_id(id_user)
-            comment = Comment(user=connected_user, movie=movie, date=date, comment = comment)
+            new_comment = Comment(user=connected_user, movie=movie, date=date, comment = comment)
             query = """
                 SELECT COUNT(*) as count FROM comment
                 WHERE id_user = %s AND id_movie = %s;
             """
             result = self.db_connection.sql_query(
                 query,
-                (comment.user.id_user, comment.movie.id_movie),
+                (new_comment.user.id_user, new_comment.movie.id_movie),
                 return_type="one",
             )
             comment_exist = result["count"] > 0 if result else False
             if comment_exist:
                 print("Updating comment relationship.")
-                self.comment_dao.update(comment)
+                self.comment_dao.update(new_comment)
             else:
                 print(
-                    f"Comment relationship between {comment.user.username} and {comment.movie.title} does not exist, so we add it."
+                    f"Comment relationship between {new_comment.user.username} and {new_comment.movie.title} does not exist, so we add it."
                 )
-                self.comment_dao.insert(comment)
+                self.comment_dao.insert(new_comment)
         except Exception as error:
             raise ValueError(f"An error occurred while commenting the movie: {error}")
 
@@ -219,14 +219,18 @@ class UserMovieService:
             self.comment_dao.delete(comment)
         except Exception as error:
             raise ValueError(f"An error occurred while deleting comment for the movie: {error}")
+
 # db_connection = DBConnector()
 
 # # u = CommentDao(db_connection)
 # service = UserMovieService(db_connection)
-# service.rate_film_or_update(417, 111, 5)
+# #service.rate_film_or_update(221, 19995, 5)
+# service.delete_user_and_update_ratings(221)
 # # print(type(service.get_ratings_user(305)[0])) # on obtient bien une liste d'objet Rating
-# #service.delete_user_and_update_ratings(305)
+
 # #rating = service.get_ratings_user(305)[0]
 # # service.delete_a_user_rating(rating)
 
-# # service.add_or_update_comment(224, 321, "j'aime plus ce film")
+# # service.add_or_update_comment(418, 19995, "J'aime les fonds marins de avatar")
+# # print(service.get_comments_user(418))
+# # service.delete_a_user_comment(service.get_comments_user(418)[0])

@@ -17,7 +17,7 @@ class CommentDao(metaclass=Singleton):
 
     # CREATE
 
-    def insert(self, comments: Comment):
+    def insert(self, comment: Comment):
         try:
             # Vérification de l'existence de la relation
             query = """
@@ -126,7 +126,7 @@ class CommentDao(metaclass=Singleton):
         to delete a comment
         """
         try:
-            query = "DELETE FROM  comment WHERE id_user = %s and id_movie = %s and date = %s"
+            query = "DELETE FROM  comment WHERE id_user = %s and id_movie = %s"
             values = (comment.user.id_user, comment.movie.id_movie)
             self.db_connection.sql_query(
                 query,

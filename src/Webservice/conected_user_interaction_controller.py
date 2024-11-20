@@ -68,7 +68,7 @@ def unfollow_user(
     current_user = get_user_from_credentials(credentials)
     try:
         user_interaction_service.unfollow_user(current_user.id, user_to_unfollow_id)
-        return f"User {current_user.username} deosn't follow user {user_to_follow_id} anymore"
+        return f"User {current_user.username} deosn't follow user {user_to_unfollow_id} anymore"
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
 
@@ -79,7 +79,7 @@ def unfollow_user(
     status_code=status.HTTP_201_CREATED,
 )
 def add_favorite(
-    user_to_follow_id: int,
+    id_movie : int,
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
 ) -> str:
     """
@@ -87,8 +87,8 @@ def add_favorite(
     """
     current_user = get_user_from_credentials(credentials)
     try:
-        user_interaction_service.add_favorite(current_user.id, user_to_follow_id)
-        return f"User {current_user.username} is now having film {user_to_follow_id} in favorite"
+        user_interaction_service.add_favorite(current_user.id, id_movie)
+        return f"User {current_user.username} is now having film {id_movie} in favorite"
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
 
@@ -99,7 +99,7 @@ def add_favorite(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 def delete_favorite(
-    user_to_unfollow_id: int,
+    id_movie: int,
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
 ) -> None:
     """
@@ -107,8 +107,8 @@ def delete_favorite(
     """
     current_user = get_user_from_credentials(credentials)
     try:
-        user_interaction_service.delete_favorite(current_user.id, user_to_unfollow_id)
-        return f"User {current_user.username} doesn't have in favorite film {user_to_follow_id} anymore"
+        user_interaction_service.delete_favorite(current_user.id, id_movie)
+        return f"User {current_user.username} doesn't have in favorite film {id_movie} anymore"
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
 
