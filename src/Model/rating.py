@@ -26,3 +26,7 @@ class Rating:
         s = s + f" <{self.rate}> over 10 to the movie {self.movie.title}"
         s = s + f"  on {self.date}"
         return s
+
+    def __repr__(self):
+        return (f"Rating(user={self.user!r}, rate={self.rate!r}, "
+                f"movie={self.movie!r}, date={self.date!r})")
