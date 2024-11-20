@@ -64,7 +64,7 @@ def create_user(
 # Si la combinaison est correcte, un token JWT est généré et renvoyé dans la réponse.
 
 
-@user_router.post("/jwt", status_code=status.HTTP_201_CREATED)
+@user_router.post("/login", status_code=status.HTTP_201_CREATED)
 def login(username: str, password_tried: str) -> JWTResponse:
     """
     Authenticate with username and password and obtain a token.
@@ -83,7 +83,7 @@ def login(username: str, password_tried: str) -> JWTResponse:
         raise HTTPException(status_code=403) from error
 
 
-@user_router.get("/me", dependencies=[Depends(JWTBearer())])
+@user_router.get("/profile", dependencies=[Depends(JWTBearer())])
 def get_user_own_profile(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())]
 ) -> APIUser:
@@ -92,6 +92,16 @@ def get_user_own_profile(
     """
     return get_user_from_credentials(credentials)
 
+@user_router.delete("/delete_user", dependencies=[Depends(JWTBearer())])
+def delete_own_profile(
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())]
+) -> APIUser:
+    """
+    Allow a user to delete his own profile.
+    """
+    current_user = get_user_from_credentials(credentials)
+    user_dao.delete_user(current_user.id)
+    
 
 def get_user_from_credentials(credentials: HTTPAuthorizationCredentials) -> APIUser:
     """

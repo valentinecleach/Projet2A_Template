@@ -1,5 +1,7 @@
-from typing import List, Dict, Any
+from typing import Any, Dict, List
+
 from src.Model.genre import Genre
+
 
 class GenreService:
 
@@ -18,11 +20,12 @@ class GenreService:
             Une liste d'instances de Genre.
         """
         if data:
-            return [Genre(id=item['id'], name=item['name']) for item in data]
+            return [Genre(id=item["id"], name=item["name"]) for item in data]
         else:
             return []
 
+
 # code to prepare the doctests
-#genre_service = GenreService()
-#genre_action = [{"id": 28, "name": "Action"}]
+# genre_service = GenreService()
+# genre_action = [{"id": 28, "name": "Action"}]
 # print(genre_service.create_list_of_genre(genre_action))

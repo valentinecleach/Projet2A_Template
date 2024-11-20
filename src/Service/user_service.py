@@ -1,16 +1,8 @@
 from datetime import date
 
-import bcrypt  # Assurez-vous d'avoir bcrypt installé pour le hachage
-import psycopg2  # Assurez-vous d'avoir psycopg2 installé pour la connexion à PostgreSQL
-
 # DAO
 from src.DAO.db_connection import DBConnector
 from src.DAO.user_dao import UserDao
-
-# Model
-from src.Model.connected_user import ConnectedUser
-from src.Model.movie import Movie
-from src.Model.user import User
 
 # Service
 from src.Service.password_service import (

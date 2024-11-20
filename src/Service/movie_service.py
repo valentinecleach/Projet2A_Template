@@ -1,9 +1,10 @@
 from typing import Dict, List
 
+from src.DAO.db_connection import DBConnector
 from src.DAO.movie_dao import MovieDAO
 from src.Model.movie import Movie
 from src.TMDB.movie_tmdb import MovieTMDB
-from src.DAO.db_connection import DBConnector
+
 
 class MovieService:
     def __init__(self, db_connection: DBConnector):
@@ -12,7 +13,7 @@ class MovieService:
         self.movie_tmdb = MovieTMDB()
 
     def get_movie_by_id(self, movie_id: int) -> Movie | None:
-        """find movie by id"""
+        """Find movie by id"""
         movie = self.movie_dao.get_by_id(movie_id)
         if movie:
             print("Movie get from database")
@@ -27,7 +28,11 @@ class MovieService:
                 print(f"No Movie found with id :{movie_id}.")
                 return None
 
+<<<<<<< HEAD
     def get_movie_by_title(self, movie_title : str) -> List[Movie] | None :
+=======
+    def get_movie_by_title(self, movie_title: str) -> List[Movie] | None:
+>>>>>>> 0bb2906108f36bb96a9e038bf8400d975591e5ec
         """find movie by title"""
         movie = self.movie_dao.get_by_title(movie_title)
         if movie:
@@ -46,7 +51,6 @@ class MovieService:
                 print(f"No Movie found with title :{movie_title}.")
                 return None
 
-
     def create_movies(self, known_for_data: List[Dict]) -> List[Movie]:
         """
         Transforms a list of dictionaries into a list of Movie objects.
@@ -60,38 +64,21 @@ class MovieService:
         """
         list_movies = []
         for item in known_for_data:
-            id_movie = item['id']
+            id_movie = item["id"]
             movie = self.get_movie_by_id(id_movie)
             if movie:
                 list_movies.append(movie)
         return list_movies
 
-    #################################################################################################
-
-    def find_by_id(self, movie_id: int) -> Movie:
-        """Find movie by id"""
-        return Movie(id=1, original_title="A Clockwork Orange")
-        # return self.movie_db.get_by_id(movie_id)
-
-    def find_by_title(self, movie_title: str) -> Movie:
-        """Find movie by title"""
-        pass
-
-    def view_comments(self, movie: Movie) -> ...:
-        """View the comments of a movie"""
-        pass
-
-    #    def filter_by_genre(self, genre: Genre) -> ...:
-    #       """Filter movies by their genre"""
-    #        pass
-
-    def filter_by_popularity(self) -> list[Movie]:
-        """Filters the movie by the popularity"""
-        pass
 
 # db_connection = DBConnector()
 # my_object = MovieService(db_connection)
+<<<<<<< HEAD
 # #print(my_object.get_movie_by_id(118))
 # print(my_object.get_movie_by_title('Comedian'))
 
 
+=======
+# #print(my_object.get_movie_by_id(1252415))
+# print(my_object.get_movie_by_title('Aladin'))
+>>>>>>> 0bb2906108f36bb96a9e038bf8400d975591e5ec

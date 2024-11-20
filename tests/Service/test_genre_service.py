@@ -13,7 +13,7 @@ def genre_data():
         {"id": 16, "name": "Animation"},
     ]
 
-#python -m pytest tests/Service/test_genre_service.py -k "test_create_list_of_genre_with_valid_data"
+
 def test_create_list_of_genre_with_valid_data(genre_data):
     """Teste la création d'une liste de genres à partir de données valides."""
     genres = GenreService.create_list_of_genre(genre_data)
@@ -37,3 +37,35 @@ def test_create_list_of_genre_with_none_data():
     genres = GenreService.create_list_of_genre(None)
 
     assert genres == []
+
+
+def test_create_list_of_genre_with_invalid_data_type():
+    """Teste la gestion des données avec un type incorrect."""
+    with pytest.raises(TypeError):
+        GenreService.create_list_of_genre("not a list")
+
+
+def test_create_list_of_genre_with_missing_keys():
+    """Teste la création de genres lorsque certaines clés sont manquantes."""
+    data_with_missing_keys = [
+        {"id": 28},  # Pas de "name"
+        {"name": "Adventure"},  # Pas de "id"
+    ]
+
+    with pytest.raises(KeyError):
+        GenreService.create_list_of_genre(data_with_missing_keys)
+
+
+def test_create_list_of_genre_with_extra_keys(genre_data):
+    """Teste la création de genres avec des données contenant des clés supplémentaires."""
+    data_with_extra_keys = [
+        {"id": 28, "name": "Action", "description": "A genre with lots of explosions"},
+        {"id": 12, "name": "Adventure", "popularity": 9.5},
+    ]
+
+    genres = GenreService.create_list_of_genre(data_with_extra_keys)
+
+    assert len(genres) == 2
+    assert all(isinstance(genre, Genre) for genre in genres)
+    assert genres[0].id == 28
+    assert genres[0].name == "Action"

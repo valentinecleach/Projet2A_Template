@@ -83,6 +83,22 @@ def test_initialization_config():
     assert db_connection.password == "test_password"
     assert db_connection.schema == "projet_info_test"
 
+
+class MockDBConnection():
+    def sql_query(
+        self,
+        query: str,
+        data: Optional[Union[tuple, list, dict]] = None,
+        return_type: Union[Literal["one"], Literal["all"]] = "one",
+    ):
+        match query:
+            case "SELECT * from users WHERE id=%s":
+                if not data:
+                    raise Exception
+                id_user = data[0]
+                return {"id": id_user, "username": "janjak", "password": "myHashedPassword", "salt": "mySalt"}
+
+
 # pas de methode set search path? Pq on a ce
 def test_set_search_path(mocker):
     """SVP ajoutez de la docu pour qu'on puisse comprendre qqe chose. Merci :)
