@@ -16,7 +16,9 @@ class RecommendDao:
         # create a DB connection object
         self.db_connection = db_connection
 
-    def recommend_movies(self, id_user: int) -> List[Movie]:
+    def recommend_movies(
+        self, id_user: int, filter: dict = {}, limit: int = 25
+    ) -> List[Movie]:
         """
         Recommend movies to a user based on their own film collection, age, and gender.
 
@@ -82,7 +84,12 @@ class RecommendDao:
         except (TypeError, ValueError) as e:
             print(f"Error while collecting date_of_birth and gender: {e}")
             return None
-
+        val = []
+        cond = []
+        if filter:
+            val = [filter[key] for key in filter]
+            cond = [f"{key} = %s" for key in filter]
+        filters = " AND ".join(cond) if val else "1=1"
         try:
             query = f"""
             WITH PotentialMovies AS (
@@ -93,7 +100,8 @@ class RecommendDao:
                     SELECT id_movie 
                     FROM user_movie_collection 
                     WHERE id_user = %s
-                )ORDER BY popularity DESC, vote_average DESC
+                ) AND {filters}
+                ORDER BY popularity DESC, vote_average DESC
             ),
             UserGenreCounts AS (
                 SELECT l.id_genre, COUNT(*) AS genre_count
@@ -102,48 +110,43 @@ class RecommendDao:
                 WHERE c.id_user = %s
                 GROUP BY l.id_genre
             ),
-            AgeGender AS ( --movie popular in user's age and gender group
-                SELECT m.id_movie, COUNT(*) AS Score
-                FROM PotentialMovies m
-                JOIN user_movie_collection c using(id_movie)
-                JOIN users u USING(id_user)
-                WHERE {condition}
-                GROUP BY m.id_movie
-                ORDER BY Score DESC
+            UserGenreScore AS (
+                SELECT id_movie, p.id_genre,SUM(u.genre_count) AS Score
+                FROM PotentialMovies p
+                LEFT JOIN UserGenreCounts u USING(id_genre)
+                GROUP BY id_movie, p.id_genre, popularity, vote_average
             ),
-            Forward AS (--movie popular in user's social network
-                SELECT c.id_movie
+            Forward AS (
+                SELECT c.id_movie, COUNT(*) AS Score
                 FROM follower f1
                 INNER JOIN follower f2 ON f1.id_user_followed = f2.id_user
+                INNER JOIN follower f3 ON f3.id_user_followed = f1.id_user
                 INNER JOIN user_movie_collection c 
-                ON (c.id_user = f2.id_user_followed OR c.id_user = f2.id_user)
+                ON (c.id_user = f2.id_user_followed OR c.id_user = f2.id_user OR c.id_user = f3.id_user)
                 WHERE f1.id_user = %s
+                GROUP BY c.id_movie
+            ),
+            AgeGender AS (
+                SELECT c.id_movie, COUNT(*) AS Score
+                FROM user_movie_collection c
+                JOIN users u USING(id_user)
+                WHERE {condition}
+                GROUP BY c.id_movie
             )
-            SELECT DISTINCT id_movie
-            FROM (
-                (SELECT m.id_movie, COUNT(*) AS Score
-                FROM PotentialMovies m
-                JOIN Forward f using(id_movie)
-                GROUP BY m.id_movie
-                ORDER BY Score DESC
-                LIMIT 5)
-                UNION
-                (SELECT id_movie, Score
-                FROM AgeGender
-                LIMIT 10)
-                UNION
-                (SELECT p.id_movie, SUM(u.genre_count) AS score
-                FROM PotentialMovies p
-                LEFT JOIN UserGenreCounts u ON p.id_genre = u.id_genre
-                GROUP BY p.id_movie
-                ORDER BY score DESC
-                LIMIT 15)
-            ) as f;
+            SELECT id_movie, 
+                (0.4 * COALESCE(f.Score, 0) / NULLIF((SELECT MAX(Score) FROM Forward), 0) +
+                0.4 * COALESCE(a.Score, 0) / NULLIF((SELECT MAX(Score) FROM AgeGender), 0) +
+                0.2 * COALESCE(g.score, 0) / NULLIF((SELECT MAX(Score) FROM UserGenreScore), 0)) AS final_score
+            FROM UserGenreScore g
+            LEFT JOIN Forward f USING(id_movie)
+            LEFT JOIN AgeGender a USING(id_movie)
+            ORDER BY final_score DESC
+            LIMIT {limit};
             """
 
             results = self.db_connection.sql_query(
                 query,
-                (id_user, id_user, *values, id_user),
+                (id_user, *val, id_user, id_user, *values),
                 return_type="all",
             )
         except Exception as e:
@@ -157,7 +160,9 @@ class RecommendDao:
         else:
             return None
 
-    def recommend_users_to_follow(self, id_user: int) -> List[ConnectedUser]:
+    def recommend_users_to_follow(
+        self, id_user: int, limit: int = 25
+    ) -> List[ConnectedUser]:
         """
         Recommend users to follow based on the user's movie genre preferences and their social network.
 
@@ -179,6 +184,46 @@ class RecommendDao:
         List[ConnectedUser]
             A list of recommended users to follow.
         """
+        try:
+            dao = UserDao(self.db_connection)
+            user = dao.get_user_by_id(id_user)
+            gender = user.gender
+            date_of_birth = user.date_of_birth
+
+            updates = []
+            values = []
+            if gender:
+                updates.append("gender = %s")
+                values.append(gender)
+            if date_of_birth:
+                if isinstance(date_of_birth, str):
+                    date_of_birth_obj = datetime.strptime(
+                        date_of_birth, "%Y-%m-%d"
+                    ).date()
+                elif isinstance(date_of_birth, datetime):
+                    date_of_birth_obj = date_of_birth.date()
+                elif isinstance(date_of_birth, date):
+                    date_of_birth_obj = date_of_birth
+                else:
+                    raise TypeError(
+                        "date_of_birth must be a string, datetime, or date object"
+                    )
+
+                updates.append("date_of_birth BETWEEN %s AND %s")
+                values.append(
+                    (date_of_birth_obj - timedelta(days=3 * 365)).strftime("%Y-%m-%d")
+                )
+                values.append(
+                    (date_of_birth_obj + timedelta(days=3 * 365)).strftime("%Y-%m-%d")
+                )
+
+            condition = (
+                " AND ".join(updates) if updates else "1=1"
+            )  # Default condition to avoid syntax error
+
+        except (TypeError, ValueError) as e:
+            print(f"Error while collecting date_of_birth and gender: {e}")
+            return None
 
         # Sort users by the score of mutual films in their collections
         try:
@@ -190,64 +235,62 @@ class RecommendDao:
                     SELECT id_user_followed 
                     FROM follower
                     WHERE id_user = %s
-                )
+                ) AND id_user <> %s 
             ),
-            -- find users and frequencies of their movies genre
+            -- Find users and frequencies of their movies genre
             GenreFrequencies AS (
                 SELECT c.id_user, l.id_genre, COUNT(*) * 1.0 / SUM(COUNT(*)) OVER (PARTITION BY c.id_user) AS frequency
                 FROM user_movie_collection c
                 JOIN link_movie_genre l USING(id_movie)
                 GROUP BY c.id_user, l.id_genre
             ),
-            -- find the user's frequencies of his movies genre
+            -- Find the user's frequencies of his movies genre
             UserGenreFrequencies AS (
                 SELECT id_genre, frequency AS frequency_user
                 FROM GenreFrequencies
                 WHERE id_user = %s
             ),
+            -- Calculate mutual genres
             MutualGenres AS (
-                SELECT g1.id_user, SUM(POWER((g1.frequency - g2.frequency_user),2)) AS Mutual_genre
+                SELECT g1.id_user, SUM(POWER((COALESCE(g1.frequency, 0) - COALESCE(g2.frequency_user, 0)), 2)) AS Mutual_genre
                 FROM GenreFrequencies g1
-                JOIN UserGenreFrequencies g2 USING(id_genre)
+                LEFT JOIN UserGenreFrequencies g2 USING(id_genre)
                 WHERE g1.id_user <> %s
                 GROUP BY g1.id_user
             ),
-            Forward AS (
-                SELECT f2.id_user_followed AS follow, COUNT(*) AS Score
+            -- Calculate forward scores
+            ForwardScores AS (
+                SELECT f3.id_user AS id_user, COUNT(*) AS Score
                 FROM follower f1
-                JOIN Potentialusers p USING(id_user)
                 INNER JOIN follower f2 ON f1.id_user_followed = f2.id_user
+                INNER JOIN follower f3 ON f2.id_user_followed = f3.id_user
+                INNER JOIN follower f4 ON f4.id_user_followed = f1.id_user
                 WHERE f1.id_user = %s
-                GROUP BY f2.id_user_followed
+                GROUP BY f3.id_user
+            ),
+            -- Calculate age and gender scores
+            AgeGender AS (
+                SELECT u.id_user, COUNT(*) AS Score
+                FROM users u
+                LEFT JOIN follower f ON u.id_user = f.id_user
+                WHERE {condition}
+                GROUP BY u.id_user
             )
-            SELECT DISTINCT id_user
-            FROM (
-                (SELECT id_user , Mg.Mutual_genre  as Score
-                FROM MutualGenres Mg
-                JOIN Potentialusers p USING(id_user)
-                ORDER BY Mg.Mutual_genre ASC
-                LIMIT 10)
-
-                UNION
-
-                (SELECT DISTINCT follow AS id_user,Score
-                FROM (
-                    (SELECT follow, Score
-                    FROM Forward)
-                    UNION
-                    (SELECT f3.id_user_followed AS follow, COUNT(*) AS Score
-                    FROM Forward f
-                    INNER JOIN follower f3 ON f.follow = f3.id_user
-                    GROUP BY f3.id_user_followed)
-                ) AS tab
-                ORDER BY Score DESC
-                LIMIT 15)
-            ) AS fin;
+            SELECT id_user,
+                (-0.2 * COALESCE(MutualGenres.Mutual_genre, 0) / NULLIF((SELECT MAX(Mutual_genre) FROM MutualGenres), 0) +
+                0.5 * COALESCE(ForwardScores.Score, 0) / NULLIF((SELECT MAX(Score) FROM ForwardScores), 0) +
+                0.5 * COALESCE(AgeGender.Score, 0) / NULLIF((SELECT MAX(Score) FROM AgeGender), 0)) AS final_score
+            FROM Potentialusers p
+            LEFT JOIN MutualGenres USING(id_user)
+            LEFT JOIN ForwardScores USING(id_user)
+            LEFT JOIN AgeGender USING(id_user)
+            ORDER BY final_score DESC
+            LIMIT {limit};
             """
 
             results = self.db_connection.sql_query(
                 query,
-                (id_user, id_user, id_user, id_user),
+                (id_user, id_user, id_user, id_user, id_user, *values),
                 return_type="all",
             )
 
@@ -320,13 +363,13 @@ class RecommendDao:
             return [user_dao.get_user_by_id(res["id_user_followed"]) for res in result]
 
 
-# db_connection = DBConnector()
+db_connection = DBConnector()
 # u = UserDao(db_connection)
-# # dao = RecommendDao(db_connection)
+dao = RecommendDao(db_connection)
 # user = u.check_email_address("cmitchell@example.net")
 # print(user)
 # # #print(dao.get_popular_users(24))
-# dao.recommend_users_to_follow(224)
+print(dao.recommend_users_to_follow(224))
 # print(len(dao.recommend_movies(24)))
 # date_of_birth = user.date_of_birth
 # print(isinstance(date_of_birth, date))
