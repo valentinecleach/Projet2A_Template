@@ -7,15 +7,12 @@ from src.DAO.db_connection import DBConnector
 from src.DAO.movie_dao import MovieDAO
 from src.Model.genre import Genre
 from src.Model.movie import Movie
+from src.Model.movie_collection import MovieCollection
+from src.Service.movie_service import MovieService
 
-<<<<<<< HEAD
-
-class MockMovieService:
-    def 
-=======
 # python -m pip install mock
 # python -m pip install pytest-mock
->>>>>>> 813cb84f872ce1434f8342b15a378b3bd2ca8f43
+# >>>>>>> 813cb84f872ce1434f8342b15a378b3bd2ca8f43
 
 
 @pytest.fixture
