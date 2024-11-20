@@ -1,0 +1,31 @@
+# Point Hebdomadaire - Projet Réseau social ciné
+
+Date : Jeudi 14 Novembre 2024
+Semaine n° 10
+
+## Tâches réalisées cette semaine
+
+
+### Clément YVERNAULT-COLLET
+-[x] travail sur rating et comment avec notement la mise à jour de la moyenne des films. Traitement également de l'ajustement de la moyenne si un utilisateur est supprimé.
+Le but étant de ne plus tenir compte de ses notes. Ajustement sur les différents controller. 
+Création d'un fichier seravnt à implémenter les tables pour avoir des données fictives avant de lancer l'application.
+
+### Jolan Louis
+-[x] Bonne avancé sur le rapport
+
+### Charlin DJIOKO SADIO
+-[ ] Travail sur l'algorithme de recommendation (dao, service, controller). En cours
+
+### Valentine CLEACH
+-[x] Bonne avancé sur les tests 
+
+### Gaspard POIRIER
+-[ ] Bonnes avancé sur les test
+
+## Backlog
+
+> Liste des tâches en attente de prise en charge.
+
+### Prioritaires
+- Avoir finit le code vendredi soir
