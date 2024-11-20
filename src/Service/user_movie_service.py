@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List
 
 from src.DAO.comment_dao import CommentDao
 from src.DAO.db_connection import DBConnector
@@ -32,7 +33,7 @@ class UserMovieService:
         else:
             return None
 
-    def get_ratings_user(self, id_user: int):
+    def get_ratings_user(self, id_user: int) -> List[Rating]:
         try:
             connected_user = self.user_dao.get_user_by_id(id_user)
             query = "SELECT id_movie, date, rating FROM rating where id_user = %s"
@@ -70,7 +71,7 @@ class UserMovieService:
     def delete_a_user_rating(self, rating: Rating):
         try:
             movie = rating.movie
-            self.rating_dao.delete(Rating)
+            self.rating_dao.delete(rating)
             self.updating_rating_of_movie(movie)
         except Exception as error:
             raise ValueError(f"An error occurred while commenting the movie: {error}")
@@ -171,11 +172,13 @@ class UserMovieService:
             raise ValueError(f"An error occurred while commenting the movie: {error}")
 
 
-# db_connection = DBConnector()
+db_connection = DBConnector()
 
-# # u = CommentDao(db_connection)
-# service = UserMovieService(db_connection)
+# u = CommentDao(db_connection)
+service = UserMovieService(db_connection)
 # service.add_comment(224, 321, "j'aime plus ce film")
-# service.rate_film_or_update(305, 217, 10)
-# # print(service.get_ratings_user(417))
-# service.delete_user_and_update_ratings(305)
+#service.rate_film_or_update(305, 118, 10)
+# print(type(service.get_ratings_user(305)[0])) # on obtient bien une liste d'objet Rating
+service.delete_user_and_update_ratings(305)
+#rating = service.get_ratings_user(305)[0]
+# service.delete_a_user_rating(rating)
