@@ -154,29 +154,20 @@ class MovieDAO(metaclass=Singleton):
 
     def update(self, movie: Movie):
         try:
-            with self.self.db_connection.connection.cursor() as cursor:
-                cursor.execute(
-                    """
+            query = """
                     UPDATE Movie
-                    SET adult = %s, genre.id = %s , original_title = %s
-                    , overview = %s,popularity = %s, release_date = %s,
-                    title = %s, vote_average = %s,vote = %s
+                    SET revenue = %s, popularity = %s, vote_average = %s, vote_count = %s
                     WHERE id_movie = %s;
-                """,
-                    (
-                        movie.adult,
-                        movie.genre.id,
-                        movie.original_title,
-                        movie.overview,
+                """
+            values = (
+                        movie.revenue,
                         movie.popularity,
-                        movie.release_date,
-                        movie.title,
                         movie.vote_average,
-                        movie.vote,
-                    ),
-                )
-                self.db_connection.connection.commit()
-                print("Update successful : movie updated.")
+                        movie.vote_count,
+                        movie.id_movie
+                    )
+            self.db_connection.sql_query(query, values)
+            print("Update successful : movie updated.")
         except Exception as e:
             print("Update error : ", str(e))
 
