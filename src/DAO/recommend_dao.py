@@ -3,6 +3,7 @@ from typing import List
 
 from src.DAO.db_connection import DBConnector
 from src.DAO.movie_dao import MovieDAO
+from src.DAO.singleton import Singleton
 from src.DAO.user_dao import UserDao
 
 # Model
@@ -10,7 +11,7 @@ from src.Model.connected_user import ConnectedUser
 from src.Model.movie import Movie
 
 
-class RecommendDao:
+class RecommendDao(metaclass=Singleton):
 
     def __init__(self, db_connection: DBConnector):
         # create a DB connection object
@@ -374,27 +375,9 @@ class RecommendDao:
             return [user_dao.get_user_by_id(res["id_user_followed"]) for res in result]
 
 
-<<<<<<< HEAD
 # db_connection = DBConnector()
-# # u = UserDao(db_connection)
-# dao = RecommendDao(db_connection)
-=======
-<<<<<<< HEAD
-# db_connection = DBConnector()
-# # u = UserDao(db_connection)
-# dao = RecommendDao(db_connection)
-# # user = u.check_email_address("cmitchell@example.net")
-# # print(user)
-# # # #print(dao.get_popular_users(24))
-# print(dao.recommend_users_to_follow(224))
-# # print(len(dao.recommend_movies(24)))
-# # date_of_birth = user.date_of_birth
-# # print(isinstance(date_of_birth, date))
-=======
-db_connection = DBConnector()
 # u = UserDao(db_connection)
-dao = RecommendDao(db_connection)
->>>>>>> 6599bc69a0c66a5f5bfb01ef24f188a9aab43ead
+# dao = RecommendDao(db_connection)
 # user = u.check_email_address("cmitchell@example.net")
 # print(user)
 # # #print(dao.get_popular_users(24))
@@ -402,4 +385,3 @@ dao = RecommendDao(db_connection)
 # print(len(dao.recommend_movies(24)))
 # date_of_birth = user.date_of_birth
 # print(isinstance(date_of_birth, date))
->>>>>>> 0bb2906108f36bb96a9e038bf8400d975591e5ec

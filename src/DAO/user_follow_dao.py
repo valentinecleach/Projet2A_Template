@@ -2,11 +2,12 @@ from datetime import datetime
 from typing import List
 
 from src.DAO.db_connection import DBConnector
+from src.DAO.singleton import Singleton
 from src.DAO.user_dao import UserDao
 from src.Model.connected_user import ConnectedUser
 
 
-class UserFollowDao:
+class UserFollowDao(metaclass=Singleton):
     def __init__(self, db_connection: DBConnector):
         if not isinstance(db_connection, DBConnector):
             raise ValueError("db_connection must be an instance of DBConnector")

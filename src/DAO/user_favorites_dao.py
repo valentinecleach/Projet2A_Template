@@ -1,9 +1,10 @@
 from datetime import datetime
 
 from src.DAO.db_connection import DBConnector
+from src.DAO.singleton import Singleton
 
 
-class UserFavoriteDao:
+class UserFavoriteDao(metaclass=Singleton):
     def __init__(self, db_connection: DBConnector):
         self.db_connection = db_connection
 
