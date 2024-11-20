@@ -24,7 +24,7 @@ def hash_password(password: str, salt: Optional[List[str]] = None) -> str:
     return hashed_password
 
 
-def create_salt(username: str, user_password_token) -> list[str]:
+def create_salt(username: str, user_password_token: Optional[str] = None) -> list[str]:
     """Creates a salt for the password to be hashed"""
     # Création des parties de sel
     password_token = (
