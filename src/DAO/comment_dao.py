@@ -135,19 +135,19 @@ class CommentDao(metaclass=Singleton):
             print(f"Error while deleting from comments: {e}")
             return None
 
-    def get_overall(self, id_movie: int):
-        """
-        count how many comment for a movie
-        """
+    # def get_overall(self, id_movie: int):
+    #     """
+    #     count how many comment for a movie
+    #     """
 
-        try:
-            query = "SELECT COUNT(*) as number FROM  comment WHERE id_movie = %s"
-            res = self.db_connection.sql_query(query, (id_movie,), return_type="one")
-        except Exception as e:
-            print(f"Error while averaging comments of movie {id_movie}: {e}")
-            return None
-        if res:
-            return res["number"]
+    #     try:
+    #         query = "SELECT COUNT(*) as number FROM  comment WHERE id_movie = %s"
+    #         res = self.db_connection.sql_query(query, (id_movie,), return_type="one")
+    #     except Exception as e:
+    #         print(f"Error while averaging comments of movie {id_movie}: {e}")
+    #         return None
+    #     if res:
+    #         return res["number"]
 
 
 # db = DBConnector()
