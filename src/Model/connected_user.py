@@ -24,6 +24,12 @@ class ConnectedUser(User):
     def __str__(self):
         return f"id: {self.id_user}, username: {self.username}"
 
+    def __repr__(self):
+        return (f"id : {self.id_user}, "
+            f"username : {self.username}, "
+            f"own_film_collection : {self.own_film_collection}, "
+            f"follow_list : {self.follow_list}")
+
     def to_dict(self):
         # Masque le mot de passe
         return {
