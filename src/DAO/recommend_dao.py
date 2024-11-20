@@ -374,12 +374,11 @@ class RecommendDao:
             return [user_dao.get_user_by_id(res["id_user_followed"]) for res in result]
 
 
-<<<<<<< HEAD
+
 # db_connection = DBConnector()
 # # u = UserDao(db_connection)
 # dao = RecommendDao(db_connection)
-=======
-<<<<<<< HEAD
+
 # db_connection = DBConnector()
 # # u = UserDao(db_connection)
 # dao = RecommendDao(db_connection)
@@ -390,11 +389,11 @@ class RecommendDao:
 # # print(len(dao.recommend_movies(24)))
 # # date_of_birth = user.date_of_birth
 # # print(isinstance(date_of_birth, date))
-=======
-db_connection = DBConnector()
-# u = UserDao(db_connection)
-dao = RecommendDao(db_connection)
->>>>>>> 6599bc69a0c66a5f5bfb01ef24f188a9aab43ead
+
+# db_connection = DBConnector()
+# # u = UserDao(db_connection)
+# dao = RecommendDao(db_connection)
+
 # user = u.check_email_address("cmitchell@example.net")
 # print(user)
 # # #print(dao.get_popular_users(24))
@@ -402,4 +401,4 @@ dao = RecommendDao(db_connection)
 # print(len(dao.recommend_movies(24)))
 # date_of_birth = user.date_of_birth
 # print(isinstance(date_of_birth, date))
->>>>>>> 0bb2906108f36bb96a9e038bf8400d975591e5ec
+
