@@ -172,13 +172,13 @@ class UserMovieService:
             raise ValueError(f"An error occurred while commenting the movie: {error}")
 
 
-db_connection = DBConnector()
+# db_connection = DBConnector()
 
-# u = CommentDao(db_connection)
-service = UserMovieService(db_connection)
-# service.add_comment(224, 321, "j'aime plus ce film")
-#service.rate_film_or_update(305, 118, 10)
-# print(type(service.get_ratings_user(305)[0])) # on obtient bien une liste d'objet Rating
-service.delete_user_and_update_ratings(305)
-#rating = service.get_ratings_user(305)[0]
-# service.delete_a_user_rating(rating)
+# # u = CommentDao(db_connection)
+# service = UserMovieService(db_connection)
+# # service.add_comment(224, 321, "j'aime plus ce film")
+# service.rate_film_or_update(417, 111, 5)
+# # print(type(service.get_ratings_user(305)[0])) # on obtient bien une liste d'objet Rating
+# #service.delete_user_and_update_ratings(305)
+# #rating = service.get_ratings_user(305)[0]
+# # service.delete_a_user_rating(rating)
