@@ -24,14 +24,14 @@ def test_hash_password_with_salt():
 def test_create_salts():
     # GIVEN
     username = "testuser"
-
+    user_password_token = "123456"
     # When
-    salt = create_salt(username)
+    salt = create_salt(username, user_password_token)
 
     # THEN
     assert len(salt) == 3  # Le sel doit être composé de 2 parties
     assert salt[0] == "tes"  # Les trois premiers caractères du username
-    assert salt[1] == "tuser"+salt[2]   # Les caractères restants du username + le token
+    assert salt[1] == "tuser123456"   # Les caractères restants du username + le token
 
 
 # Test de la vérification de la force du mot de passe

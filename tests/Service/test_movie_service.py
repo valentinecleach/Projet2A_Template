@@ -8,8 +8,8 @@ from src.Model.genre import Genre
 from src.Model.movie import Movie
 
 
-# python -m pip install mock
-# python -m pip install pytest-mock
+class MockMovieService:
+    def 
 
 @pytest.fixture
 def movie_service(mocker):

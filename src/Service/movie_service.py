@@ -12,7 +12,7 @@ class MovieService:
         self.movie_tmdb = MovieTMDB()
 
     def get_movie_by_id(self, movie_id: int) -> Movie | None:
-        """find movie by id"""
+        """Find movie by id"""
         movie = self.movie_dao.get_by_id(movie_id)
         if movie:
             print("Movie get from database")
