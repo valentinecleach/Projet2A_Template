@@ -1,4 +1,5 @@
 import datetime
+from typing import Optional
 
 import pytest
 
@@ -10,37 +11,13 @@ from src.Service.movie_service import MovieService
 from src.TMDB.movie_tmdb import MovieTMDB
 from tests.DAO.test_db import MockDBConnection
 
-
-class MockMovieService:
-    def __init__(self):
-        db_connection_mock = MockDBConnection()
-        self.db_connection_mock = db_connection_mock
-        self.movie_dao_mock = MovieDAO(db_connection_mock)
-        self.movie_tmdb_mock = MovieTMDB()
-
-    def get_movie_by_id(self, movie_id: int) -> Movie | None:
-        """Find movie by id"""
-        movie = self.movie_dao_mock.get_by_id(movie_id)
-        if movie:
-            print("Movie get from database")
-            return movie
-        else:
-            movie_from_tmdb = self.movie_tmdb_mock.get_movie_by_id(movie_id)
-            if movie_from_tmdb:
-                self.movie_dao.insert(movie_from_tmdb)
-                print(f"Movie with id {movie_id} get from TMDB and inserted")
-                return movie_from_tmdb
-            else:
-                print(f"No Movie found with id :{movie_id}.")
-                return None
-
-
 # ------ TEST GET MOVIE BY ID -----------
 
 
 def test_get_movie_by_id_found_in_db():
 
-    mockmovieservice = MockMovieService()
+    # GIVEN
+    mockmovieservice = MovieService(MockDBConnection)
 
     # Configuration du mock pour retourner un film de la base de données
     mock_movie = Movie(
@@ -67,8 +44,10 @@ def test_get_movie_by_id_found_in_db():
         adult=False,
     )
 
+    # WHEN
     result = mockmovieservice.get_movie_by_id(19995)
 
+    # THEN
     assert result == mock_movie
 
 
