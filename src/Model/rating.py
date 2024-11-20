@@ -14,7 +14,7 @@ class Rating:
         user: ConnectedUser,
         movie: Movie,
         date: date,
-        rate: int,
+        rate: int
     ):
         self.user = user
         self.movie = movie

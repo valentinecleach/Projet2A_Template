@@ -21,6 +21,8 @@ class UserMovieService:
         self.rating_dao = RatingDao(db_connection)
         self.comment_dao = CommentDao(db_connection)
 
+### For Rating ############
+
     def get_overall_rating(self, id_movie: int):
         try:
             query = "SELECT AVG(rating) as mean  FROM  rating WHERE id_movie = %s"
@@ -74,7 +76,7 @@ class UserMovieService:
             self.rating_dao.delete(rating)
             self.updating_rating_of_movie(movie)
         except Exception as error:
-            raise ValueError(f"An error occurred while commenting the movie: {error}")
+            raise ValueError(f"An error occurred while deleting rating for the movie: {error}")
 
     def count_rating(self, id_movie: int):
         try:
@@ -136,15 +138,14 @@ class UserMovieService:
                 )
                 self.rating_dao.insert(rating)
                 self.updating_rating_of_movie(movie)
-            # changer la moyenne du film et le nombre de votant (Clément s'en occupe)
-            # mean = get_overall_rating(id_movie)
-            # count = count_rating(id_movie)
-            # self.movie_dao.update(movie)
 
         except Exception as error:
             raise ValueError(f"An error occurred while rating the movie: {error}")
 
-    def add_comment(self, id_user: int, id_movie: int, comment: str):
+
+#### For comment ####
+
+    def add_or_update_comment(self, id_user: int, id_movie: int, comment: str):
         """
         provide a comment to a specific movie.
 
@@ -160,25 +161,72 @@ class UserMovieService:
             None
         -------
         """
-        comments = Comment(
-            self.user_dao.get_user_by_id(id_user),
-            self.movie_dao.get_by_id(id_movie),
-            datetime.now().date(),
-            comment,
-        )
         try:
-            self.comment_dao.insert(comments)
+            movie = self.movie_service.get_movie_by_id(id_movie)
+            date = datetime.now().date()
+            connected_user = self.user_dao.get_user_by_id(id_user)
+            comment = Comment(user=connected_user, movie=movie, date=date, comment = comment)
+            query = """
+                SELECT COUNT(*) as count FROM comment
+                WHERE id_user = %s AND id_movie = %s;
+            """
+            result = self.db_connection.sql_query(
+                query,
+                (comment.user.id_user, comment.movie.id_movie),
+                return_type="one",
+            )
+            comment_exist = result["count"] > 0 if result else False
+            if comment_exist:
+                print("Updating comment relationship.")
+                self.comment_dao.update(comment)
+            else:
+                print(
+                    f"Comment relationship between {comment.user.username} and {comment.movie.title} does not exist, so we add it."
+                )
+                self.comment_dao.insert(comment)
         except Exception as error:
             raise ValueError(f"An error occurred while commenting the movie: {error}")
 
+    def get_comments_user(self, id_user: int) -> List[Rating]:
+        try:
+            connected_user = self.user_dao.get_user_by_id(id_user)
+            query = "SELECT id_movie, date, comment FROM comment where id_user = %s"
+            res = self.db_connection.sql_query(query, (id_user,), return_type="all")
+            comments = []
+            for result in res:
+                comment_res = dict(result)
+                movie = self.movie_service.get_movie_by_id(comment_res["id_movie"])
+                comment = Comment(
+                    user=connected_user,
+                    movie=movie,
+                    date=comment_res['date'],
+                    comment = comment_res['comment'],
+                )
+                comments.append(comment)
+            if comments != []:
+                return comments
+            else:
+                print(
+                    f" The user {connected_user} didn't comment any moovie for the moment."
+                )
+                return None
+        except Exception as e:
+            print(f"Error while finding user {id_user} comments: {e}")
 
+    def delete_a_user_comment(self, comment : Comment):
+        try:
+            movie = comment.movie
+            self.comment_dao.delete(comment)
+        except Exception as error:
+            raise ValueError(f"An error occurred while deleting comment for the movie: {error}")
 # db_connection = DBConnector()
 
 # # u = CommentDao(db_connection)
 # service = UserMovieService(db_connection)
-# # service.add_comment(224, 321, "j'aime plus ce film")
 # service.rate_film_or_update(417, 111, 5)
 # # print(type(service.get_ratings_user(305)[0])) # on obtient bien une liste d'objet Rating
 # #service.delete_user_and_update_ratings(305)
 # #rating = service.get_ratings_user(305)[0]
 # # service.delete_a_user_rating(rating)
+
+# # service.add_or_update_comment(224, 321, "j'aime plus ce film")

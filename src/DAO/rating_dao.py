@@ -82,7 +82,7 @@ class RatingDao(metaclass=Singleton):
                     )
                     return rating
                 else:
-                    print(f"Erreur: Error while fetching user or Movie (id_user={id_user}, id_movie={id_movie}).")
+                    print(f" Error while fetching user or Movie (id_user={id_user}, id_movie={id_movie}).")
                     return None
             else:
                 print(f"No existing rating beetween {id_user} and Movie {id_movie}.")

@@ -13,13 +13,14 @@ class Comment:
         self,
         user: ConnectedUser,
         movie: Movie,
-        date: str,
         comment: str,
+        date: str
     ):
         self.user = user
         self.movie = movie
-        self.date = date
         self.comment = comment
+        self.date = date
+        
 
     def __str__(self):
         s = f"{self.user.username} commented :"

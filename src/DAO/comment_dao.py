@@ -12,60 +12,86 @@ class CommentDao(metaclass=Singleton):
     def __init__(self, db_connection: DBConnector):
         # create a DB connection object
         self.db_connection = db_connection
+        self.user_dao = UserDao(db_connection)
+        self.movie_dao = MovieDAO(db_connection)
 
     # CREATE
 
     def insert(self, comments: Comment):
-        id_user = comments.user.id_user
-        id_movie = comments.movie.id_movie
-        comment = comments.comment
-        date = comments.date
-        if comment:
-            values = (id_user, id_movie, comment, date)
-            try:
-                query = "INSERT INTO comment(id_user, id_movie, comment, date) VALUES (%s, %s, %s, %s)"
-                self.db_connection.sql_query(query, values, return_type="one")
-                print(
-                    "Insertion successful: Comment relationship between "
-                    + f"{comments.user.username} and {comments.movie.title} added."
+        try:
+            # Vérification de l'existence de la relation
+            query = """
+                SELECT COUNT(*) as count FROM comment
+                WHERE id_user = %s AND id_movie = %s;
+            """
+            result = self.db_connection.sql_query(
+                query,
+                (comment.user.id_user, comment.movie.id_movie),
+                return_type="one",
+            )
+            comment_exist = result["count"] > 0 if result else False
+            if not comment_exist:
+                print(f"Inserting comment relationship between user : {comment.user.username} and movie {comment.movie.id_movie}")
+                query = """
+                    INSERT INTO comment (id_user, id_movie, comment, date)
+                    VALUES (%s, %s, %s, %s);
+                """
+                values = (
+                    comment.user.id_user,
+                    comment.movie.id_movie,
+                    comment.comment,
+                    comment.date,
                 )
+                self.db_connection.sql_query(query, values)
+                print(
+                    f"Insertion successful: Comment relationship between {comment.user.username} and {comment.movie.title} added."
+                )
+            else:
+                print(f"Comment relationship between {comment.user.username} and {comment.movie.title} already exist. Try an update")
+        except Exception as e:
+            print("Insertion error:", str(e))
 
-            except Exception as e:
-                print(f"Erreur lors de l'insertion dans comment: {str(e)}")
-                return None
-
-        return None
+    def update(self, comment : Comment):
+        try:
+            update_query = """
+                UPDATE comment
+                SET comment = %s, date = %s
+                WHERE id_user = %s AND id_movie = %s;
+            """
+            values = (comment.comment, comment.date, comment.user.id_user, comment.movie.id_movie)
+            self.db_connection.sql_query(update_query, values)
+            print(f"Update successful: Comment for {comment.user.username} and {comment.movie.title} updated.")
+        except Exception as e:
+            print("Update error:", str(e))
 
     # READ (Fetch a specific user's comment)
-    def get_user_comment(
+    def get_comment(
         self,
         id_user: int,
         id_movie: int,
-    ) -> List[Comment]:
-
+    ) -> Comment:
         try:
             query = "SELECT * FROM  comment WHERE id_user = %s and id_movie = %s"
-            results = self.db_connection.sql_query(
-                query, (id_user, id_movie), return_type="all"
+            result = self.db_connection.sql_query(
+                query, (id_user, id_movie), return_type="one"
             )
-            if results:
-                user = UserDao(self.db_connection).get_user_by_id(id_user)
-                movie = MovieDAO(self.db_connection).get_by_id(id_movie)
-                com = [
-                    Comment(
-                        user=user, movie=movie, date=res["date"], comment=res["comment"]
-                    )
-                    for res in results
-                ]
-                return com
+            if result:
+                user = self.user_dao.get_user_by_id(id_user)
+                movie = self.movie_dao.get_by_id(id_movie)
+                if user and movie:
+                    comment = Comment(
+                            user=user, movie=movie, date=result["date"], comment=result["comment"]
+                        )
+                    return comment
             else:
-                return []  # Liste vide si aucun commentaire n'est trouvé
+                print(f" Error while fetching user or Movie (id_user={id_user}, id_movie={id_movie}).")
+                return None
         except Exception as e:
             print(f"Error while fetching user comment: {e}")
             return []
 
     # READ (Fetch all comments of a specific movie)
-    def get_recent_comments(
+    def get_recent_comments_for_a_movie(
         self,
         id_movie: int,
         limit: int = 10,
@@ -77,10 +103,10 @@ class CommentDao(metaclass=Singleton):
                 query, (id_movie,), return_type="all"
             )
             if results:
-                movie = MovieDAO(self.db_connection).get_by_id(id_movie)
+                movie = self.movie_dao.get_by_id(id_movie)
                 com = [
                     Comment(
-                        user=UserDao(self.db_connection).get_user_by_id(res["id_user"]),
+                        user=self.user_dao.get_user_by_id(res["id_user"]),
                         movie=movie,
                         date=res["date"],
                         comment=res["comment"],
@@ -89,30 +115,31 @@ class CommentDao(metaclass=Singleton):
                 ]
                 return com
             else:
+                print(f" Error while fetching for Movie : {movie}.")
                 return None
         except Exception:
             return None
 
     # DELETE
-    def delete(self, com: Comment):
-        id_user = com.user.id_user
-        id_movie = com.movie.id_movie
-        date = com.date
+    def delete(self, comment: Comment):
+        """
+        to delete a comment
+        """
         try:
             query = "DELETE FROM  comment WHERE id_user = %s and id_movie = %s and date = %s"
+            values = (comment.user.id_user, comment.movie.id_movie)
             self.db_connection.sql_query(
                 query,
-                (
-                    id_user,
-                    id_movie,
-                    date,
-                ),
-            )
+                values)
         except Exception as e:
             print(f"Error while deleting from comments: {e}")
             return None
 
     def get_overall(self, id_movie: int):
+        """
+        count how many comment for a movie
+        """
+
         try:
             query = "SELECT COUNT(*) as number FROM  comment WHERE id_movie = %s"
             res = self.db_connection.sql_query(query, (id_movie,), return_type="one")
