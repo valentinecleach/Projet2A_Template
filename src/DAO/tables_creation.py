@@ -50,8 +50,8 @@ class TablesCreation(metaclass=Singleton):
             id_movie_collection INTEGER,
 
             PRIMARY KEY (id_movie, id_movie_collection), 
-            FOREIGN KEY (id_movie) REFERENCES movie(id_movie),
-            FOREIGN KEY (id_movie_collection) REFERENCES movie_collection(id_movie_collection)
+            FOREIGN KEY (id_movie) REFERENCES movie(id_movie) ON DELETE CASCADE,
+            FOREIGN KEY (id_movie_collection) REFERENCES movie_collection(id_movie_collection) ON DELETE CASCADE
         );
         """
 
@@ -61,8 +61,8 @@ class TablesCreation(metaclass=Singleton):
             id_genre INTEGER,
 
             PRIMARY KEY (id_movie, id_genre), 
-            FOREIGN KEY (id_movie) REFERENCES movie(id_movie),
-            FOREIGN KEY (id_genre) REFERENCES genre(id_genre)
+            FOREIGN KEY (id_movie) REFERENCES movie(id_movie) ON DELETE CASCADE,
+            FOREIGN KEY (id_genre) REFERENCES genre(id_genre) ON DELETE CASCADE
         );
         """
 
@@ -102,6 +102,7 @@ class TablesCreation(metaclass=Singleton):
             rating INTEGER,
             date VARCHAR(255),
 
+            PRIMARY KEY (id_user, id_movie),
             FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE,
             FOREIGN KEY (id_movie) REFERENCES movie(id_movie) ON DELETE CASCADE
         );
@@ -111,9 +112,10 @@ class TablesCreation(metaclass=Singleton):
         CREATE TABLE IF NOT EXISTS comment (
             id_user INTEGER NOT NULL,
             id_movie INTEGER NOT NULL,
-            comment TEXT NOT NULL, -- le commentaire ne doit probablement pas être vide
-            date DATE NOT NULL, -- ajouter NOT NULL pour la date
+            comment TEXT NOT NULL,
+            date DATE NOT NULL, 
 
+            PRIMARY KEY (id_user, id_movie),
             FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE, -- pour gérer la suppression d'utilisateurs
             FOREIGN KEY (id_movie) REFERENCES movie(id_movie) ON DELETE CASCADE 
         );
@@ -136,6 +138,7 @@ class TablesCreation(metaclass=Singleton):
             id_movie INTEGER,
             id_movie_maker INTEGER,
 
+            PRIMARY KEY (id_movie, id_movie_maker),
             FOREIGN KEY (id_movie_maker) REFERENCES movie_maker(id_movie_maker) ON DELETE CASCADE,
             FOREIGN KEY (id_movie) REFERENCES movie(id_movie) ON DELETE CASCADE
         );
@@ -153,16 +156,17 @@ class TablesCreation(metaclass=Singleton):
         );
         """
 
-        create_table_User_MovieMaker_collection = """
-        CREATE TABLE IF NOT EXISTS user_movie_maker_collection(
-            id_user INTEGER NOT NULL,
-            id_movie_maker INTEGER NOT NULL,
-            date DATE,
+# a supprimer on ne propose pas d'ajouter des MovieMaker en favori
+        # create_table_User_MovieMaker_collection = """
+        # CREATE TABLE IF NOT EXISTS user_movie_maker_collection(
+        #     id_user INTEGER NOT NULL,
+        #     id_movie_maker INTEGER NOT NULL,
+        #     date DATE,
 
-            FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE,
-            FOREIGN KEY (id_movie_maker) REFERENCES movie_maker(id_movie_maker) ON DELETE CASCADE
-        );
-        """
+        #     FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE,
+        #     FOREIGN KEY (id_movie_maker) REFERENCES movie_maker(id_movie_maker) ON DELETE CASCADE
+        # );
+        # """
 
         create_queries = [
             create_table_Genre,
@@ -179,5 +183,4 @@ class TablesCreation(metaclass=Singleton):
         ]
         for query in create_queries:
             self.db_connection.sql_query(query)
-
         print("All tables created successfully.")
