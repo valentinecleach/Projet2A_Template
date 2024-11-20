@@ -22,7 +22,7 @@ class Comment:
         self.comment = comment
 
     def __str__(self):
-        s = f"{self.user.username} commented"
-        s+ = f"{self.comment} on the movie {self.movie.title}"
-        s+ = f" on {self.date}"
+        s = f"{self.user.username} commented :"
+        s = s + f" <{self.comment}> on the movie {self.movie.title}"
+        s = s + f" on {self.date}"
         return s

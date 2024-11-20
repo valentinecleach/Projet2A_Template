@@ -102,7 +102,7 @@ class TablesCreation(metaclass=Singleton):
             rating INTEGER,
             date VARCHAR(255),
 
-            FOREIGN KEY (id_user) REFERENCES user(id_user),
+            FOREIGN KEY (id_user) REFERENCES users(id_user),
             FOREIGN KEY (id_movie) REFERENCES movie(id_movie)
         );
         """
@@ -176,11 +176,8 @@ class TablesCreation(metaclass=Singleton):
             create_table_User_Movie_Collection,
             create_table_movie_maker,
             create_table_KnownFor,
-            create_table_User_MovieMaker_collection
-
         ]
         for query in create_queries:
             self.db_connection.sql_query(query)
 
         print("All tables created successfully.")
-

@@ -1,0 +1,4 @@
+# Python modules to install to correctly run the applicatiion
+
+# tests
+pip install pyjwt

@@ -1,6 +1,6 @@
 import hashlib
 import secrets
-from typing import Optional
+from typing import List, Optional
 
 import bcrypt
 
@@ -14,17 +14,22 @@ import bcrypt
 # hash password and salt password in user_service
 
 
-def hash_password(password: str, salt: Optional[str] = None) -> str:
-    """Hashes the password"""
-    salted_password = f"{salt[0]}{password}{salt[1]}".encode("utf-8")
-    hashed_password = hashlib.sha256(salted_password).hexdigest()
+def hash_password(password: str, salt: Optional[List[str]] = None) -> str:
+    """Hashes the password. The salt is optional"""
+    if salt is None:
+        hashed_password = hashlib.sha256(password.encode("utf-8")).hexdigest()
+    else:
+        salted_password = f"{salt[0]}{password}{salt[1]}".encode("utf-8")
+        hashed_password = hashlib.sha256(salted_password).hexdigest()
     return hashed_password
 
 
-def create_salt(username: str, password_token: Optional[str] = None) -> list[str]:
+def create_salt(username: str, user_password_token) -> list[str]:
     """Creates a salt for the password to be hashed"""
     # Création des parties de sel
-    password_token = password_token if password_token else secrets.token_hex(16)
+    password_token = (
+        user_password_token if user_password_token else secrets.token_hex(16)
+    )
     start_salt = username[:3]  # Les trois premiers caractères du nom d'utilisateur
     end_salt = (
         username[3:] + password_token

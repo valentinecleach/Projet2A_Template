@@ -1,5 +1,6 @@
 from src.Model.connected_user import ConnectedUser
 from src.Model.movie import Movie
+from datetime import date
 
 
 class Rating:
@@ -12,16 +13,16 @@ class Rating:
         self,
         user: ConnectedUser,
         movie: Movie,
-        date: str,
-        rating: int,
+        date: date,
+        rate: int,
     ):
         self.user = user
         self.movie = movie
         self.date = date
-        self.rating = rating
+        self.rate = rate
 
     def __str__(self):
         s = f"{self.user.username} rated"
-        s+ = f"{self.rating} over 10 to the movie {self.movie.title}"
-        s+ = f" on {self.date}"
+        s = s + f" <{self.rate}> over 10 to the movie {self.movie.title}"
+        s = s + f"  on {self.date}"
         return s

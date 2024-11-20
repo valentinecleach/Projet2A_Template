@@ -4,7 +4,6 @@ from typing import List  # , Optional
 from src.DAO.db_connection import DBConnector
 from src.DAO.movie_dao import MovieDAO
 from src.DAO.singleton import Singleton
-from src.DAO.tables_creation import TablesCreation
 from src.DAO.user_dao import UserDao
 from src.Model.comment import Comment
 
@@ -13,23 +12,19 @@ class CommentDao(metaclass=Singleton):
     def __init__(self, db_connection: DBConnector):
         # create a DB connection object
         self.db_connection = db_connection
-        # Create tables if don't exist
-        self.tables_creation = TablesCreation(db_connection)
 
     # CREATE
 
-    def insert(self, id_user: int, id_movie: int, comment: str):
+    def insert(self, comments: Comment):
+        id_user = comments.user.id_user
+        id_movie = comments.movie.id_movie
+        comment = comments.comment
         date = datetime.now()
         if comment:
             values = (id_user, id_movie, comment, date)
             try:
-                with self.db_connection.connection.cursor() as cursor:
-                    query = "INSERT INTO comment(id_user, id_movie, comment, date) VALUES (%s, %s, %s, %s)"
-                    cursor.execute(query, values)
-                    self.db_connection.connection.commit()
-
-                user = UserDao(self.db_connection).get_user_by_id(id_user)
-                movie = MovieDAO(self.db_connection).get_by_id(id_movie)
+                query = "INSERT INTO comment(id_user, id_movie, comment, date) VALUES (%s, %s, %s, %s)"
+                self.db_connection.sql_query(query, values, return_type="one")
                 return Comment(user=user, movie=movie, date=date, comment=comment)
 
             except Exception as e:
@@ -47,11 +42,10 @@ class CommentDao(metaclass=Singleton):
     ) -> List[Comment]:
 
         try:
-            query = "SELECT * FROM  comment" "WHERE id_user = %s and id_movie = %s"
-            with self.db_connection.connection as connection:
-                with connection.cursor() as cursor:
-                    cursor.execute(query, (id_user, id_movie))
-                    results = cursor.fetchall()
+            query = "SELECT * FROM  comment WHERE id_user = %s and id_movie = %s"
+            results = self.db_connection.sql_query(
+                query, (id_user, id_movie), return_type="all"
+            )
             if results:
                 user = UserDao(self.db_connection).get_user_by_id(id_user)
                 movie = MovieDAO(self.db_connection).get_by_id(id_movie)
@@ -77,15 +71,14 @@ class CommentDao(metaclass=Singleton):
 
         try:
             query = f"SELECT * FROM  comment WHERE id_movie = %s ORDER BY date DESC LIMIT {max(limit, 0)}"
-            with self.db_connection.connection as connection:
-                with connection.cursor() as cursor:
-                    cursor.execute(query, (id_movie))
-                    results = cursor.fetchall()
+            results = self.db_connection.sql_query(
+                query, (id_movie,), return_type="all"
+            )
             if results:
-                movie = MovieDAO().get_by_id(id_movie)
+                movie = MovieDAO(self.db_connection).get_by_id(id_movie)
                 com = [
                     Comment(
-                        user=UserDao().get_user_by_id(res["id_user"]),
+                        user=UserDao(self.db_connection).get_user_by_id(res["id_user"]),
                         movie=movie,
                         date=res["date"],
                         comment=res["comment"],
@@ -105,18 +98,14 @@ class CommentDao(metaclass=Singleton):
         date = com.date
         try:
             query = "DELETE FROM  comment WHERE id_user = %s and id_movie = %s and date = %s"
-            with self.db_connection.connection as connection:
-                with connection.cursor() as cursor:
-                    cursor.execute(
-                        query,
-                        (
-                            id_user,
-                            id_movie,
-                            date,
-                        ),
-                    )
-                    connection.commit()
-                    print("Record deleted successfully from comments.")
+            self.db_connection.sql_query(
+                query,
+                (
+                    id_user,
+                    id_movie,
+                    date,
+                ),
+            )
         except Exception as e:
             print(f"Error while deleting from comments: {e}")
             return None
@@ -124,15 +113,14 @@ class CommentDao(metaclass=Singleton):
     def get_overall(self, id_movie: int):
         try:
             query = "SELECT COUNT(*) as number FROM  comment WHERE id_movie = %s"
-            with self.db_connection.connection as connection:
-                with connection.cursor() as cursor:
-                    cursor.execute(
-                        query,
-                        (id_movie,),
-                    )
-                    res = cursor.fetchone()
+            res = self.db_connection.sql_query(query, (id_movie,), return_type="one")
         except Exception as e:
             print(f"Error while averaging comments of movie {id_movie}: {e}")
             return None
         if res:
             return res["number"]
+
+
+# db = DBConnector()
+# dao = CommentDao(db)
+# print(dao.get_recent_comments(250))

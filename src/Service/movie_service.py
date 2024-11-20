@@ -22,13 +22,13 @@ class MovieService:
             movie_from_tmdb = self.movie_tmdb.get_movie_by_id(movie_id)
             if movie_from_tmdb:
                 self.movie_dao.insert(movie_from_tmdb)
-                print("Movie get from TMDB")
+                print(f"Movie with id {movie_id} get from TMDB and inserted")
                 return movie_from_tmdb
             else:
                 print(f"No Movie found with id :{movie_id}.")
                 return None
 
-    def get_movie_by_title(self, movie_title: str) -> Movie | None:
+    def get_movie_by_title(self, movie_title: str) -> List[Movie] | None:
         """find movie by title"""
         movie = self.movie_dao.get_by_title(movie_title)
         if movie:
@@ -36,12 +36,15 @@ class MovieService:
             return movie
         else:
             movie_from_tmdb = self.movie_tmdb.get_movies_by_title(movie_title)
+            movies = []
             if movie_from_tmdb:
                 for movie in movie_from_tmdb:
                     self.movie_dao.insert(movie)
+                    movies.append(movie)
                 print("Movies added in database")
+                return movies
             else:
-                print(f"No Movie found with id :{movie_id}.")
+                print(f"No Movie found with title :{movie_title}.")
                 return None
 
     def create_movies(self, known_for_data: List[Dict]) -> List[Movie]:
@@ -59,7 +62,8 @@ class MovieService:
         for item in known_for_data:
             id_movie = item["id"]
             movie = self.get_movie_by_id(id_movie)
-            list_movies.append(movie)
+            if movie:
+                list_movies.append(movie)
         return list_movies
 
     #################################################################################################
@@ -88,5 +92,5 @@ class MovieService:
 
 # db_connection = DBConnector()
 # my_object = MovieService(db_connection)
-# print(my_object.get_movie_by_id(1252415))
-# #print(my_object.get_movie_by_title('Avatar'))
+# #print(my_object.get_movie_by_id(1252415))
+# print(my_object.get_movie_by_title('Aladin'))
