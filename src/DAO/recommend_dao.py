@@ -306,7 +306,7 @@ class RecommendDao:
         else:
             return None
 
-    def get_popular_movies(self, limit: int = 50) -> list[Movie]:
+    def get_popular_movies(self, filter: dict = {}, limit: int = 50) -> list[Movie]:
         """
         Description: Fetches the most popular movies based on their average rating and popularity.
 
@@ -314,13 +314,23 @@ class RecommendDao:
 
         list[Movie]: List of the most popular movies.
         """
+        val = []
+        cond = []
+        if filter:
+            val = [filter[key] for key in filter]
+            cond = [f"{key} = %s" for key in filter]
+        filters = " AND ".join(cond) if val else "1=1"
         try:
-            query = """
-                SELECT id_movie FROM Movie
+            query = f"""
+                SELECT m.id_movie
+                FROM movie m
+                JOIN link_movie_genre l USING( id_movie)
+                JOIN genre g USING( id_genre)
                 ORDER BY vote_average DESC, popularity DESC
+                WHERE {filters}
                 LIMIT {limit}
             """
-            result = self.db_connection.sql_query(query, (), return_type="all")
+            result = self.db_connection.sql_query(query, (*val,), return_type="all")
 
         except Exception as e:
             print("Error during fetching movies:", str(e))
@@ -364,13 +374,13 @@ class RecommendDao:
             return [user_dao.get_user_by_id(res["id_user_followed"]) for res in result]
 
 
-db_connection = DBConnector()
-# u = UserDao(db_connection)
-dao = RecommendDao(db_connection)
+# db_connection = DBConnector()
+# # u = UserDao(db_connection)
+# dao = RecommendDao(db_connection)
 # user = u.check_email_address("cmitchell@example.net")
 # print(user)
 # # #print(dao.get_popular_users(24))
-print(dao.recommend_movies(224, filter={"name_genre": "Drama"}))
+# print(dao.recommend_movies(224, filter={"name_genre": "Drama"}))
 # print(len(dao.recommend_movies(24)))
 # date_of_birth = user.date_of_birth
 # print(isinstance(date_of_birth, date))

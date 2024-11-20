@@ -26,7 +26,7 @@ class RecommendService:
         if users:
             return users
         else:
-            popular = self.recommend_dao.get_popular_users(id_user)
+            popular = self.recommend_dao.get_popular_users(id_user, filter)
             if popular:
                 return popular
             else:
