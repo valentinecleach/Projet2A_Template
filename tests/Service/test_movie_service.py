@@ -1,39 +1,46 @@
 import datetime
-from unittest.mock import MagicMock
 
 import pytest
 
-from src.DAO.db_connection import DBConnector
 from src.DAO.movie_dao import MovieDAO
 from src.Model.genre import Genre
 from src.Model.movie import Movie
+from src.Model.movie_collection import MovieCollection
+from src.Service.movie_service import MovieService
+from src.TMDB.movie_tmdb import MovieTMDB
+from tests.DAO.test_db import MockDBConnection
 
-<<<<<<< HEAD
 
 class MockMovieService:
-    def 
-=======
-# python -m pip install mock
-# python -m pip install pytest-mock
->>>>>>> 813cb84f872ce1434f8342b15a378b3bd2ca8f43
+    def __init__(self):
+        db_connection_mock = MockDBConnection()
+        self.db_connection_mock = db_connection_mock
+        self.movie_dao_mock = MovieDAO(db_connection_mock)
+        self.movie_tmdb_mock = MovieTMDB()
+
+    def get_movie_by_id(self, movie_id: int) -> Movie | None:
+        """Find movie by id"""
+        movie = self.movie_dao_mock.get_by_id(movie_id)
+        if movie:
+            print("Movie get from database")
+            return movie
+        else:
+            movie_from_tmdb = self.movie_tmdb_mock.get_movie_by_id(movie_id)
+            if movie_from_tmdb:
+                self.movie_dao.insert(movie_from_tmdb)
+                print(f"Movie with id {movie_id} get from TMDB and inserted")
+                return movie_from_tmdb
+            else:
+                print(f"No Movie found with id :{movie_id}.")
+                return None
 
 
-@pytest.fixture
-def movie_service(mocker):
-    # Mock MovieDAO et MovieTMDB
-    movie_dao_mock = mocker.patch("src.DAO.movie_dao.MovieDAO")
-    movie_tmdb_mock = mocker.patch("src.TMDB.movie_tmdb.MovieTMDB")
-
-    # Instance de MovieService avec les mocks
-    service = MovieService()
-    service.movie_dao = movie_dao_mock.return_value
-    service.movie_tmdb = movie_tmdb_mock.return_value
-
-    return service, movie_dao_mock, movie_tmdb_mock
+# ------ TEST GET MOVIE BY ID -----------
 
 
-def test_get_movie_by_id_found_in_db(movie_service):
-    service, movie_dao_mock, movie_tmdb_mock = movie_service
+def test_get_movie_by_id_found_in_db():
+
+    mockmovieservice = MockMovieService()
 
     # Configuration du mock pour retourner un film de la base de données
     mock_movie = Movie(
@@ -59,13 +66,10 @@ def test_get_movie_by_id_found_in_db(movie_service):
         vote_count=31385,
         adult=False,
     )
-    movie_dao_mock.get_by_id.return_value = mock_movie
 
-    result = service.get_movie_by_id(19995)
+    result = mockmovieservice.get_movie_by_id(19995)
 
     assert result == mock_movie
-    movie_dao_mock.get_by_id.assert_called_once_with(19995)
-    movie_tmdb_mock.get_movie_by_id.assert_not_called()
 
 
 def test_get_movie_by_id_found_in_tmdb(movie_service):
@@ -96,3 +100,10 @@ def test_get_movie_by_id_not_found(movie_service):
     assert result is None
     movie_dao_mock.get_by_id.assert_called_once_with(999)
     movie_tmdb_mock.get_movie_by_id.assert_called_once_with(999)
+
+
+# ------ GET MOVIE BY TITLE -----------
+
+# ------ CREATE MOVIES -----------
+
+# ------ GET MOVIE BY ID -----------

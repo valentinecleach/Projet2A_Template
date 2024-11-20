@@ -96,11 +96,11 @@ class RatingDao(metaclass=Singleton):
         try:
             # Requête DELETE pour supprimer un enregistrement basé sur id_user et id_movie
             query = "DELETE FROM rating WHERE id_user = %s AND id_movie = %s"
+            values = (rating.user.id_user, rating.movie.id_movie)
+            print(values)
             self.db_connection.sql_query(
                 query,
-                (rating.user.id_user, rating.movie.id_movie),  # Utilisation des ID de l'objet Rating
-                return_type="one",  # Pas besoin de renvoyer un résultat ici
-            )
+                values)
             print(f"Record deleted successfully from ratings for user {rating.user.id_user} and movie {rating.movie.id_movie}.")
         except Exception as e:
             # Gestion des erreurs et affichage du message d'erreur

@@ -2,10 +2,10 @@ from datetime import datetime
 
 from src.DAO.comment_dao import CommentDao
 from src.DAO.db_connection import DBConnector
+from src.DAO.rating_dao import RatingDao
 from src.DAO.user_dao import UserDao
 from src.DAO.user_favorites_dao import UserFavoriteDao
 from src.DAO.user_follow_dao import UserFollowDao
-from src.DAO.rating_dao import RatingDao
 from src.Service.movie_service import MovieService
 
 
@@ -165,7 +165,7 @@ class UserInteractionService:
         -------
         """
         try:
-            self.comment_dao.insert(id_user, id_movie, rating)
+            self.comment_dao.insert(id_user, id_movie, comment)
         except Exception as error:
             raise ValueError(f"An error occurred while commenting the movie: {error}")
 

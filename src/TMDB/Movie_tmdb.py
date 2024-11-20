@@ -57,8 +57,8 @@ class MovieTMDB:
                     "release_date": data["release_date"] if data["release_date"] != "" else None,
                     "revenue": data["revenue"],
                     "runtime": data["runtime"],
-                    "vote_average": data["vote_average"],
-                    "vote_count": data["vote_count"],
+                    "vote_average": 0, # on met 0 au début car on s'intéresse qu'aux votes de nos utilisateurs.
+                    "vote_count": 0,
                     "adult": data["adult"],
                 }
                 print(f"Movie {data['title']} get from TMDB")
@@ -174,4 +174,4 @@ class MovieTMDB:
 
 # data2 = MovieTMDB()
 # #print(data2.get_movie_by_id(7317))
-# print(data2.get_movies_by_title("Between Worlds"))
+# print(data2.get_movies_by_title("charlie et la chocolaterie"))
