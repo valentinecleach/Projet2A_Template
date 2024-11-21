@@ -19,6 +19,7 @@ class Fill_tables:
 
     def fill_table_user(self, n : int):
         fake = Faker()
+        Faker.seed(1234) # to fix seed
         genders = [1, 2]  # 1 pour masculin, 2 pour féminin
         id_user_created = []
         
@@ -115,18 +116,18 @@ class Fill_tables:
 
     def fill_the_database(self):
         id_user_created = self.fill_table_user(100)
-        id_movie_created = self.fill_table_movie(100, 100)
-        self.fill_table_follower(id_user_created)
-        self.fill_table_favorite(id_user_created, id_movie_created)
-        self.fill_table_rating(id_user_created, id_movie_created)
-        self.fill_table_comment(id_user_created, id_movie_created)
-        self.fill_table_movie_maker()
+        # id_movie_created = self.fill_table_movie(100, 100)
+        # self.fill_table_follower(id_user_created)
+        # self.fill_table_favorite(id_user_created, id_movie_created)
+        # self.fill_table_rating(id_user_created, id_movie_created)
+        # self.fill_table_comment(id_user_created, id_movie_created)
+        # self.fill_table_movie_maker()
         print("Database successfully filled.")
 
 
 ##### To fill schema (take less than 10 min) ########
 
-# db_connection = DBConnector()
-# creation_object = TablesCreation(db_connection)
-# my_object = Fill_tables(db_connection)
-# my_object.fill_the_database()
+db_connection = DBConnector()
+creation_object = TablesCreation(db_connection)
+my_object = Fill_tables(db_connection)
+my_object.fill_the_database()
