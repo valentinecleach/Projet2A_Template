@@ -18,6 +18,7 @@ class KnownForDao(metaclass=Singleton):
     """
 
     def __init__(self, db_connection: DBConnector):
+        """Constructor"""
         self.db_connection = db_connection
 
     def insert(self, id_movie: int, id_movie_maker: int):
@@ -31,7 +32,7 @@ class KnownForDao(metaclass=Singleton):
             The ID of a movie maker.
         """
         try:
-            # Verifying the existance of the link
+            # Verifying the existence of the link
             query = """
                 SELECT COUNT(*) FROM knownfor
                 WHERE id_movie = %s AND id_movie_maker = %s;

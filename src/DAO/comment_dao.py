@@ -22,6 +22,7 @@ class CommentDao(metaclass=Singleton):
     """
 
     def __init__(self, db_connection: DBConnector):
+        """Constructor"""
         self.db_connection = db_connection
         self.user_dao = UserDao(db_connection)
         self.movie_dao = MovieDAO(db_connection)
@@ -37,7 +38,7 @@ class CommentDao(metaclass=Singleton):
             The comment to insert
         """
         try:
-            # Verifying the existance of the relationship
+            # Verifying the existence of the relationship
             query = """
                 SELECT COUNT(*) as count FROM comment
                 WHERE id_user = %s AND id_movie = %s;

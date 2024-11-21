@@ -26,6 +26,7 @@ class DBConnector:
     """
 
     def __init__(self, config=None):
+        """Constructor"""
         if config is not None:
             self.host = config["host"]
             self.port = config["port"]

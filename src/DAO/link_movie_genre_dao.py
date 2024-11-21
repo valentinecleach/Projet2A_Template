@@ -18,6 +18,7 @@ class LinkMovieGenreDAO(metaclass=Singleton):
     """
 
     def __init__(self, db_connection: DBConnector):
+        """Constructor"""
         self.db_connection = db_connection
 
     def insert(self, id_movie: int, id_genre: int):
@@ -31,7 +32,7 @@ class LinkMovieGenreDAO(metaclass=Singleton):
             The ID of a genre.
         """
         try:
-            # Verifying the existance of the link
+            # Verifying the existence of the link
             query = """
                 SELECT COUNT(*) FROM link_movie_genre
                 WHERE id_movie = %s AND id_genre = %s;

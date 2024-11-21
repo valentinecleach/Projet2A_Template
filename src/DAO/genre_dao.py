@@ -18,6 +18,7 @@ class GenreDao(metaclass=Singleton):
     """
 
     def __init__(self, db_connection: DBConnector):
+        """Constructor"""
         self.db_connection = db_connection
 
     def insert(self, new_genre: Genre):
