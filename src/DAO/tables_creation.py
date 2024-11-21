@@ -180,6 +180,7 @@ class TablesCreation(metaclass=Singleton):
             create_table_User_Movie_Collection,
             create_table_movie_maker,
             create_table_KnownFor,
+            create_table_rating,
         ]
         for query in create_queries:
             self.db_connection.sql_query(query)

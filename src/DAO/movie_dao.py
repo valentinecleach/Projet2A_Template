@@ -41,7 +41,7 @@ class MovieDAO(metaclass=Singleton):
                 FROM movie
                 WHERE id_movie = %s;
             """
-            result = self.db_connection.sql_query(query, (new_movie.id_movie,))
+            result = self.db_connection.sql_query(query, (new_movie.id_movie,), return_type = "one")
             movie_exist = result["count"] > 0  # True si film, False sinon
 
             if not movie_exist:
@@ -218,6 +218,7 @@ class MovieDAO(metaclass=Singleton):
 # db_connection = DBConnector()
 # my_object = MovieDAO(db_connection)
 # print(my_object.get_by_id(19995))
+
 """
 tout ceci est inclu si on utilisedes with
 conn.commit()

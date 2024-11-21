@@ -31,7 +31,7 @@ class MovieMakerDAO(metaclass=Singleton):
                 FROM movie_maker
                 WHERE name = %s;
             """
-            result = self.db_connection.sql_query(query, (movie_maker.name,))
+            result = self.db_connection.sql_query(query, (movie_maker.name,), return_type = "one")
             movie_maker_exist = result["count"] > 0
             if not movie_maker_exist:
                 print(f"Inserting Movie Maker {movie_maker.name} in the database.")

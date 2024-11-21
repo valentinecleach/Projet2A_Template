@@ -27,7 +27,7 @@ class UserDao(metaclass=Singleton):
                     WHERE username = %s;
                 """
             result = result = self.db_connection.sql_query(
-                query, (new_user["username"],)
+                query, (new_user["username"],), return_type = "one"
             )
             user_exist = result["count"] > 0  # True si film, False sinon
 
@@ -38,6 +38,7 @@ class UserDao(metaclass=Singleton):
                                             date_of_birth, gender, first_name, last_name,
                                             email_address, phone_number, password_token) 
                             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                            RETURNING id_user;
                 """
                 values = (
                     new_user["username"],
@@ -54,8 +55,12 @@ class UserDao(metaclass=Singleton):
                     ),
                     new_user["password_token"],
                 )
-                self.db_connection.sql_query(insert_query, values)
-                print(f"Insertion user successful: {new_user['username']}")
+                result = self.db_connection.sql_query(insert_query, values, return_type = "one")
+                if result :
+                    id_user = result['id_user']
+                    new_user.update({'id_user' : id_user})
+                    print(f"Insertion user successful: {new_user['username']}, with id : {result['id_user']}")
+                    return ConnectedUser(**new_user)
         except Exception as e:
             print(f"Insertion error: {str(e)}")
 

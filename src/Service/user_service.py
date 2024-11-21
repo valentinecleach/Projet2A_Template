@@ -3,6 +3,7 @@ from datetime import date
 # DAO
 from src.DAO.db_connection import DBConnector
 from src.DAO.user_dao import UserDao
+from src.Model.connected_user import ConnectedUser
 
 # Service
 from src.Service.password_service import (
@@ -37,11 +38,10 @@ class UserService:
         date_of_birth: date,
         email_address: str,
         phone_number: str | None = None,  # Optionnel
-    ):
+    ) -> ConnectedUser:
         """Permet de créer un compte utilisateur."""
-        self.check_valid_username(username)
+        self.check_valid_username(username) 
         check_password_strenght(password)
-
         salt = create_salt(username)
         hashed_password = hash_password(password, salt)
 
@@ -59,8 +59,9 @@ class UserService:
         }
         try:
             # Utilisation de la méthode insert de DBConnection
-            self.user_dao.insert(user)
-            print(f"Utilisateur '{username}' inscrit avec succès.")
+            connected_user = self.user_dao.insert(user)
+            print(f"User '{connected_user.username}' successfully sign_up. His id is {connected_user.id_user}")
+            return connected_user
         except Exception as e:
             print(f"Erreur lors de l'inscription : {str(e)}")
 
