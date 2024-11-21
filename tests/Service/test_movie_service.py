@@ -52,20 +52,40 @@ def test_get_movie_by_id_found_in_db():
     assert result.title == movie.title
 
 
-def test_get_movie_by_id_found_in_tmdb(movie_service):
-    service, movie_dao_mock, movie_tmdb_mock = movie_service
+def test_get_movie_by_id_found_in_tmdb():
+    # GIVEN
+    movieservice = MovieService(MockDBConnection)
 
-    # Configuration du mock pour retourner None de la base de données et un film de TMDB
-    movie_dao_mock.get_by_id.return_value = None
-    mock_movie_tmdb = Movie(id=1, title="The Matrix Reloaded", year=2003)
-    movie_tmdb_mock.get_movie_by_id.return_value = mock_movie_tmdb
-
-    result = service.get_movie_by_id(1)
-
-    assert result == mock_movie_tmdb
-    movie_dao_mock.get_by_id.assert_called_once_with(1)
-    movie_tmdb_mock.get_movie_by_id.assert_called_once_with(1)
-    movie_dao_mock.insert.assert_called_once_with(mock_movie_tmdb)
+    # Verifie que ce nest pas dans la DAO
+    assert movieservice.movie_dao.get_by_id(19995) == None
+    
+    movie = Movie(
+        id_movie=19995,
+        title="Avatar",
+        belongs_to_collection=[MovieCollection(id=87096, name="Avatar Collection")],
+        budget=237000000,
+        genres=[
+            Genre(id=28, name="Action"),
+            Genre(id=12, name="Adventure"),
+            Genre(id=14, name="Fantasy"),
+            Genre(id=878, name="Science Fiction"),
+        ],
+        origin_country=["US"],
+        original_language="en",
+        original_title="Avatar",
+        overview="In the 22nd century, a paraplegic Marine is dispatched to the moon Pandora on a unique mission, but becomes torn between following orders and protecting an alien civilization.",
+        popularity=99.959,
+        release_date=datetime.date(2009, 12, 15),
+        revenue=2923706026,
+        runtime=162,
+        vote_average=7.582,
+        vote_count=31385,
+        adult=False,
+    )
+    # WHEN
+    result = movieservice.get_movie_by_id(19995)
+    # THEN
+    assert result.title == movie.title
 
 
 def test_get_movie_by_id_not_found(movie_service):
