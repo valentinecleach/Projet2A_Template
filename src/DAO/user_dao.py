@@ -3,7 +3,8 @@ from typing import Dict, List
 from src.DAO.db_connection import DBConnector
 from src.DAO.singleton import Singleton
 from src.Model.connected_user import ConnectedUser
-
+from src.DAO.user_favorites_dao import UserFavoriteDao
+from src.DAO.user_follow_dao import UserFollowDao
 
 class UserDao(metaclass=Singleton):
     """
@@ -13,6 +14,8 @@ class UserDao(metaclass=Singleton):
     def __init__(self, db_connection: DBConnector):
         # create a DB connection object
         self.db_connection = db_connection
+        self.user_favorites_dao = UserFavoriteDao(db_connection)
+        self.user_follow_dao = UserFollowDao(db_connection)
 
     def insert(self, new_user: Dict) -> ConnectedUser | None:
         """insert a Connected User into the database"""
@@ -65,7 +68,10 @@ class UserDao(metaclass=Singleton):
             print(f"Error while fetching FROM users: {e}")
             return None
         if result:
+            own_film_collection = self.user_favorites_dao.get_favorites(id_user)
+            follow_list = self.user_follow_dao.get_all_user_followed(id_user)
             user = dict(result)
+            user.update({'own_film_collection' : own_film_collection , 'follow_list' : follow_list })
             return ConnectedUser(**user)  # Crée et retourne l'utilisateur connecté
         else:
             return None  # Aucun utilisateur trouvé
@@ -76,23 +82,23 @@ class UserDao(metaclass=Singleton):
         """
         try:
             query = """
-                SELECT * FROM users 
+                SELECT id_user FROM users 
                 WHERE username LIKE %s 
             """
             search_pattern = "%" + username + "%"
-            # Utilisation de % pour un 'LIKE' avec des recherches partielles
             results = self.db_connection.sql_query(
                 query, (search_pattern,), return_type="all"
             )
+            if results:
+                users_read = [self.get_user_by_id(user['id_user']) for user in results]  # .to_dict()
+                return users_read
+            else:
+                return None
         except Exception as e:
             print(f"Error while searching: {e}")
             return None
 
-        if results:
-            users_read = [ConnectedUser(**dict(user)) for user in results]  # .to_dict()
-            return users_read
-        else:
-            return None
+
 
     # READ (Fetch all users)
     def get_all_users(self, limit: int = 10, offset: int = 0) -> List[ConnectedUser]:
@@ -114,72 +120,35 @@ class UserDao(metaclass=Singleton):
             results = self.db_connection.sql_query(
                 query, (email_address,), return_type="one"
             )
+            if results:
+                print(f"{email_address} already exist in our database")
+                return None
+            else:
+                return True
         except Exception as e:
             print(f"Error while fetching FROM users: {e}")
             return None
-        if results:
-            print(f"{email_address} already exist in our database")
-            return None
-        else:
-            return 1
 
     # UPDATE
     def update_user(
         self,
-        id_user: int,
-        username: str = None,
-        hashed_password: str = None,
-        date_of_birth: str = None,
-        gender: int = None,
-        first_name: str = None,
-        last_name: str = None,
-        email_address: str = None,
-        phone_number: str = None,
+        connected_user : ConnectedUser
     ):
+        """ 
+        Allow the user to update his email_adress or his phone number
+        """
         try:
-            # Build the dynamic query based on the provided parameters
-            updates = []
-            values = []
-
-            if username:
-                updates.append("username = %s")
-                values.append(username)
-            if email_address:
-                updates.append("email_address = %s")
-                values.append(email_address)
-            if hashed_password:
-                updates.append("hashed_password = %s")
-                values.append(hashed_password)
-            if phone_number:
-                updates.append("phone_number = %s")
-                values.append(phone_number)
-            if date_of_birth:
-                updates.append("date_of_birth = %s")
-                values.append(date_of_birth)
-            if gender:
-                updates.append("gender = %s")
-                values.append(gender)
-            if first_name:
-                updates.append("first_name = %s")
-                values.append(first_name)
-            if last_name:
-                updates.append("last_name = %s")
-                values.append(last_name)
-
-            # If there are no updates, return
-            if not updates:
-                print("No data provided for update.")
-                return None
-
-            query = f"UPDATE users SET {', '.join(updates)} WHERE id_user = %s"
-            values.append(id_user)
-            self.db_connection.sql_query(query, tuple(values))
-            print(f"User {id_user} updated successfully!")
-            return 1
-
+            if self.check_email_address(connected_user.email_address):
+                update_query = """
+                    UPDATE users
+                    SET email_address = %s, phone_number = %s
+                    WHERE id_user = %s;
+                """
+                values = (connected_user.email_address, connected_user.phone_number, connected_user.id_user)
+                self.db_connection.sql_query(update_query, values)
+                print(f"Update successful for user {connected_user.username}")
         except Exception as e:
-            print(f"Error updating user: {e}")
-            return None
+            print("Update error:", str(e))
 
     # DELETE
     def delete_user(self, id_user):
@@ -194,5 +163,5 @@ class UserDao(metaclass=Singleton):
 
 # db_connection = DBConnector()
 # my_object = UserDao(db_connection)
-# #print(my_object.get_user_by_name('johndoe'))
-# print(my_object.get_user_by_id(2))
+# print(my_object.get_user_by_name('garrettmercer'))
+# #print(my_object.get_user_by_id(217))

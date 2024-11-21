@@ -55,6 +55,7 @@ def create_user(
             email_address=email_address,
             phone_number=phone_number,
         )
+        return f"User with username: {username} succesfully created."
     except Exception as error:
         raise HTTPException(status_code=409, detail=str(error)) from error
 
@@ -83,10 +84,27 @@ def login(username: str, password_tried: str) -> JWTResponse:
         raise HTTPException(status_code=403) from error
 
 
+@user_router.post("/profile", dependencies=[Depends(JWTBearer())])
+def update_user_own_profile(
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
+    new_email_adress : Optional[str] = None,
+    new_phone_number : Optional[str] = None
+):
+    """
+    Allow the user to update his email_adress or his phone_number
+    """
+    connected_user = get_user_from_credentials(credentials)
+    if new_email_adress:
+        connected_user.email_address = new_email_adress
+    if new_phone_number:
+        connected_user.phone_number = new_phone_number
+    user_dao.update_user(connected_user)
+    return f"Account update successfull for user {connected_user.username}"
+
 @user_router.get("/profile", dependencies=[Depends(JWTBearer())])
 def get_user_own_profile(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())]
-) -> APIUser:
+):
     """
     Get the authenticated user profile
     """
@@ -95,25 +113,23 @@ def get_user_own_profile(
 @user_router.delete("/delete_user", dependencies=[Depends(JWTBearer())])
 def delete_own_profile(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())]
-) -> APIUser:
+):
     """
     Allow a user to delete his own profile.
     """
     current_user = get_user_from_credentials(credentials)
-    user_dao.delete_user(current_user.id)
+    user_dao.delete_user(current_user.id_user)
     
 
-def get_user_from_credentials(credentials: HTTPAuthorizationCredentials) -> APIUser:
+def get_user_from_credentials(credentials: HTTPAuthorizationCredentials) -> ConnectedUser:
     """
     Get a user from credentials
     """
     token = credentials.credentials
-    print(token)
     user_id = int(jwt_service.validate_user_jwt(token))
-    print(user_id)
-    user: User | None = user_dao.get_user_by_id(user_id)
-    if not user:
+    connected_user: ConnectedUser | None = user_dao.get_user_by_id(user_id)
+    if not connected_user:
         raise HTTPException(status_code=404, detail="User not found")
-    return APIUser(id= user_id, username=user.username)
+    return connected_user # ça serait mieux de retourner un Connected USER !! POur avoir acces own_favorite ... quand on regarde le profil
 
 

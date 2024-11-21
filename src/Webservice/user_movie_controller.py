@@ -29,7 +29,7 @@ def add_or_update_movie_rate(
 ):
     current_user = get_user_from_credentials(credentials)
     try:
-        user_movie_service.rate_film_or_update(current_user.id, id_movie, rate)
+        user_movie_service.rate_film_or_update(current_user.id_user, id_movie, rate)
         return f"User {current_user.username} put the rate : {rate} for movie with id : {id_movie}"
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
@@ -51,10 +51,10 @@ def get_ratings_for_a_user(
     current_user = get_user_from_credentials(credentials)
     try:
         if id_movie :
-            rating = user_movie_service.rating_dao.get_rating(current_user.id, id_movie)
+            rating = user_movie_service.rating_dao.get_rating(current_user.id_user, id_movie)
             return rating
         else :
-            ratings = user_movie_service.get_ratings_user(current_user.id)
+            ratings = user_movie_service.get_ratings_user(current_user.id_user)
             return ratings
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
@@ -71,7 +71,7 @@ def delete_a_user_rating(
 ):
     current_user = get_user_from_credentials(credentials)
     try:
-        rating = user_movie_service.rating_dao.get_rating(current_user.id, id_movie)
+        rating = user_movie_service.rating_dao.get_rating(current_user.id_user, id_movie)
         if rating:
             user_movie_service.delete_a_user_rating(rating)
             return f" Rating deletion for the movie with id {id_movie} completed."
@@ -95,7 +95,7 @@ def add_or_update_comment(
     """
     current_user = get_user_from_credentials(credentials)
     try:
-        user_movie_service.add_or_update_comment(current_user.id, id_movie, comment)
+        user_movie_service.add_or_update_comment(current_user.id_user, id_movie, comment)
         return "Your comment has been shared successfully"
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
@@ -116,10 +116,10 @@ def get_comments_for_a_user(
     current_user = get_user_from_credentials(credentials)
     try:
         if id_movie :
-            comment = user_movie_service.comment_dao.get_comment(current_user.id, id_movie)
+            comment = user_movie_service.comment_dao.get_comment(current_user.id_user, id_movie)
             return comment
         else :
-            comments = user_movie_service.get_comments_user(current_user.id)
+            comments = user_movie_service.get_comments_user(current_user.id_user)
             return comments
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
@@ -136,7 +136,7 @@ def get_last_comments_movie(
     """
     Display 10 last comments for a movie
     """
-    current_user = get_user_from_credentials(credentials)
+    current_user = get_user_from_credentials(credentials) # pas utile ?
     try:
         comments = user_movie_service.comment_dao.get_recent_comments_for_a_movie(id_movie = id_movie, limit = 10)
         if comments :
@@ -158,7 +158,7 @@ def delete_a_user_comment(
 ):
     current_user = get_user_from_credentials(credentials)
     try:
-        comment = user_movie_service.comment_dao.get_comment(current_user.id, id_movie)
+        comment = user_movie_service.comment_dao.get_comment(current_user.id_user, id_movie)
         if comment:
             user_movie_service.delete_a_user_comment(comment)
             return f" Comment deletion for the movie with id {id_movie} completed."
