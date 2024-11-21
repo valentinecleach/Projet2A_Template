@@ -21,21 +21,21 @@ class UserInteractionService:
         self.rating_dao = RatingDao(db_connection)
         self.movie_service = MovieService(db_connection)
 
-    def search_user(self, username: str):
-        """Permet de chercher le profil d'un autre utilisateur."""
-        if not username:
-            print("Le nom d'utilisateur est requis.")
-            return None
+    # def search_user(self, username: str):
+    #     """Permet de chercher le profil d'un autre utilisateur."""
+    #     if not username:
+    #         print("Le nom d'utilisateur est requis.")
+    #         return None
 
-        users = self.user_dao.get_user_by_name(username)
+    #     users = self.user_dao.get_user_by_name(username)
 
-        if users:
-            return users
+    #     if users:
+    #         return users
 
-        print("Aucun utilisateur trouvé pour le nom :", username)
-        return None
+    #     print("Aucun utilisateur trouvé pour le nom :", username)
+    #     return None
 
-    # focntionne si correspondance exacte avec le pseudo
+    # # focntionne si correspondance exacte avec le pseudo
 
     def follow_user(
         self, follower_id: int, followee_id: int
@@ -69,10 +69,6 @@ class UserInteractionService:
         followee_id : int
             The ID of the user to be unfollowed.
         """
-        # Vérifier si l'utilisateur essaie de se désabonner de lui-même
-        if follower_id == followee_id:
-            raise ValueError("A user cannot unfollow themselves.")
-
         # Vérifier si le lien de suivi existe (ou utilisez une méthode comme follow_dao.is_following)
         if not self.user_follow_dao.is_following(follower_id, followee_id):
             raise ValueError("This user is not being followed.")
