@@ -55,11 +55,11 @@ class RecommendService:
                 return None
 
 
-#db_connection = DBConnector()
-# # # # # # u = UserDao(db_connection)
-#service = RecommendService(db_connection)
+# db_connection = DBConnector()
+# # # # # # # u = UserDao(db_connection)
+# service = RecommendService(db_connection)
 #print(service.find_users_to_follow(431))
-#print(service.find_movie_to_collect(224,{"id_genre":9648}))
+#print(service.find_movie_to_collect(224,{"name_genre" : 'drama'}))
 # date_of_birth = user.date_of_birth
 # print(isinstance(date_of_birth, date))
 # python src/Service/recommend_service.py

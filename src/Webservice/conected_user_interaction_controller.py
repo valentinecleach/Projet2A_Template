@@ -142,7 +142,6 @@ def view_users(
 def view_movies(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
     genre: str = None,
-    origin_country: str = None,
     original_language: str = None,
 ) -> list[Movie]:
     """
@@ -151,9 +150,7 @@ def view_movies(
     filter = {}
     if genre:
         filter["name_genre"] = genre.lower()
-    if origin_country:
-        filter["origin_country"] = origin_country.lower()
-    if origin_country:
+    if original_language:
         filter["original_language"] = original_language.lower()
     current_user = get_user_from_credentials(credentials)
 
