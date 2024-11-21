@@ -59,12 +59,24 @@ class MovieCollectionDao(metaclass=Singleton):
             print("Insertion error: ", str(e))
 
     #######################################################################################
-    # READ (Fetch a specific user's comment)
+    # READ (Fetch a specific movie collection)
     def get_movie_collection_by_id(
         self,
         id: int,
     ) -> MovieCollection:
+        """Fetches a collection of movies by it's ID.
 
+        Parameters
+        ----------
+        id : int
+            A ID of a movie collection
+
+        Returns
+        -------
+        MovieCollection | None
+            The movie collection that corresponds to the ID.
+            If the ID doesn't exist, then the function will return None.
+        """
         try:
             query = "SELECT * FROM  movie _collection WHERE id = %s"
             with self.db_connection.connection as connection:
