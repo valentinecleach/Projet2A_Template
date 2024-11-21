@@ -19,16 +19,16 @@ def get_movie_maker_by_name(name: str) -> List[MovieMaker]:
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Invalid request: {str(e)}")
 
-@movie_maker_router.get("/id/{id}", response_model= MovieMaker, status_code=status.HTTP_200_OK)
-def get_movie_maker_by_id(id : int) -> MovieMaker:
-    """ to get a MovieMaker by his name"""
-    try:
-        my_movie_maker = movie_maker_service.get_movie_maker_by_id(id)  
-        if my_movie_maker is None:
-            raise HTTPException(
-                status_code=404,
-                detail=f"MovieMaker with id [{id}] not found"
-            )
-        return my_movie_maker
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Invalid request: {str(e)}")
+# @movie_maker_router.get("/id/{id}", response_model= MovieMaker, status_code=status.HTTP_200_OK)
+# def get_movie_maker_by_id(id : int) -> MovieMaker:
+#     """ to get a MovieMaker by his name"""
+#     try:
+#         my_movie_maker = movie_maker_service.get_movie_maker_by_id(id)  
+#         if my_movie_maker is None:
+#             raise HTTPException(
+#                 status_code=404,
+#                 detail=f"MovieMaker with id [{id}] not found"
+#             )
+#         return my_movie_maker
+#     except Exception as e:
+#         raise HTTPException(status_code=400, detail=f"Invalid request: {str(e)}")
