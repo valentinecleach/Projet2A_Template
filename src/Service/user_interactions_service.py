@@ -132,20 +132,21 @@ class UserInteractionService:
 
     def get_user_favorites(self, user_id: int) -> list:
         """
-        Retrieves the list of favorite movies for a user.
+        Récupère la liste des films favoris d'un utilisateur.
 
         Parameters
         ----------
         user_id : int
-            The ID of the user whose favorites are to be retrieved.
+            L'ID de l'utilisateur dont on veut récupérer les favoris.
 
         Returns
         -------
         list
-            A list of favorite movies for the user.
+            Une liste des films favoris de l'utilisateur, ou une liste vide si aucune donnée n'est trouvée.
         """
         try:
-            return self.user_favorites_dao.get_favorites(user_id)
+            favorites = self.user_favorites_dao.get_favorites(user_id)
+            return favorites if favorites is not None else []  # Protection contre None
         except Exception as error:
             raise ValueError(f"An error occurred while retrieving favorites: {error}")
 
@@ -169,8 +170,6 @@ class UserInteractionService:
             self.comment_dao.insert(comment)
         except Exception as error:
             raise ValueError(f"An error occurred while commenting the movie: {error}")
-
-
 
 
 # doctest follow_user()

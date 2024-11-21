@@ -1,4 +1,10 @@
+from datetime import datetime
+
+from src.DAO.comment_dao import CommentDao
 from src.DAO.db_connection import DBConnector
+from src.DAO.movie_dao import MovieDAO
+from src.DAO.user_dao import UserDao
+from src.Model.comment import Comment
 from src.Service.user_interactions_service import UserInteractionService
 
 
@@ -118,11 +124,12 @@ def test_add_favorite_success():
     user_interaction_service.add_favorite(user_id, movie_id)
     print(f"Movie {movie_id} added to User {user_id}'s favorites.")
 
-    # Vérification si le film a bien été ajouté
+    # Vérification si les favoris ont bien été récupérés
     favorites = user_interaction_service.get_user_favorites(user_id)
-    assert any(
-        fav["id_movie"] == movie_id for fav in favorites
-    ), "Le film n'a pas été ajouté aux favoris."
+    assert favorites is not None, "Les favoris n'ont pas pu être récupérés."
+
+    # Vérifier que le film est bien dans les favoris
+    assert movie_id in favorites, "Le film n'a pas été ajouté aux favoris."
 
 
 def test_add_favorite_duplicate():
@@ -162,12 +169,8 @@ def test_get_user_favorites():
     print(f"Favorites for user {user_id}: {favorites}")
 
     # Vérifie que la liste contient les films ajoutés
-    assert any(
-        fav["id_movie"] == 19965 for fav in favorites
-    ), "Le film 19965 n'est pas dans les favoris."
-    assert any(
-        fav["id_movie"] == 19995 for fav in favorites
-    ), "Le film 29985 n'est pas dans les favoris."
+    assert 19965 in favorites, "Le film 19965 n'est pas dans les favoris."
+    assert 19995 in favorites, "Le film 19995 n'est pas dans les favoris."
 
 
 def test_add_comment():
@@ -180,17 +183,27 @@ def test_add_comment():
     # ID de l'utilisateur et du film
     user_id = 217
     movie_id = 19965
-    comment = "Super film, vraiment captivant !"
+    comment_text = "Super film, vraiment captivant !"
+
+    # Créer un objet Comment à partir des paramètres
+    user = UserDao(db_connection).get_user_by_id(
+        user_id
+    )  # Récupère l'utilisateur par ID
+    movie = MovieDAO(db_connection).get_by_id(movie_id)  # Récupère le film par ID
+    comment = Comment(
+        user=user, movie=movie, date=datetime.now().date(), comment=comment_text
+    )
 
     # Utilisation de la méthode add_comment qui elle, utilise l'insertion via CommentDao
-    user_interaction_service.add_comment(user_id, movie_id, comment)
+    user_interaction_service.add_comment(comment)
 
-    # Vérifier que le commentaire a bien été ajouté
-    # Récupérer les commentaires du film
-    comments = user_interaction_service.comment_dao.get_comments_by_movie(movie_id)
-    print(f"Comments for Movie {movie_id}: {comments}")
+    # Vérifier si le commentaire a bien été ajouté, ici il faudra récupérer le commentaire et vérifier son existence
+    comment_dao = CommentDao(db_connection)
+    retrieved_comment = comment_dao.get_comment(user_id, movie_id)
 
-    # Vérifie que le commentaire est dans la liste des commentaires du film
-    assert any(
-        com["comment"] == comment for com in comments
+    assert (
+        retrieved_comment is not None
     ), "Le commentaire n'a pas été ajouté correctement."
+    assert (
+        retrieved_comment.comment == comment_text
+    ), f"Le commentaire attendu est '{comment_text}', mais on a '{retrieved_comment.comment}'."
