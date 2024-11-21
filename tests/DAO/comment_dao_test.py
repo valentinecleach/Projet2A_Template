@@ -1,7 +1,7 @@
 import pytest
 
 from src.DAO.comment_dao import CommentDao
-from src.DAO.db_connection import DBConnection
+from src.DAO.db_connection import DBConnector
 from src.Model.comment import Comment
 
 
@@ -9,7 +9,7 @@ from src.Model.comment import Comment
 def setup_db():
     """Set up the database connection for testing."""
     # Assurez-vous d'avoir une méthode pour établir une connexion à la base de données pour vos tests.
-    db_connection = DBConnection()
+    db_connection = DBConnector()
     yield db_connection
     db_connection.close()
 
@@ -17,7 +17,7 @@ def setup_db():
 @pytest.fixture
 def insert_test_data(setup_db):
     """Insert test data for a user and movie."""
-    connection = DBConnection().connection
+    connection = DBConnector().connection
     cursor = connection.cursor()
 
     # Insérer un utilisateur de test
