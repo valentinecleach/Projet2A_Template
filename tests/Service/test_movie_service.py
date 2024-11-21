@@ -1,22 +1,14 @@
-import datetime
-from typing import Optional
-
 import pytest
 
 from src.DAO.db_connection import DBConnector
-from src.DAO.movie_dao import MovieDAO
-from src.Model.genre import Genre
-from src.Model.movie import Movie
-from src.Model.movie_collection import MovieCollection
 from src.Service.movie_service import MovieService
-from src.TMDB.movie_tmdb import MovieTMDB
 from tests.DAO.test_db import MockDBConnection
 
 # ------ TEST GET MOVIE BY ID -----------
 
+
 def test_get_movie_by_id_found_in_db():
-    """Test method get_movie_by_id when the id is found in the database
-    """
+    """Test method get_movie_by_id when the id is found in the database"""
     # GIVEN
     movieservice = MovieService(DBConnector)
 
@@ -32,8 +24,8 @@ def test_get_movie_by_id_found_in_tmdb():
     movieservice = MovieService(MockDBConnection)
 
     # Verifie que ce nest pas dans la DAO
-    assert movieservice.movie_dao.get_by_id(19995) == None
-    
+    assert movieservice.movie_dao.get_by_id(19995) is None
+
     # WHEN
     result = movieservice.get_movie_by_id(19995)
     # THEN
@@ -45,20 +37,22 @@ def test_get_movie_by_id_not_found():
     movieservice = MovieService(MockDBConnection)
 
     # WHEN / THEN
-    # Vérification du mock pour ne trouver le film ni dans la base de données ni dans TMDB
+    # Vérification du mock pour ne trouver le film ni dans la base de données
+    # ni dans TMDB
     assert movieservice.movie_dao.get_by_id(999) is None
     assert movieservice.movie_tmdb.get_movie_by_id(999) is None
 
     result = movieservice.get_movie_by_id(999)
 
     assert result is None
-    
+
 
 # ------ GET MOVIE BY TITLE -----------
 
+
 def test_get_movie_by_title_in_db():
-    """ Tests the method get_movie_by_title if the title is found in the database.
-    Since the method returns a list of films under the same or similar title, 
+    """Tests the method get_movie_by_title if the title is found in the database.
+    Since the method returns a list of films under the same or similar title,
     we will select only the first one.
     """
     # GIVEN
@@ -70,13 +64,14 @@ def test_get_movie_by_title_in_db():
     # THEN
     assert result.id_movie == 19995
 
+
 def test_get_movie_by_title_in_tmdb():
     # GIVEN
     movieservice = MovieService(MockDBConnection)
 
     # Verifie que ce nest pas dans la DAO
-    assert movieservice.movie_dao.get_by_title("Avatar") == None
-    
+    assert movieservice.movie_dao.get_by_title("Avatar") is None
+
     # WHEN
     result = movieservice.get_movie_by_title("Avatar")[0]
 
@@ -91,11 +86,14 @@ def test_get_movie_by_title_not_found():
     # WHEN / THEN
     # Vérification du mock pour ne trouver le film ni dans la base de données ni dans TMDB
     assert movieservice.movie_dao.get_by_title("The Joyful Christmas Exam") is None
-    assert movieservice.movie_tmdb.get_movies_by_title("The Joyful Christmas Exam") is None
+    assert (
+        movieservice.movie_tmdb.get_movies_by_title("The Joyful Christmas Exam") is None
+    )
 
     result = movieservice.get_movie_by_title("The Joyful Christmas Exam")
 
     assert result is None
+
 
 # ------ CREATE MOVIES -----------
 def test_create_movies():
@@ -106,8 +104,9 @@ def test_create_movies():
 
     # WHEN / THEN
     list_movies = movieservice.create_movies(movie_data)[0]
-    
+
     assert list_movies.title == "Avatar"
+
 
 """
 movie = Movie(
