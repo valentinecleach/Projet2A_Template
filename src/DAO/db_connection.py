@@ -26,6 +26,7 @@ class DBConnector:
     """
 
     def __init__(self, config=None):
+        """Constructor"""
         if config is not None:
             self.host = config["host"]
             self.port = config["port"]
@@ -41,7 +42,7 @@ class DBConnector:
             self.user = os.environ["user"]
             self.password = os.environ["password"]
             self.schema = os.environ["schema"]
-        self.connection = None  
+        self.connection = None
         self.cursor = None
 
     def _connect(self):
@@ -80,15 +81,20 @@ class DBConnector:
         dict or list[dict] or None
             If return_type is "one", it returns a dictionary
             If return_type is "all", it returns a list of dictionaries
-            If return_type is None or the query doesn't return anything, it returns None
+            If return_type is None or the query doesn't return anything,
+            it returns None
         """
         try:
             if self.connection is None:
-                self._connect() 
+                self._connect()
             with self.connection:
                 with self.connection.cursor() as cursor:
                     cursor.execute(query, data)
-                    if (query.strip().upper().startswith(("CREATE", "INSERT", "UPDATE", "DELETE"))):
+                    if (
+                        query.strip()
+                        .upper()
+                        .startswith(("CREATE", "INSERT", "UPDATE", "DELETE"))
+                    ):
                         self.connection.commit()
                     if return_type == "one":
                         return cursor.fetchone()
@@ -119,7 +125,6 @@ class DBConnector:
             print(f"Error rolling back transaction: {e}")
             raise e
 
-
     # def commit_transaction(self):
     #     """ Commits the transaction, making all changes permanent. """
     #     try:
@@ -139,4 +144,3 @@ class DBConnector:
     #     except Exception as e:
     #         print(f"Error closing connection: {e}")
     #         raise e
-
