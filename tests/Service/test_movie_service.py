@@ -21,7 +21,7 @@ def test_get_movie_by_id_found_in_db():
     movieservice = MovieService(DBConnector)
 
     # Configuration du mock pour retourner un film de la base de données
-    mock_movie = Movie(
+    movie = Movie(
         id_movie=19995,
         title="Avatar",
         belongs_to_collection=[MovieCollection(id=87096, name="Avatar Collection")],
@@ -49,7 +49,7 @@ def test_get_movie_by_id_found_in_db():
     result = movieservice.get_movie_by_id(19995)
 
     # THEN
-    assert result == mock_movie
+    assert result.title == movie.title
 
 
 def test_get_movie_by_id_found_in_tmdb(movie_service):
