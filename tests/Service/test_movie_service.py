@@ -14,43 +14,17 @@ from tests.DAO.test_db import MockDBConnection
 
 # ------ TEST GET MOVIE BY ID -----------
 
-
 def test_get_movie_by_id_found_in_db():
     """Test method get_movie_by_id when the id is found in the database
     """
     # GIVEN
     movieservice = MovieService(DBConnector)
 
-    # Configuration du mock pour retourner un film de la base de données
-    movie = Movie(
-        id_movie=19995,
-        title="Avatar",
-        belongs_to_collection=[MovieCollection(id=87096, name="Avatar Collection")],
-        budget=237000000,
-        genres=[
-            Genre(id=28, name="Action"),
-            Genre(id=12, name="Adventure"),
-            Genre(id=14, name="Fantasy"),
-            Genre(id=878, name="Science Fiction"),
-        ],
-        origin_country=["US"],
-        original_language="en",
-        original_title="Avatar",
-        overview="In the 22nd century, a paraplegic Marine is dispatched to the moon Pandora on a unique mission, but becomes torn between following orders and protecting an alien civilization.",
-        popularity=99.959,
-        release_date=datetime.date(2009, 12, 15),
-        revenue=2923706026,
-        runtime=162,
-        vote_average=7.582,
-        vote_count=31385,
-        adult=False,
-    )
-
     # WHEN
     result = movieservice.get_movie_by_id(19995)
 
     # THEN
-    assert result.title == movie.title
+    assert result.title == "Avatar"
 
 
 def test_get_movie_by_id_found_in_tmdb():
@@ -60,33 +34,10 @@ def test_get_movie_by_id_found_in_tmdb():
     # Verifie que ce nest pas dans la DAO
     assert movieservice.movie_dao.get_by_id(19995) == None
     
-    movie = Movie(
-        id_movie=19995,
-        title="Avatar",
-        belongs_to_collection=[MovieCollection(id=87096, name="Avatar Collection")],
-        budget=237000000,
-        genres=[
-            Genre(id=28, name="Action"),
-            Genre(id=12, name="Adventure"),
-            Genre(id=14, name="Fantasy"),
-            Genre(id=878, name="Science Fiction"),
-        ],
-        origin_country=["US"],
-        original_language="en",
-        original_title="Avatar",
-        overview="In the 22nd century, a paraplegic Marine is dispatched to the moon Pandora on a unique mission, but becomes torn between following orders and protecting an alien civilization.",
-        popularity=99.959,
-        release_date=datetime.date(2009, 12, 15),
-        revenue=2923706026,
-        runtime=162,
-        vote_average=7.582,
-        vote_count=31385,
-        adult=False,
-    )
     # WHEN
     result = movieservice.get_movie_by_id(19995)
     # THEN
-    assert result.title == movie.title
+    assert result.title == "Avatar"
 
 
 def test_get_movie_by_id_not_found():
@@ -113,36 +64,11 @@ def test_get_movie_by_title_in_db():
     # GIVEN
     movieservice = MovieService(DBConnector)
 
-    # Configuration du mock pour retourner un film de la base de données
-    movie = Movie(
-        id_movie=19995,
-        title="Avatar",
-        belongs_to_collection=[MovieCollection(id=87096, name="Avatar Collection")],
-        budget=237000000,
-        genres=[
-            Genre(id=28, name="Action"),
-            Genre(id=12, name="Adventure"),
-            Genre(id=14, name="Fantasy"),
-            Genre(id=878, name="Science Fiction"),
-        ],
-        origin_country=["US"],
-        original_language="en",
-        original_title="Avatar",
-        overview="In the 22nd century, a paraplegic Marine is dispatched to the moon Pandora on a unique mission, but becomes torn between following orders and protecting an alien civilization.",
-        popularity=99.959,
-        release_date=datetime.date(2009, 12, 15),
-        revenue=2923706026,
-        runtime=162,
-        vote_average=7.582,
-        vote_count=31385,
-        adult=False,
-    )
-
     # WHEN
     result = movieservice.get_movie_by_title("Avatar")[0]
 
     # THEN
-    assert result.id_movie == movie.id_movie
+    assert result.id_movie == 19995
 
 def test_get_movie_by_title_in_tmdb():
     # GIVEN
@@ -151,34 +77,11 @@ def test_get_movie_by_title_in_tmdb():
     # Verifie que ce nest pas dans la DAO
     assert movieservice.movie_dao.get_by_title("Avatar") == None
     
-    movie = Movie(
-        id_movie=19995,
-        title="Avatar",
-        belongs_to_collection=[MovieCollection(id=87096, name="Avatar Collection")],
-        budget=237000000,
-        genres=[
-            Genre(id=28, name="Action"),
-            Genre(id=12, name="Adventure"),
-            Genre(id=14, name="Fantasy"),
-            Genre(id=878, name="Science Fiction"),
-        ],
-        origin_country=["US"],
-        original_language="en",
-        original_title="Avatar",
-        overview="In the 22nd century, a paraplegic Marine is dispatched to the moon Pandora on a unique mission, but becomes torn between following orders and protecting an alien civilization.",
-        popularity=99.959,
-        release_date=datetime.date(2009, 12, 15),
-        revenue=2923706026,
-        runtime=162,
-        vote_average=7.582,
-        vote_count=31385,
-        adult=False,
-    )
     # WHEN
     result = movieservice.get_movie_by_title("Avatar")[0]
 
     # THEN
-    assert result.id_movie == movie.id_movie
+    assert result.id_movie == 19995
 
 
 def test_get_movie_by_title_not_found():
@@ -204,7 +107,10 @@ def test_create_movies():
     # WHEN / THEN
     list_movies = movieservice.create_movies(movie_data)[0]
     
-    movie = Movie(
+    assert list_movies.title == "Avatar"
+
+"""
+movie = Movie(
         id_movie=19995,
         title="Avatar",
         belongs_to_collection=[MovieCollection(id=87096, name="Avatar Collection")],
@@ -227,6 +133,4 @@ def test_create_movies():
         vote_count=31385,
         adult=False,
     )
-
-    assert list_movies.title == "Avatar"
-
+    """
