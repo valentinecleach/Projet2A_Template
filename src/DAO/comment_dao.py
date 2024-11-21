@@ -9,13 +9,16 @@ from src.Model.comment import Comment
 
 
 class CommentDao(metaclass=Singleton):
-    """CommentDao contains the
+    """CommentDao is a DAO for managing comments in the database.
 
     Attributes
     ----------
     db_connection : DBConnector
+        A connector to a database
     user_dao : UserDao
+        A DAO object used for operations related to users.
     movie_dao : MovieDAO
+        A DAO object used for operations related to movies.
     """
 
     def __init__(self, db_connection: DBConnector):
