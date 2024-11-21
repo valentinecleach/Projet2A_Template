@@ -40,30 +40,39 @@ class UserService:
         phone_number: str | None = None,  # Optionnel
     ) -> ConnectedUser:
         """Permet de créer un compte utilisateur."""
-        self.check_valid_username(username) 
-        check_password_strenght(password)
-        salt = create_salt(username)
-        hashed_password = hash_password(password, salt)
-
-        # Préparation des valeurs à insérer
-        user = {
-            "username": username,
-            "first_name": first_name,
-            "last_name": last_name,
-            "password_token": salt[-1],  # Dernière valeur de la liste `salt`
-            "hashed_password": hashed_password,
-            "email_address": email_address,
-            "date_of_birth": date_of_birth,
-            "phone_number": phone_number,
-            "gender": gender,
-        }
         try:
-            # Utilisation de la méthode insert de DBConnection
-            connected_user = self.user_dao.insert(user)
-            print(f"User '{connected_user.username}' successfully sign_up. His id is {connected_user.id_user}")
-            return connected_user
+            self.check_valid_username(username)
+            check_password_strenght(password)
+            salt = create_salt(username)
+            hashed_password = hash_password(password, salt)
+
+            # Préparation des valeurs à insérer
+            user = {
+                "username": username,
+                "first_name": first_name,
+                "last_name": last_name,
+                "password_token": salt[-1],  # Dernière valeur de la liste `salt`
+                "hashed_password": hashed_password,
+                "email_address": email_address,
+                "date_of_birth": date_of_birth,
+                "phone_number": phone_number,
+                "gender": gender,
+            }
+            try:
+                # Utilisation de la méthode insert de DBConnection
+                connected_user = self.user_dao.insert(user)
+                print(
+                    f"User '{connected_user.username}' successfully sign_up. His id is {connected_user.id_user}"
+                )
+                return connected_user
+            except Exception as e:
+                print(f"Erreur lors de l'inscription : {str(e)}")
+        except ValueError as e:
+            print(f"Error during user registration: {str(e)}")
+            return None
         except Exception as e:
-            print(f"Erreur lors de l'inscription : {str(e)}")
+            print(f"Unexpected error: {str(e)}")
+            return None
 
     ##### sign_up fonctionne
 
@@ -92,19 +101,3 @@ class UserService:
                 )
         except Exception as e:
             print(f"Erreur : {str(e)}")
-
-
-# db_connection = DBConnector()
-# my_object = UserService(db_connection)
-# # user = {
-# #     'first_name': 'John',
-# #     'last_name': 'Doe',
-# #     'username': 'johndoe',
-# #     'password': 'SecurePassword123!',
-# #     'gender': 1,  # Exemple de genre (1 pour masculin, 2 pour féminin, selon votre définition)
-# #     'date_of_birth': date(1990, 12, 25),
-# #     'email_address': 'john.doe@example.com',
-# #     'phone_number': '123-456-7890'
-# # }
-# # my_object.sign_up(**user)
-# print(my_object.log_in("user1", "passworduser1"))
