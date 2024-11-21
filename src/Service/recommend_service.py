@@ -27,9 +27,6 @@ class RecommendService:
             A list of recommended users to follow or popular users if no recommendations are found.
             If neither are possible or if the users id isn't entered, the function will return None.
         """
-        if not id_user:
-            print("User ID is required")
-            return None
         users = self.recommend_dao.recommend_users_to_follow(id_user)
         if users:
             return users
