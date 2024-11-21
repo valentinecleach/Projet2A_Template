@@ -137,8 +137,8 @@ class RecommendDao(metaclass=Singleton):
             )
             SELECT id_movie, 
                 (0.4 * COALESCE(f.Score, 0) / NULLIF((SELECT MAX(Score) FROM Forward), 0) +
-                0.4 * COALESCE(a.Score, 0) / NULLIF((SELECT MAX(Score) FROM AgeGender), 0) +
-                0.2 * COALESCE(g.score, 0) / NULLIF((SELECT MAX(Score) FROM UserGenreScore), 0)) AS final_score
+                0.3 * COALESCE(a.Score, 0) / NULLIF((SELECT MAX(Score) FROM AgeGender), 0) +
+                0.3 * COALESCE(g.score, 0) / NULLIF((SELECT MAX(Score) FROM UserGenreScore), 0)) AS final_score
             FROM UserGenreScore g
             LEFT JOIN Forward f USING(id_movie)
             LEFT JOIN AgeGender a USING(id_movie)
@@ -280,8 +280,8 @@ class RecommendDao(metaclass=Singleton):
             )
             SELECT id_user,
                 (-0.25 * COALESCE(MutualGenres.Mutual_genre, 0) / NULLIF((SELECT MAX(Mutual_genre) FROM MutualGenres), 0) +
-                0.5 * COALESCE(ForwardScores.Score, 0) / NULLIF((SELECT MAX(Score) FROM ForwardScores), 0) +
-                0.5 * COALESCE(AgeGender.Score, 0) / NULLIF((SELECT MAX(Score) FROM AgeGender), 0)) AS final_score
+                0.6 * COALESCE(ForwardScores.Score, 0) / NULLIF((SELECT MAX(Score) FROM ForwardScores), 0) +
+                0.4 * COALESCE(AgeGender.Score, 0) / NULLIF((SELECT MAX(Score) FROM AgeGender), 0)) AS final_score
             FROM Potentialusers p
             LEFT JOIN MutualGenres USING(id_user)
             LEFT JOIN ForwardScores USING(id_user)

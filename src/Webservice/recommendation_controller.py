@@ -24,7 +24,7 @@ recommendation_router = APIRouter(
 )
 def view_users(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
-)-> list[ConnectedUser]:
+):
     """
     Allows the authentificated user to see a recommended list of user.
     """

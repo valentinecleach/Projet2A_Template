@@ -85,21 +85,21 @@ def unfollow_user(
 @user_interaction_router.get(
     "/{user_id}/follow_list",
     dependencies=[Depends(JWTBearer())],
-    status_code=status.HTTP_204_NO_CONTENT,
+    status_code=status.HTTP_201_CREATED,
 )
 def view_my_scout_list(
-    credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())]
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
 ):
     """
     Allows the authenticated user to view all users he follows.
     """
-    current_user = get_user_from_credentials(credentials)
+    current_user = get_user_from_credentials(credentials)  
     try:
         users = [user_dao.get_user_by_id(id).to_dict() for id in current_user.follow_list]
         if users:
             return users
         else:
-            return f"User {current_user.username} deosn't follow any user yet"
+            return f"User {current_user.username} doesn't follow any user yet"
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
 
@@ -109,6 +109,7 @@ def view_my_scout_list(
     dependencies=[Depends(JWTBearer())],
     status_code=status.HTTP_201_CREATED,
 )
+
 def add_favorite(
     id_movie: int,
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
