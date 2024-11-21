@@ -30,7 +30,7 @@ def view_movies(
     filter = {}
     if genre:
         filter["name_genre"] = genre.lower()
-    if origin_country:
+    if original_language:
         filter["original_language"] = original_language.lower()
     try:
         my_movie = recommend_dao.get_popular_movies(filter)
