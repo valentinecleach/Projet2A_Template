@@ -11,7 +11,7 @@ def test_search_user_found():
     db_connection = DBConnector()
     user_interaction_service = UserInteractionService(db_connection)
 
-    result = user_interaction_service.search_user("user_test2")
+    result = user_interaction_service.search_user("garrettmercer")
     print(result)
     assert result is not None  # Vérifie que l'utilisateur est trouvé
 
