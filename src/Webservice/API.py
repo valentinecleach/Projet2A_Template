@@ -8,7 +8,8 @@ from fastapi.responses import RedirectResponse
 # DAO
 from src.DAO.db_connection import DBConnector
 from src.DAO.tables_creation import TablesCreation
-from src.Webservice.conected_user_interaction_controller import user_interaction_router
+from src.Webservice.conected_user_interaction_controller import user_interaction_router,user_favorite_router
+from src.Webservice.recommendation_controller import recommendation_router
 from src.Webservice.movie_controller import movie_router
 from src.Webservice.movie_maker_controller import movie_maker_router
 from src.Webservice.user_controller import user_router
@@ -29,6 +30,8 @@ def run_app():
     app.include_router(user_router)
     app.include_router(movie_router)
     app.include_router(user_interaction_router)
+    app.include_router(user_favorite_router)
+    app.include_router(recommendation_router)
     app.include_router(movie_maker_router)
     app.include_router(user_movie_router)
     uvicorn.run(app, port=8000, host="localhost")

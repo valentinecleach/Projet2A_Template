@@ -170,11 +170,7 @@ class UserInteractionService:
         except Exception as error:
             raise ValueError(f"An error occurred while commenting the movie: {error}")
 
-    def log_out(self):
-        """Déconnexion de l'utilisateur."""
 
-    def delete_account(self):
-        """Suppression du compte de l'utilisateur."""
 
 
 # doctest follow_user()

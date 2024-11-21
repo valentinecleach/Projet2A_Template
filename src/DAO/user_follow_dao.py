@@ -45,13 +45,14 @@ class UserFollowDao(metaclass=Singleton):
             print("Insertion error:", str(e))
 
     def get_all_user_followed(
-        self, id_user: int, limit: int = 10, offset: int = 0
+        self, id_user: int, limit: int = 1000, offset: int = 0
     ) -> List[ConnectedUser]:
         """Get all users followed by a specific user with pagination."""
         try:
             query = """
                 SELECT * FROM follower
                 WHERE id_user = %s
+                ORDER BY date DESC
                 LIMIT %s OFFSET %s;
             """
             results = self.db_connection.sql_query(
@@ -92,8 +93,8 @@ class UserFollowDao(metaclass=Singleton):
 
 
 # db_connection = DBConnector()
-# my_object = UserFollowDAO(db_connection)
-# #print(my_object.insert(1,2))  #works
-# print(my_object.get_all_user_followed(1,2))
+# my_object = UserFollowDao(db_connection)
+# # #print(my_object.insert(1,2))  #works
+# print(my_object.get_all_user_followed(431))
 # #print(my_object.delete(1,2)) #works
 # #print(my_object.is_following(1,2)) #works

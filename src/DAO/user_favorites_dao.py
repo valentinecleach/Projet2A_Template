@@ -2,7 +2,7 @@ from datetime import datetime
 
 from src.DAO.db_connection import DBConnector
 from src.DAO.singleton import Singleton
-
+from src.DAO.movie_dao import MovieDAO
 
 class UserFavoriteDao(metaclass=Singleton):
     def __init__(self, db_connection: DBConnector):
@@ -56,12 +56,15 @@ class UserFavoriteDao(metaclass=Singleton):
         try:
             select_query = """
                 SELECT id_movie, date FROM user_movie_collection
-                WHERE id_user = %s;
+                WHERE id_user = %s
+                ORDER BY date DESC;
             """
             results = self.db_connection.sql_query(
                 select_query, (id_user,), return_type="all"
             )
-            return results
+            if results:
+                mov = MovieDAO(self.db_connection)
+                return [mov.get_by_id(res["id_movie"]) for res in results]
         except Exception as e:
             print("Retrieval error:", str(e))
             return []

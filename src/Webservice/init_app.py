@@ -5,6 +5,7 @@ from src.DAO.movie_dao import MovieDAO
 from src.DAO.user_dao import UserDao
 from src.DAO.recommend_dao import RecommendDao
 from src.DAO.user_follow_dao import UserFollowDao
+from src.DAO.user_favorites_dao import UserFavoriteDao
 
 from src.Service.jwt_service import JwtService
 from src.Service.movie_maker_service import MovieMakerService
@@ -19,6 +20,7 @@ db_connection = DBConnector()
 user_dao = UserDao(db_connection)
 movie_dao = MovieDAO(db_connection)
 user_follow_dao = UserFollowDao(db_connection)
+user_favorite_dao = UserFavoriteDao(db_connection)
 jwt_service = JwtService()
 user_service = UserService(db_connection)
 movie_service = MovieService(db_connection)
