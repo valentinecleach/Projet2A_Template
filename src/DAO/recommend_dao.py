@@ -89,7 +89,7 @@ class RecommendDao(metaclass=Singleton):
         cond = []
         if filter:
             val = [filter[key] for key in filter]
-            cond = [f"{key} = %s" for key in filter]
+            cond = [f"LOWER({key}) = %s" for key in filter]
         filters = " AND ".join(cond) if val else "1=1"
         try:
             query = f"""
@@ -319,7 +319,7 @@ class RecommendDao(metaclass=Singleton):
         cond = []
         if filter:
             val = [filter[key] for key in filter]
-            cond = [f"{key} = %s" for key in filter]
+            cond = [f"LOWER({key}) = %s" for key in filter]
         filters = " AND ".join(cond) if val else "1=1"
         try:
             query = f"""

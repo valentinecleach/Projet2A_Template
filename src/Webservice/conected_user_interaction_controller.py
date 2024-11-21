@@ -150,11 +150,11 @@ def view_movies(
     """
     filter = {}
     if genre:
-        filter["name_genre"] = genre
+        filter["name_genre"] = genre.lower()
     if origin_country:
-        filter["origin_country"] = origin_country
+        filter["origin_country"] = origin_country.lower()
     if origin_country:
-        filter["original_language"] = original_language
+        filter["original_language"] = original_language.lower()
     current_user = get_user_from_credentials(credentials)
 
     try:
