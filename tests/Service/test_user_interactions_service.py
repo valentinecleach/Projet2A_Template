@@ -16,8 +16,7 @@ def test_search_user_found():
     """
     db_connection = DBConnector()
     user_interaction_service = UserInteractionService(db_connection)
-
-    result = user_interaction_service.search_user("garrettmercer")
+    result = user_interaction_service.search_user("zmason")
     print(result)
     assert result is not None  # Vérifie que l'utilisateur est trouvé
 
@@ -44,11 +43,22 @@ def test_follow_user_success():
     db_connection = DBConnector()
     user_interaction_service = UserInteractionService(db_connection)
 
-    follower_id = 1
-    followee_id = 2
-    user_interaction_service.follow_user(follower_id, followee_id)
-    print(f"User {follower_id} is now following {followee_id}")  # Vérification du suivi
-    # Aucun retour attendu si cela fonctionne bien
+    db_connection.start_transaction()
+    follower_id = 20
+    followee_id = 21  
+
+    try:
+        # Appel de la méthode pour suivre l'utilisateur
+        user_interaction_service.follow_user(follower_id, followee_id)
+        print(f"User {follower_id} is now following {followee_id}")  # Vérification du suivi
+    except Exception as e:
+        print(f"An error occurred during the test: {e}")
+        # En cas d'erreur, on annule la transaction
+        db_connection.rollback_transaction()
+        raise e  
+    # Si tout s'est bien passé, on fait un rollback pour ne pas laisser de modification en base
+    db_connection.rollback_transaction()
+
 
 
 def test_follow_user_self_follow():
@@ -57,16 +67,19 @@ def test_follow_user_self_follow():
     """
     db_connection = DBConnector()
     user_interaction_service = UserInteractionService(db_connection)
+    db_connection.start_transaction()
 
     follower_id = 1
-    followee_id = 1  # L'utilisateur essaie de se suivre lui-même
+    followee_id = 1 
+    
     try:
         user_interaction_service.follow_user(follower_id, followee_id)
     except ValueError as e:
-        print(e)  # Attendu: "A user cannot follow themselves."
-        assert (
-            str(e) == "A user cannot follow themselves."
-        )  # Vérifie que l'erreur attendue est levée
+        assert str(e) == "A user cannot follow themselves."
+        db_connection.rollback_transaction()
+    else:
+        print("Test failed: no exception raised for self-follow.")
+        db_connection.rollback_transaction()
 
 
 def test_unfollow_user_success():
