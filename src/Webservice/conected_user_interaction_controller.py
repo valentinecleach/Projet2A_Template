@@ -2,6 +2,8 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials
+from src.Model.movie import Movie
+from src.Model.connected_user import ConnectedUser
 
 from src.Webservice.init_app import (
     recommend_service,
@@ -113,16 +115,16 @@ def delete_favorite(
         raise HTTPException(status_code=400, detail=str(error)) from error
 
 
-@user_interaction_router.post(
+@user_interaction_router.get(
     "/{user_id}/recommendation_user",
     dependencies=[Depends(JWTBearer())],
     status_code=status.HTTP_201_CREATED,
 )
 def view_users(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
-) -> str:
+)-> list[ConnectedUser]:
     """
-    Allows the authenticated user to see a recommended list of user.
+    Allows the authentificated user to see a recommended list of user.
     """
     current_user = get_user_from_credentials(credentials)
     try:
@@ -132,7 +134,7 @@ def view_users(
         raise HTTPException(status_code=400, detail=str(error)) from error
 
 
-@user_interaction_router.post(
+@user_interaction_router.get(
     "/{user_id}/recommendation_movies",
     dependencies=[Depends(JWTBearer())],
     status_code=status.HTTP_201_CREATED,

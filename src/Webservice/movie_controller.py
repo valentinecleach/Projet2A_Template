@@ -41,3 +41,10 @@ def view_movies(
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Invalid request: {str(e)}")
 
+# @movie_router.get("/users", response_model= List[Movie], status_code=status.HTTP_200_OK)
+# def get_movie_by_title(title: str) -> List[Movie]:
+#     try:
+#         my_movie = movie_service.get_movie_by_title(title)
+#         return my_movie
+#     except Exception as e:
+#         raise HTTPException(status_code=400, detail=f"Invalid request: {str(e)}")

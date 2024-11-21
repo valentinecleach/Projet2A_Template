@@ -327,8 +327,8 @@ class RecommendDao(metaclass=Singleton):
                 FROM movie m
                 JOIN link_movie_genre l USING( id_movie)
                 JOIN genre g USING( id_genre)
-                ORDER BY vote_average DESC, popularity DESC
                 WHERE {filters}
+                ORDER BY vote_average DESC, popularity DESC
                 LIMIT {limit}
             """
             result = self.db_connection.sql_query(query, (*val,), return_type="all")

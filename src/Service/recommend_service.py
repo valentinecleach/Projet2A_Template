@@ -33,7 +33,7 @@ class RecommendService:
                 print("No users found at the moment:")
                 return None
 
-    def find_movie_to_collect(self, id_user: int,, filter: dict = {}):
+    def find_movie_to_collect(self, id_user: int,filter: dict = {}):
         """
         Finds movies to collect for a given user.
 
@@ -47,7 +47,7 @@ class RecommendService:
         if movies:
             return movies
         else:
-            popular = self.recommend_dao.get_popular_movies(id_user,filter)
+            popular = self.recommend_dao.get_popular_movies(filter)
             if popular:
                 return popular
             else:
@@ -55,11 +55,11 @@ class RecommendService:
                 return None
 
 
-# db_connection = DBConnector()
-# # # # # u = UserDao(db_connection)
-# service = RecommendService(db_connection)
-# # # print(len(service.find_users_to_follow(24)))
-# print(service.find_movie_to_collect(224))
+#db_connection = DBConnector()
+# # # # # # u = UserDao(db_connection)
+#service = RecommendService(db_connection)
+#print(service.find_users_to_follow(431))
+#print(service.find_movie_to_collect(224,{"id_genre":9648}))
 # date_of_birth = user.date_of_birth
 # print(isinstance(date_of_birth, date))
 # python src/Service/recommend_service.py

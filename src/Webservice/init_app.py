@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from src.DAO.db_connection import DBConnector
 from src.DAO.movie_dao import MovieDAO
 from src.DAO.user_dao import UserDao
-from src.recommend_dao import RecommendDao
+from src.DAO.recommend_dao import RecommendDao
 from src.DAO.user_follow_dao import UserFollowDao
 
 from src.Service.jwt_service import JwtService
