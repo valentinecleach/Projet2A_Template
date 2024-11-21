@@ -23,7 +23,7 @@ class MovieMaker(BaseModel):
     name : str
         Name of the person.
     gender : int
-        Indicates the gender of the person (2: male).
+        Indicates the gender of the person (1: female, 2: male, 3: non-binary).
     biography : str
         Biography of the person.
     birthday : str
