@@ -48,25 +48,25 @@ class DBConnector:
         data: Optional[Union[tuple, list, dict]] = None,
         return_type: Union[Literal["one"], Literal["all"]] = None,
     ):
-    """
-    Executes a query in SQL in the database
+        """
+        Executes a query in SQL in the database
 
-    Parameters
-    ----------
-    query : str
-        An SQL query to execute
-    data : tuple| list | dict] | None
-        Data tp use as values in the SQL query
-    return_type : Union[Literal["one"], Literal["all"]] | None
-        Decides how many rows to return
+        Parameters
+        ----------
+        query : str
+            An SQL query to execute
+        data : tuple| list | dict] | None
+            Data tp use as values in the SQL query
+        return_type : Union[Literal["one"], Literal["all"]] | None
+            Decides how many rows to return
 
-    Returns
-    -------
-    dict or list[dict] or None
-        If return_type is "one", it returns a dictionary
-        If return_type is "all", it returns a list of dictionaries
-        If return_type is None or the query doesn't return anything, it returns None
-    """
+        Returns
+        -------
+        dict or list[dict] or None
+            If return_type is "one", it returns a dictionary
+            If return_type is "all", it returns a list of dictionaries
+            If return_type is None or the query doesn't return anything, it returns None
+        """
         try:
             with psycopg2.connect(
                 host=self.host,

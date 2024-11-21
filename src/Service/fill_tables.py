@@ -19,11 +19,9 @@ class Fill_tables:
 
     def fill_table_user(self, n : int):
         fake = Faker()
-        Faker.seed(1234) # to fix seed
+        Faker.seed(1234) # to fix seed. Same fake user each time to simplify testing
         genders = [1, 2]  # 1 pour masculin, 2 pour féminin
         id_user_created = []
-        
-        # Générer 200 utilisateurs
         for k in range(n):
             first_name = fake.first_name()
             last_name = fake.last_name()
@@ -35,7 +33,6 @@ class Fill_tables:
             date_of_birth = fake.date_of_birth(minimum_age=18, maximum_age=80)  # Age between 18 and 80 
             email_address = fake.email()
             phone_number = None
-
             connected_user = self.user_service.sign_up(
                 first_name=first_name,
                 last_name=last_name,
@@ -69,13 +66,12 @@ class Fill_tables:
             "Clint Eastwood","Wes Anderson","Roman Polanski","Oliver Stone","Spike Lee","Fellini Federico",
             "Lars von Trier", "Jean-Luc Godard", "Krzysztof Kieslowski", "Bong Joon-ho", "Greta Gerwig"
         ]
-
         for movie_maker in movie_makers:
             movie_maker =  self.movie_maker_service.get_movie_maker_by_name(movie_maker) 
 
     def fill_table_follower(self, id_user_created):
         for id_user in id_user_created:
-            for k in range(3): # we add max 3 link per user. Less if 2 time the same link
+            for k in range(2): # we add max 2 link per user. Less if 2 time the same link
                 id_followed = random.choice(id_user_created)
                 while id_followed == id_user_created:
                     id_followed = random.choice(id_user_created)
@@ -83,13 +79,13 @@ class Fill_tables:
 
     def fill_table_favorite(self, id_user_created, id_movie_created):
         for id_user in id_user_created:
-            for k in range(3): # we add max 3 link per user. Less if 2 time the same link
+            for k in range(2): 
                 id_favorite_movie = random.choice(id_movie_created)
                 self.user_interaction_service.add_favorite(id_user, id_favorite_movie)
 
     def fill_table_rating(self, id_user_created, id_movie_created):
         for id_user in id_user_created:
-            for k in range(3): 
+            for k in range(2): 
                 rating = random.randint(0,10)
                 id_movie = random.choice(id_movie_created)
                 self.user_movie_service.rate_film_or_update(id_user, id_movie, rating)
@@ -109,19 +105,19 @@ class Fill_tables:
             "The action scenes were intense, but sometimes hard to follow due to the quick cuts."
         ]
         for id_user in id_user_created:
-            for k in range(3): 
+            for k in range(2): 
                 comment = random.choice(movie_comments)
                 id_movie = random.choice(id_movie_created)
                 self.user_movie_service.add_or_update_comment(id_user, id_movie, comment)
 
     def fill_the_database(self):
         id_user_created = self.fill_table_user(100)
-        # id_movie_created = self.fill_table_movie(100, 100)
-        # self.fill_table_follower(id_user_created)
-        # self.fill_table_favorite(id_user_created, id_movie_created)
-        # self.fill_table_rating(id_user_created, id_movie_created)
-        # self.fill_table_comment(id_user_created, id_movie_created)
-        # self.fill_table_movie_maker()
+        id_movie_created = self.fill_table_movie(100, 100)
+        self.fill_table_follower(id_user_created)
+        self.fill_table_favorite(id_user_created, id_movie_created)
+        self.fill_table_rating(id_user_created, id_movie_created)
+        self.fill_table_comment(id_user_created, id_movie_created)
+        self.fill_table_movie_maker()
         print("Database successfully filled.")
 
 
