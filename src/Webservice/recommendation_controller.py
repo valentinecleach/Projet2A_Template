@@ -30,7 +30,7 @@ def view_users(
     """
     current_user = get_user_from_credentials(credentials)
     try:
-        users = recommend_service.find_users_to_follow(current_user.id_user)
+        users = [u.to_dict() for u in recommend_service.find_users_to_follow(current_user.id_user)]
         return users
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
