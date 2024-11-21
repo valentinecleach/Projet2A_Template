@@ -9,6 +9,15 @@ from src.Model.comment import Comment
 
 
 class CommentDao(metaclass=Singleton):
+    """CommentDao contains the
+
+    Attributes
+    ----------
+    db_connection : DBConnector
+    user_dao : UserDao
+    movie_dao : MovieDAO
+    """
+
     def __init__(self, db_connection: DBConnector):
         # create a DB connection object
         self.db_connection = db_connection
@@ -18,6 +27,13 @@ class CommentDao(metaclass=Singleton):
     # CREATE
 
     def insert(self, comment: Comment):
+        """Inserts a new comment into the database.
+
+        Parameters
+        ----------
+        comment: Comment
+            The comment to insert
+        """
         try:
             # Vérification de l'existence de la relation
             query = """
@@ -31,7 +47,9 @@ class CommentDao(metaclass=Singleton):
             )
             comment_exist = result["count"] > 0 if result else False
             if not comment_exist:
-                print(f"Inserting comment relationship between user : {comment.user.username} and movie {comment.movie.id_movie}")
+                print(
+                    f"Inserting comment relationship between user : {comment.user.username} and movie {comment.movie.id_movie}"
+                )
                 query = """
                     INSERT INTO comment (id_user, id_movie, comment, date)
                     VALUES (%s, %s, %s, %s);
@@ -47,20 +65,36 @@ class CommentDao(metaclass=Singleton):
                     f"Insertion successful: Comment relationship between {comment.user.username} and {comment.movie.title} added."
                 )
             else:
-                print(f"Comment relationship between {comment.user.username} and {comment.movie.title} already exist. Try an update")
+                print(
+                    f"Comment relationship between {comment.user.username} and {comment.movie.title} already exist. Try an update"
+                )
         except Exception as e:
             print("Insertion error:", str(e))
 
-    def update(self, comment : Comment):
+    def update(self, comment: Comment):
+        """Updates a previously made comment.
+
+        Parameters
+        ----------
+        comment : Comment
+            The new comment that replaces the one already made by the user.
+        """
         try:
             update_query = """
                 UPDATE comment
                 SET comment = %s, date = %s
                 WHERE id_user = %s AND id_movie = %s;
             """
-            values = (comment.comment, comment.date, comment.user.id_user, comment.movie.id_movie)
+            values = (
+                comment.comment,
+                comment.date,
+                comment.user.id_user,
+                comment.movie.id_movie,
+            )
             self.db_connection.sql_query(update_query, values)
-            print(f"Update successful: Comment for {comment.user.username} and {comment.movie.title} updated.")
+            print(
+                f"Update successful: Comment for {comment.user.username} and {comment.movie.title} updated."
+            )
         except Exception as e:
             print("Update error:", str(e))
 
@@ -70,6 +104,20 @@ class CommentDao(metaclass=Singleton):
         id_user: int,
         id_movie: int,
     ) -> Comment:
+        """Fetches a specific comment that a certain user wrote about a given movie.
+
+        Parameters
+        ----------
+        id_user : int
+            The ID of the user who wrote the comment
+        id_movie : int
+            The ID of the movie that the comment describes
+
+        Returns
+        -------
+        Comment
+            The comment that gets corresponds to the info given
+        """
         try:
             query = "SELECT * FROM  comment WHERE id_user = %s and id_movie = %s"
             result = self.db_connection.sql_query(
@@ -80,11 +128,16 @@ class CommentDao(metaclass=Singleton):
                 movie = self.movie_dao.get_by_id(id_movie)
                 if user and movie:
                     comment = Comment(
-                            user=user, movie=movie, date=result["date"], comment=result["comment"]
-                        )
+                        user=user,
+                        movie=movie,
+                        date=result["date"],
+                        comment=result["comment"],
+                    )
                     return comment
             else:
-                print(f" Error while fetching user or Movie (id_user={id_user}, id_movie={id_movie}).")
+                print(
+                    f" Error while fetching user or Movie (id_user={id_user}, id_movie={id_movie})."
+                )
                 return None
         except Exception as e:
             print(f"Error while fetching user comment: {e}")
@@ -96,7 +149,20 @@ class CommentDao(metaclass=Singleton):
         id_movie: int,
         limit: int = 10,
     ) -> List[Comment]:
+        """Gets a list of the most recent comments for a movie
 
+        Parameters
+        ----------
+        id_movie : int
+            The ID of the movie for which we want to retrieve comments.
+        limit : int = 10
+            The max amount of comments that are returned. By defaut, this number is 10.
+
+        Returns
+        -------
+        List[Comment]
+            A list of the most recent comments.
+        """
         try:
             query = f"SELECT * FROM  comment WHERE id_movie = %s ORDER BY date DESC LIMIT {max(limit, 0)}"
             results = self.db_connection.sql_query(
@@ -122,15 +188,17 @@ class CommentDao(metaclass=Singleton):
 
     # DELETE
     def delete(self, comment: Comment):
-        """
-        to delete a comment
+        """Deletes a comment
+
+        Parameters
+        ----------
+        comment : Comment
+            The comment that will get deleted.
         """
         try:
             query = "DELETE FROM  comment WHERE id_user = %s and id_movie = %s"
             values = (comment.user.id_user, comment.movie.id_movie)
-            self.db_connection.sql_query(
-                query,
-                values)
+            self.db_connection.sql_query(query, values)
         except Exception as e:
             print(f"Error while deleting from comments: {e}")
             return None
@@ -148,8 +216,3 @@ class CommentDao(metaclass=Singleton):
     #         return None
     #     if res:
     #         return res["number"]
-
-
-# db = DBConnector()
-# dao = CommentDao(db)
-# print(dao.get_recent_comments(250))
