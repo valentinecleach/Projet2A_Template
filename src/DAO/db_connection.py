@@ -1,12 +1,30 @@
 import os
 from typing import Literal, Optional, Union
-import dotenv
 
+import dotenv
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
 
 class DBConnector:
+    """A connector the the database
+
+    Attributes
+    ----------
+    host : str
+        The database host adress.
+    port : str or int
+        The port number that the database listens.
+    database : str
+        The name of the database.
+    user : str
+        The username for authentification.
+    password : str
+        The password for authentification.
+    schema : str
+        The schema used in the database.
+    """
+
     def __init__(self, config=None):
         if config is not None:
             self.host = config["host"]
@@ -28,8 +46,27 @@ class DBConnector:
         self,
         query: str,
         data: Optional[Union[tuple, list, dict]] = None,
-        return_type: Union[Literal["one"], Literal["all"]] = None
+        return_type: Union[Literal["one"], Literal["all"]] = None,
     ):
+        """
+        Executes a query in SQL in the database
+
+        Parameters
+        ----------
+        query : str
+            An SQL query to execute
+        data : tuple| list | dict] | None
+            Data tp use as values in the SQL query
+        return_type : Union[Literal["one"], Literal["all"]] | None
+            Decides how many rows to return
+
+        Returns
+        -------
+        dict or list[dict] or None
+            If return_type is "one", it returns a dictionary
+            If return_type is "all", it returns a list of dictionaries
+            If return_type is None or the query doesn't return anything, it returns None
+        """
         try:
             with psycopg2.connect(
                 host=self.host,
@@ -42,7 +79,11 @@ class DBConnector:
             ) as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(query, data)
-                    if query.strip().upper().startswith(("CREATE","INSERT", "UPDATE", "DELETE")):
+                    if (
+                        query.strip()
+                        .upper()
+                        .startswith(("CREATE", "INSERT", "UPDATE", "DELETE"))
+                    ):
                         connection.commit()
                     if return_type == "one":
                         return cursor.fetchone()
@@ -52,5 +93,3 @@ class DBConnector:
             print("ERROR")
             print(e)
             raise e
-
-
