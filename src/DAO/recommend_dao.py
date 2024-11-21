@@ -352,9 +352,6 @@ class RecommendDao(metaclass=Singleton):
         list[User]: List of the most popular users.
         Does this work for you?
 
-
-
-
         """
         try:
             query = """

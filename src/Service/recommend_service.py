@@ -16,8 +16,16 @@ class RecommendService:
         """
         Finds users to follow for a given user.
 
-        :param id_user: User ID for whom to find follow recommendations.
-        :return: List of recommended users to follow or popular users if no recommendations are found.
+        Parameters
+        ----------
+        id_user: int
+            User ID for whom to find follow recommendations.
+
+        Returns
+        -------
+        list[User] | None
+            A list of recommended users to follow or popular users if no recommendations are found.
+            If neither are possible or if the users id isn't entered, the function will return None.
         """
         if not id_user:
             print("User ID is required")
@@ -33,7 +41,7 @@ class RecommendService:
                 print("No users found at the moment:")
                 return None
 
-    def find_movie_to_collect(self, id_user: int,filter: dict = {}):
+    def find_movie_to_collect(self, id_user: int, filter: dict = {}):
         """
         Finds movies to collect for a given user.
 
@@ -43,7 +51,7 @@ class RecommendService:
         if not id_user:
             print("User ID is required")
             return None
-        movies = self.recommend_dao.recommend_movies(id_user,filter)
+        movies = self.recommend_dao.recommend_movies(id_user, filter)
         if movies:
             return movies
         else:
@@ -58,8 +66,8 @@ class RecommendService:
 # db_connection = DBConnector()
 # # # # # # # u = UserDao(db_connection)
 # service = RecommendService(db_connection)
-#print(service.find_users_to_follow(431))
-#print(service.find_movie_to_collect(224,{"name_genre" : 'drama'}))
+# print(service.find_users_to_follow(431))
+# print(service.find_movie_to_collect(224,{"name_genre" : 'drama'}))
 # date_of_birth = user.date_of_birth
 # print(isinstance(date_of_birth, date))
 # python src/Service/recommend_service.py
