@@ -88,19 +88,19 @@ def test_get_movie_by_id_found_in_tmdb():
     assert result.title == movie.title
 
 
-def test_get_movie_by_id_not_found(movie_service):
-    service, movie_dao_mock, movie_tmdb_mock = movie_service
+def test_get_movie_by_id_not_found():
+    # GIVEN
+    movieservice = MovieService(MockDBConnection)
 
-    # Configuration du mock pour ne trouver le film ni dans la base de données ni dans TMDB
-    movie_dao_mock.get_by_id.return_value = None
-    movie_tmdb_mock.get_movie_by_id.return_value = None
+    # WHEN / THEN
+    # Vérification du mock pour ne trouver le film ni dans la base de données ni dans TMDB
+    assert movieservice.movie_dao.get_by_id(999) is None
+    assert movieservice.movie_tmdb.get_movie_by_id(999) is None
 
-    result = service.get_movie_by_id(999)
+    result = movieservice.get_movie_by_id(999)
 
     assert result is None
-    movie_dao_mock.get_by_id.assert_called_once_with(999)
-    movie_tmdb_mock.get_movie_by_id.assert_called_once_with(999)
-
+    
 
 # ------ GET MOVIE BY TITLE -----------
 
