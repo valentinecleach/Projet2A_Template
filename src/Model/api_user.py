@@ -2,5 +2,7 @@ from pydantic import BaseModel
 
 
 class APIUser(BaseModel):
-    id : int
+    id_user : int
     username : str
+    own_fillm_collection : list | None = None
+    follow_list : list

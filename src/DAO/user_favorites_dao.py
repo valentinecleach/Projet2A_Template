@@ -61,7 +61,15 @@ class UserFavoriteDao(metaclass=Singleton):
             results = self.db_connection.sql_query(
                 select_query, (id_user,), return_type="all"
             )
-            return results
+            if results:
+                favorites = [result['id_movie'] for result in results]
+                return favorites 
+            else:
+                return None
         except Exception as e:
             print("Retrieval error:", str(e))
             return []
+
+# db_connection = DBConnector()
+# service = UserFavoriteDao(db_connection)
+# print(service.get_favorites(217))

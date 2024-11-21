@@ -22,7 +22,6 @@ class UserService:
         if len(username) < 5:
             raise ValueError("Username must contain at least 5 characters")
         existing_user = self.user_dao.get_user_by_name(username)
-        print(existing_user)
         if existing_user is not None:
             raise ValueError("This username is already taken.")
         else:

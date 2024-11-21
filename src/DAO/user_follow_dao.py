@@ -3,7 +3,6 @@ from typing import List
 
 from src.DAO.db_connection import DBConnector
 from src.DAO.singleton import Singleton
-from src.DAO.user_dao import UserDao
 from src.Model.connected_user import ConnectedUser
 
 
@@ -45,26 +44,26 @@ class UserFollowDao(metaclass=Singleton):
             print("Insertion error:", str(e))
 
     def get_all_user_followed(
-        self, id_user: int, limit: int = 10, offset: int = 0
-    ) -> List[ConnectedUser]:
+        self, id_user: int
+    ) -> list:
         """Get all users followed by a specific user with pagination."""
         try:
             query = """
                 SELECT * FROM follower
-                WHERE id_user = %s
-                LIMIT %s OFFSET %s;
+                WHERE id_user = %s;
             """
             results = self.db_connection.sql_query(
-                query, (id_user, max(0, limit), max(0, offset)), return_type="all"
+                query, (id_user,), return_type="all"
             )
+            if results:
+                follow_list = [result['id_user_followed'] for result in results]
+                return follow_list
+                #return [user_dao.get_user_by_id(res["id_user_followed"]) for res in results]  #pas une bonneidée car appel en chaîne à user_dao car on cherche les favorit de l'user favorit de l'user favorit ...
+            else:
+                return None
         except Exception as e:
             print(f"Error while fetching from follower: {e}")
             return None
-
-        if results:
-            user_dao = UserDao(self.db_connection)
-            return [user_dao.get_user_by_id(res["id_user_followed"]) for res in results]
-        return []
 
     def delete(self, id_user: int, id_user_followed: int):
         """Delete a follow relationship between two users."""
@@ -92,8 +91,8 @@ class UserFollowDao(metaclass=Singleton):
 
 
 # db_connection = DBConnector()
-# my_object = UserFollowDAO(db_connection)
+# my_object = UserFollowDao(db_connection)
 # #print(my_object.insert(1,2))  #works
-# print(my_object.get_all_user_followed(1,2))
+# print(my_object.get_all_user_followed(250))
 # #print(my_object.delete(1,2)) #works
 # #print(my_object.is_following(1,2)) #works
