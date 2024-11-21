@@ -90,7 +90,7 @@ def view_my_scout_list(
     """
     current_user = get_user_from_credentials(credentials)
     try:
-        usersf = user_follow_dao.get_all_user_followed(current_user.id)
+        usersf = user_follow_dao.get_all_user_followed(current_user.id_user)
         if usersf:
             return usersf
         else : 
@@ -131,7 +131,7 @@ def view_my_favorite_movies(
     """
     current_user = get_user_from_credentials(credentials)
     try:
-        movies = user_favorite_dao.get_favorites(current_user.id)
+        movies = user_favorite_dao.get_favorites(current_user.id_user)
         if movies:
             return movies
         else : 
