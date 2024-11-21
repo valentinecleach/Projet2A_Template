@@ -19,7 +19,6 @@ class Fill_tables:
 
     def fill_table_user(self, n : int):
         fake = Faker()
-        Faker.seed(1234) # to fix seed. Same fake user each time to simplify testing
         genders = [1, 2]  # 1 pour masculin, 2 pour féminin
         id_user_created = []
         for k in range(n):
@@ -111,6 +110,8 @@ class Fill_tables:
                 self.user_movie_service.add_or_update_comment(id_user, id_movie, comment)
 
     def fill_the_database(self):
+        Faker.seed(1234) # to fix seed. Same fake user each time to simplify testing
+        random.seed(1234)
         id_user_created = self.fill_table_user(100)
         id_movie_created = self.fill_table_movie(100, 100)
         self.fill_table_follower(id_user_created)
