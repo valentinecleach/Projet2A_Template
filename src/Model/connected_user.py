@@ -6,6 +6,11 @@ from src.Model.user import User
 
 
 class ConnectedUser(User):
+    """
+    own_film_collection : list of id_movie of favorite movies
+
+    follow_list : list of user_id of user followed
+    """
     id_user: int
     username: str
     hashed_password: str
