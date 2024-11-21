@@ -63,15 +63,10 @@ class UserFavoriteDao(metaclass=Singleton):
                 select_query, (id_user,), return_type="all"
             )
             if results:
-<<<<<<< HEAD
-                mov = MovieDAO(self.db_connection)
-                return [mov.get_by_id(res["id_movie"]) for res in results]
-=======
                 favorites = [result['id_movie'] for result in results]
                 return favorites 
             else:
                 return None
->>>>>>> 07d91adcc1b602d47fa464336ec666cac417d160
         except Exception as e:
             print("Retrieval error:", str(e))
             return []
