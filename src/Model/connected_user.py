@@ -1,5 +1,5 @@
 from datetime import date
-
+from typing import Optional
 from pydantic import BaseModel
 
 from src.Model.user import User
@@ -15,9 +15,7 @@ class ConnectedUser(User):
     last_name: str
     email_address: str
     password_token: str
-    phone_number: str | None = None  # Optionnel
-
-    # Collections associées à l'utilisateur connecté
+    phone_number: str | None = None  
     own_film_collection: list | None = None
     follow_list: list | None = None
 

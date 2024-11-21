@@ -53,7 +53,7 @@ def follow_user(
     """
     current_user = get_user_from_credentials(credentials)
     try:
-        user_interaction_service.follow_user(current_user.id, user_to_follow_id)
+        user_interaction_service.follow_user(current_user.id_user, user_to_follow_id)
         return f"User {current_user.username} is now following user {user_to_follow_id}"
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
@@ -73,7 +73,7 @@ def unfollow_user(
     """
     current_user = get_user_from_credentials(credentials)
     try:
-        user_interaction_service.unfollow_user(current_user.id, user_to_unfollow_id)
+        user_interaction_service.unfollow_user(current_user.id_user, user_to_unfollow_id)
         return f"User {current_user.username} deosn't follow user {user_to_unfollow_id} anymore"
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
@@ -113,7 +113,7 @@ def add_favorite(
     """
     current_user = get_user_from_credentials(credentials)
     try:
-        user_interaction_service.add_favorite(current_user.id, id_movie)
+        user_interaction_service.add_favorite(current_user.id_user, id_movie)
         return f"User {current_user.username} is now having film {id_movie} in favorite"
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
@@ -154,7 +154,7 @@ def delete_favorite(
     """
     current_user = get_user_from_credentials(credentials)
     try:
-        user_interaction_service.delete_favorite(current_user.id, id_movie)
+        user_interaction_service.delete_favorite(current_user.id_user, id_movie)
         return f"User {current_user.username} doesn't have in favorite film {id_movie} anymore"
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error

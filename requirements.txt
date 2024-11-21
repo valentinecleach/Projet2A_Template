@@ -2,3 +2,6 @@
 
 # tests
 pip install pyjwt
+
+# 
+pip install uvicorn
