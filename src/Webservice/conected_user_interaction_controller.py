@@ -2,14 +2,15 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials
-from src.Model.movie import Movie
-from src.Model.connected_user import ConnectedUser
 
+from src.Model.connected_user import ConnectedUser
+from src.Model.movie import Movie
 from src.Webservice.init_app import (
     recommend_service,
     user_dao,
-    user_follow_dao,
+    movie_dao,
     user_favorite_dao,
+    user_follow_dao,
     user_interaction_service,
 )
 from src.Webservice.jwt_bearer_webservice import JWTBearer
@@ -29,7 +30,7 @@ def find_a_user(username: str) -> list:
     Find aa user registerred on the API.
     """
     try:
-        user = user_dao.get_user_by_name(username=username)
+        user = [u.to_dict() for u in user_dao.get_user_by_name(username=username)]
         if not user:
             raise HTTPException(status_code=403, detail="Invalid username")
 
@@ -73,27 +74,31 @@ def unfollow_user(
     """
     current_user = get_user_from_credentials(credentials)
     try:
-        user_interaction_service.unfollow_user(current_user.id_user, user_to_unfollow_id)
+        user_interaction_service.unfollow_user(
+            current_user.id_user, user_to_unfollow_id
+        )
         return f"User {current_user.username} deosn't follow user {user_to_unfollow_id} anymore"
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
 
+
 @user_interaction_router.get(
-    "/{user_id}/follow",
+    "/{user_id}/follow_list",
     dependencies=[Depends(JWTBearer())],
     status_code=status.HTTP_204_NO_CONTENT,
 )
 def view_my_scout_list(
-    credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())]):
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())]
+):
     """
     Allows the authenticated user to view all users he follows.
     """
     current_user = get_user_from_credentials(credentials)
     try:
-        usersf = user_follow_dao.get_all_user_followed(current_user.id_user)
-        if usersf:
-            return usersf
-        else : 
+        users = [user_dao.get_user_by_id(id).to_dict() for id in current_user.follow_list]
+        if users:
+            return users
+        else:
             return f"User {current_user.username} deosn't follow any user yet"
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
@@ -105,7 +110,7 @@ def view_my_scout_list(
     status_code=status.HTTP_201_CREATED,
 )
 def add_favorite(
-    id_movie : int,
+    id_movie: int,
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
 ) -> str:
     """
@@ -117,6 +122,7 @@ def add_favorite(
         return f"User {current_user.username} is now having film {id_movie} in favorite"
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
+
 
 @user_favorite_router.get(
     "/{user_id}/favorite_movies",
@@ -131,10 +137,10 @@ def view_my_favorite_movies(
     """
     current_user = get_user_from_credentials(credentials)
     try:
-        movies = user_favorite_dao.get_favorites(current_user.id_user)
+        movies = [movie_dao.get_by_id(id) for id in current_user.own_film_collection]
         if movies:
             return movies
-        else : 
+        else:
             return f"User {current_user.username} don't have any favorite movie yet"
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
@@ -158,4 +164,3 @@ def delete_favorite(
         return f"User {current_user.username} doesn't have in favorite film {id_movie} anymore"
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
-
