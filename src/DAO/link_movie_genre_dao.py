@@ -7,19 +7,43 @@ from src.DAO.singleton import Singleton
 
 
 class LinkMovieGenreDAO(metaclass=Singleton):
+    """LinkMovieGenreDao is DAO for managing the link between a movie and a
+    genre in the database.
+
+    Attributes
+    ----------
+    db_connection : DBConnector
+        A connector to the database
+
+    """
 
     def __init__(self, db_connection: DBConnector):
-        # create a DB connection object
         self.db_connection = db_connection
 
     def insert(self, id_movie: int, id_genre: int):
+        """Inserts a link between a movie and a genre.
+
+        Parameters
+        ----------
+        id_movie: int
+            The ID of a movie.
+        id_genre : int
+            The ID of a genre.
+        """
         try:
-            # Vérification de l'existence du lien
+            # Verifying the existance of the link
             query = """
-                SELECT COUNT(*) FROM link_movie_genre 
+                SELECT COUNT(*) FROM link_movie_genre
                 WHERE id_movie = %s AND id_genre = %s;
             """
-            result = self.db_connection.sql_query(query, (id_movie, id_genre,), return_type="one")
+            result = self.db_connection.sql_query(
+                query,
+                (
+                    id_movie,
+                    id_genre,
+                ),
+                return_type="one",
+            )
             link_exists = result["count"] > 0 if result else False
             print(link_exists)
 
@@ -29,11 +53,16 @@ class LinkMovieGenreDAO(metaclass=Singleton):
                     INSERT INTO link_movie_genre (id_movie, id_genre)
                     VALUES (%s, %s);
                 """
-                self.db_connection.sql_query(insert_query, (id_movie, id_genre,))
+                self.db_connection.sql_query(
+                    insert_query,
+                    (
+                        id_movie,
+                        id_genre,
+                    ),
+                )
                 print("Insertion successful: Link Movie Genre added.")
             else:
                 print("Link already exists.")
 
         except Exception as e:
             print("Insertion error: ", str(e))
-

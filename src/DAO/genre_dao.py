@@ -18,7 +18,6 @@ class GenreDao(metaclass=Singleton):
     """
 
     def __init__(self, db_connection: DBConnector):
-        # create a DB connection object
         self.db_connection = db_connection
 
     def insert(self, new_genre: Genre):
@@ -31,7 +30,7 @@ class GenreDao(metaclass=Singleton):
             The genre to add.
         """
         try:
-            # Vérification de l'existence du genre
+            # Verifying the existence of the genre
             query = "SELECT id_genre FROM genre WHERE id_genre = %s;"
             genre_exists = self.db_connection.sql_query(
                 query, (new_genre.id,), return_type="one"

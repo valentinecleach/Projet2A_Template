@@ -80,7 +80,8 @@ class DBConnector:
         dict or list[dict] or None
             If return_type is "one", it returns a dictionary
             If return_type is "all", it returns a list of dictionaries
-            If return_type is None or the query doesn't return anything, it returns None
+            If return_type is None or the query doesn't return anything,
+            it returns None
         """
         try:
             if self.connection is None:

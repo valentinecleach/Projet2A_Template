@@ -31,7 +31,7 @@ class KnownForDao(metaclass=Singleton):
             The ID of a movie maker.
         """
         try:
-            # Verifies the existance of the link
+            # Verifying the existance of the link
             query = """
                 SELECT COUNT(*) FROM knownfor
                 WHERE id_movie = %s AND id_movie_maker = %s;

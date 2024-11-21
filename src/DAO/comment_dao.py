@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List  # , Optional
+from typing import List
 
 from src.DAO.db_connection import DBConnector
 from src.DAO.movie_dao import MovieDAO
@@ -22,7 +22,6 @@ class CommentDao(metaclass=Singleton):
     """
 
     def __init__(self, db_connection: DBConnector):
-        # create a DB connection object
         self.db_connection = db_connection
         self.user_dao = UserDao(db_connection)
         self.movie_dao = MovieDAO(db_connection)
@@ -38,7 +37,7 @@ class CommentDao(metaclass=Singleton):
             The comment to insert
         """
         try:
-            # Vérification de l'existence de la relation
+            # Verifying the existance of the relationship
             query = """
                 SELECT COUNT(*) as count FROM comment
                 WHERE id_user = %s AND id_movie = %s;
@@ -101,7 +100,7 @@ class CommentDao(metaclass=Singleton):
         except Exception as e:
             print("Update error:", str(e))
 
-    # READ (Fetch a specific user's comment)
+    # READ (Fetches a specific user's comment)
     def get_comment(
         self,
         id_user: int,
@@ -146,7 +145,7 @@ class CommentDao(metaclass=Singleton):
             print(f"Error while fetching user comment: {e}")
             return []
 
-    # READ (Fetch all comments of a specific movie)
+    # READ (Fetches all comments of a specific movie)
     def get_recent_comments_for_a_movie(
         self,
         id_movie: int,
