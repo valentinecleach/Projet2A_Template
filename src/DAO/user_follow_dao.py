@@ -25,7 +25,6 @@ class UserFollowDao(metaclass=Singleton):
                 (id_user, id_user_followed),
                 return_type="one",
             )
-
             follow_exists = result["count"] > 0 if result else False
 
             if not follow_exists:

@@ -67,7 +67,7 @@ class MovieService:
         return list_movies
 
 
-# db_connection = DBConnector()
-# my_object = MovieService(db_connection)
-# print(my_object.get_movie_by_id(19995))
-# #print(my_object.get_movie_by_title('Aladin'))
+db_connection = DBConnector()
+my_object = MovieService(db_connection)
+print(my_object.get_movie_by_id(1995))
+#print(my_object.get_movie_by_title('Aladin'))

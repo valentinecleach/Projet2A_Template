@@ -41,6 +41,21 @@ class DBConnector:
             self.user = os.environ["user"]
             self.password = os.environ["password"]
             self.schema = os.environ["schema"]
+        self.connection = None  
+        self.cursor = None
+
+    def _connect(self):
+        """Establishes a connection to the database."""
+        if self.connection is None:
+            self.connection = psycopg2.connect(
+                host=self.host,
+                port=self.port,
+                database=self.database,
+                user=self.user,
+                password=self.password,
+                options=f"-c search_path={self.schema}",
+                cursor_factory=RealDictCursor,
+            )
 
     def sql_query(
         self,
@@ -68,23 +83,13 @@ class DBConnector:
             If return_type is None or the query doesn't return anything, it returns None
         """
         try:
-            with psycopg2.connect(
-                host=self.host,
-                port=self.port,
-                database=self.database,
-                user=self.user,
-                password=self.password,
-                options=f"-c search_path={self.schema}",
-                cursor_factory=RealDictCursor,
-            ) as connection:
-                with connection.cursor() as cursor:
+            if self.connection is None:
+                self._connect() 
+            with self.connection:
+                with self.connection.cursor() as cursor:
                     cursor.execute(query, data)
-                    if (
-                        query.strip()
-                        .upper()
-                        .startswith(("CREATE", "INSERT", "UPDATE", "DELETE"))
-                    ):
-                        connection.commit()
+                    if (query.strip().upper().startswith(("CREATE", "INSERT", "UPDATE", "DELETE"))):
+                        self.connection.commit()
                     if return_type == "one":
                         return cursor.fetchone()
                     if return_type == "all":
@@ -93,3 +98,45 @@ class DBConnector:
             print("ERROR")
             print(e)
             raise e
+
+    def start_transaction(self):
+        """Starts a transaction."""
+        try:
+            if self.connection is None:
+                self._connect()
+            if not self.connection.autocommit:
+                self.connection.autocommit = False
+        except Exception as e:
+            print(f"Error starting transaction: {e}")
+            raise e
+
+    def rollback_transaction(self):
+        """Rolls back the transaction."""
+        try:
+            if self.connection is not None and not self.connection.autocommit:
+                self.connection.rollback()
+        except Exception as e:
+            print(f"Error rolling back transaction: {e}")
+            raise e
+
+
+    # def commit_transaction(self):
+    #     """ Commits the transaction, making all changes permanent. """
+    #     try:
+    #         if self.connection is not None:
+    #             self.connection.commit()
+    #     except Exception as e:
+    #         print(f"Error committing transaction: {e}")
+    #         raise e
+
+    # def close(self):
+    #     """Closes the database connection and cursor."""
+    #     try:
+    #         if self.cursor:
+    #             self.cursor.close()
+    #         if self.connection:
+    #             self.connection.close()
+    #     except Exception as e:
+    #         print(f"Error closing connection: {e}")
+    #         raise e
+

@@ -51,12 +51,8 @@ class UserInteractionService:
             The ID of the user to be followed.
         """
         # Vérifier si l'utilisateur essaie de se suivre lui-même
-        try:
-            if follower_id == followee_id:
-                raise ValueError("A user cannot follow themselves.")
-        except ValueError as ve:
-            print(f"Erreur : {ve}")
-        # Ajouter le suivi en base de données si la relation n'existe pas déjà
+        if follower_id == followee_id:
+            raise ValueError("A user cannot follow themselves.")
         try:
             self.user_follow_dao.insert(follower_id, followee_id)
         except Exception as error:

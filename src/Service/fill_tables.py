@@ -122,9 +122,9 @@ class Fill_tables:
         print("Database successfully filled.")
 
 
-##### To fill schema (take less than 10 min) ########
+##### To fill schema (take less than 5 min) ########
 
-db_connection = DBConnector()
-creation_object = TablesCreation(db_connection)
-my_object = Fill_tables(db_connection)
-my_object.fill_the_database()
+# db_connection = DBConnector()
+# creation_object = TablesCreation(db_connection)
+# my_object = Fill_tables(db_connection)
+# my_object.fill_the_database()
