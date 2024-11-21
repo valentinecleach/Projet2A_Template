@@ -104,8 +104,7 @@ class DBConnector:
         try:
             if self.connection is None:
                 self._connect()
-            if not self.connection.autocommit:
-                self.connection.autocommit = False
+            self.connection.autocommit = False
         except Exception as e:
             print(f"Error starting transaction: {e}")
             raise e
@@ -118,7 +117,6 @@ class DBConnector:
         except Exception as e:
             print(f"Error rolling back transaction: {e}")
             raise e
-
 
     # def commit_transaction(self):
     #     """ Commits the transaction, making all changes permanent. """

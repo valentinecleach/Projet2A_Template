@@ -67,7 +67,9 @@ class UserFollowDao(metaclass=Singleton):
     def delete(self, id_user: int, id_user_followed: int):
         """Delete a follow relationship between two users."""
         try:
-            query = "DELETE FROM follower WHERE id_user = %s AND id_user_followed = %s"
+            query = """
+            DELETE FROM follower WHERE id_user = %s AND id_user_followed = %s
+            """
             self.db_connection.sql_query(query, (id_user, id_user_followed))
             print("Record deleted successfully from follower.")
         except Exception as e:
@@ -78,7 +80,7 @@ class UserFollowDao(metaclass=Singleton):
         try:
             query = """
                 SELECT COUNT(*) as count FROM follower
-                WHERE id_user = %s AND id_user_followed = %s;
+                WHERE id_user= %s AND id_user_followed = %s;
             """
             result = self.db_connection.sql_query(
                 query, (id_user, id_user_followed), return_type="one"
