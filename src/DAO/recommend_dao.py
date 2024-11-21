@@ -280,8 +280,8 @@ class RecommendDao(metaclass=Singleton):
             )
             SELECT id_user,
                 (-0.25 * COALESCE(MutualGenres.Mutual_genre, 0) / NULLIF((SELECT MAX(Mutual_genre) FROM MutualGenres), 0) +
-                0.6 * COALESCE(ForwardScores.Score, 0) / NULLIF((SELECT MAX(Score) FROM ForwardScores), 0) +
-                0.4 * COALESCE(AgeGender.Score, 0) / NULLIF((SELECT MAX(Score) FROM AgeGender), 0)) AS final_score
+                0.4 * COALESCE(ForwardScores.Score, 0) / NULLIF((SELECT MAX(Score) FROM ForwardScores), 0) +
+                0.6 * COALESCE(AgeGender.Score, 0) / NULLIF((SELECT MAX(Score) FROM AgeGender), 0)) AS final_score
             FROM Potentialusers p
             LEFT JOIN MutualGenres USING(id_user)
             LEFT JOIN ForwardScores USING(id_user)
