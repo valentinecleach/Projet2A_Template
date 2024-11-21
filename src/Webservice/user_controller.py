@@ -28,7 +28,7 @@ def create_user(
     date_of_birth: date = Query(..., description="format : YYYY-MM-DD"),
     gender: int = Query(..., description="Put 1 for Man, 2 for a Woman"),
     phone_number: Optional[str] = Query(None),
-) -> APIUser:
+):
     """
     Performs validation on the username and password
 
@@ -96,9 +96,12 @@ def update_user_own_profile(
     connected_user = get_user_from_credentials(credentials)
     if new_email_adress:
         connected_user.email_address = new_email_adress
+        is_new_mail = True
+    else:
+        is_new_mail = False
     if new_phone_number:
         connected_user.phone_number = new_phone_number
-    user_dao.update_user(connected_user)
+    user_dao.update_user(connected_user, is_new_mail)
     return f"Account update successfull for user {connected_user.username}"
 
 @user_router.get("/profile", dependencies=[Depends(JWTBearer())])

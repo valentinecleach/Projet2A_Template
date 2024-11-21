@@ -137,21 +137,23 @@ class UserDao(metaclass=Singleton):
     # UPDATE
     def update_user(
         self,
-        connected_user : ConnectedUser
+        connected_user : ConnectedUser,
+        is_new_mail : bool
     ):
         """ 
         Allow the user to update his email_adress or his phone number
         """
         try:
-            if self.check_email_address(connected_user.email_address):
-                update_query = """
-                    UPDATE users
-                    SET email_address = %s, phone_number = %s
-                    WHERE id_user = %s;
-                """
-                values = (connected_user.email_address, connected_user.phone_number, connected_user.id_user)
-                self.db_connection.sql_query(update_query, values)
-                print(f"Update successful for user {connected_user.username}")
+            if is_new_mail:
+                self.check_email_address(connected_user.email_address)
+            update_query = """
+                UPDATE users
+                SET email_address = %s, phone_number = %s
+                WHERE id_user = %s;
+            """
+            values = (connected_user.email_address, connected_user.phone_number, connected_user.id_user)
+            self.db_connection.sql_query(update_query, values)
+            print(f"Update successful for user {connected_user.username}")
         except Exception as e:
             print("Update error:", str(e))
 
