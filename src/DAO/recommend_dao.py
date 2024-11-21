@@ -272,11 +272,11 @@ class RecommendDao(metaclass=Singleton):
             ),
             -- Calculate age and gender scores
             AgeGender AS (
-                SELECT u.id_user, COUNT(*) AS Score
+                SELECT f.id_user_followed as id_user, COUNT(*) AS Score
                 FROM users u
                 LEFT JOIN follower f ON u.id_user = f.id_user
                 WHERE {condition}
-                GROUP BY u.id_user
+                GROUP BY f.id_user_followed
             )
             SELECT id_user,
                 (-0.25 * COALESCE(MutualGenres.Mutual_genre, 0) / NULLIF((SELECT MAX(Mutual_genre) FROM MutualGenres), 0) +
