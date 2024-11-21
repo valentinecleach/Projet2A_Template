@@ -50,29 +50,29 @@ def test_find_movie_to_collect_no_id():
 def test_find_movie_to_collect_movies_found():
     recommendservice = RecommendService(DBConnector)
 
-    movies = recommendservice.find_movie_to_collect(id_user = )
+    movies = recommendservice.find_movie_to_collect(id_user = 217)
     
     result = recommendservice.find_movie_to_collect(id_user)[0]
     
-    assert result.id_movie == 
+    assert result.id_movie == 19965
 
 
 def test_find_users_to_follow_no_users_and_popular():
     recommendservice = RecommendService(DBConnector)
 
-    id_user = 
+    id_user = 217
     
     users = recommendservice.find_movie_to_collect(id_user)
     
     assert recommendservice.recommend_dao.recommend_users_to_follow(id_user) is None
     result = recommendservice.find_movie_to_collect(id_user)[0]
     
-    assert result.id_movie == 
+    assert result.id_movie == 19965
 
 
 def test_find_users_to_follow_no_users_and_popular():
     recommendservice = RecommendService(DBConnector)
-    id_user = 
+    id_user = 217
     
     users = recommendservice.find_movie_to_collect(id_user)
     

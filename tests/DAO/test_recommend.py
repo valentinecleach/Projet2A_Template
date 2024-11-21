@@ -4,7 +4,7 @@ from typing import List
 from unittest.mock import MagicMock
 
 from src.DAO.db_connection import DBConnector
-from src.DAO.recommend import Recommend
+from src.DAO.recommend_dao import RecommendDao
 from src.DAO.user_dao import UserDao
 from src.Model.connected_user import ConnectedUser
 from src.Model.genre import Genre
