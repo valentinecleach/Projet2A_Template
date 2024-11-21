@@ -112,41 +112,6 @@ class MockDBConnection:
                 }
 
 
-# pas de methode set search path? Pq on a ce
-def test_set_search_path(mocker):
-    """SVP ajoutez de la docu pour qu'on puisse comprendre qqe chose. Merci :)"""
-    mock_connection, mock_cursor = mock_db_connection(mocker)
-
-    mock_connection._DBConnection__set_search_path("projet_info_test")
-
-    mock_cursor.execute.assert_called_once_with("SET search_path TO projet_info_test;")
-    mock_connection.commit.assert_called_once()
-
-
-# python -m pytest tests/DAO/test_db.py -k 'test_create_tables'
-# NE MARCHE PAS
-def test_create_tables(mocker):
-    """Teste la création de tables avec la méthode sql_query"""
-    # GIVEN
-    mock_connection, mock_cursor = mock_db_connection(mocker)
-
-    create_table_query = """ 
-    CREATE TABLE IF NOT EXISTS test_table_MovieMaker( 
-        test_id_movie_maker SERIAL PRIMARY KEY, 
-        test_adult BOOLEAN NOT NULL DEFAULT FALSE, 
-        test_name VARCHAR(255) NOT NULL 
-        );
-    """
-
-    # WHEN
-    mock_connection.sql_query(query=create_table_query)
-
-    # THEN: Verify the calls were made to execute
-    mock_connection.sql_query.assert_called_with(query=create_table_query)
-    mock_connection.sql_query.assert_called_once()
-
-
-# NE MARCHE PAS VRMT CAR IL NE TEST RIEN
 def test_insert(mocker):
     """Teste la création de tables avec la méthode sql_query"""
     # GIVEN
@@ -169,3 +134,4 @@ def test_insert(mocker):
     mock_connection.sql_query(insert_table_query)
 
     # GIVEN
+

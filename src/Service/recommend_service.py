@@ -43,6 +43,7 @@ class RecommendService:
         Finds movies to collect for a given user.
 
         :param id_user: User ID for whom to find movie recommendations.
+        dict
         :return: List of recommended movies to collect or popular movies if no recommendations are found.
         """
         if not id_user:
