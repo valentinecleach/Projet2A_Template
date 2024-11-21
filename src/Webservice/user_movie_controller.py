@@ -13,11 +13,11 @@ from src.Webservice.init_app import (
 from src.Webservice.jwt_bearer_webservice import JWTBearer
 from src.Webservice.user_controller import get_user_from_credentials
 
-user_movie_router = APIRouter(prefix="/users_movie", tags=["User Movie"])
-
+rating_movie_router = APIRouter(prefix="/rating", tags=["Rating Movie"])
+comment_movie_router = APIRouter(prefix="/comment", tags=["Comment Movie"])
 #### Rating Section ###########
 
-@user_movie_router.post(
+@rating_movie_router.post(
     "/{user_id}/add_or_update_movie_rating",
     dependencies=[Depends(JWTBearer())],
     status_code=status.HTTP_201_CREATED,
@@ -35,7 +35,7 @@ def add_or_update_movie_rate(
         raise HTTPException(status_code=400, detail=str(error)) from error
 
 
-@user_movie_router.get(
+@rating_movie_router.get(
     "/{user_id}/get_a_user_rate",
     dependencies=[Depends(JWTBearer())],
     status_code=status.HTTP_201_CREATED,
@@ -52,15 +52,21 @@ def get_ratings_for_a_user(
     try:
         if id_movie :
             rating = user_movie_service.rating_dao.get_rating(current_user.id_user, id_movie)
-            return rating
+            if rating:
+                return f"{rating}"
+            else:
+                f"You haven't rated this movie yet!"
         else :
             ratings = user_movie_service.get_ratings_user(current_user.id_user)
-            return ratings
+            if ratings:
+                return [f"{rating}" for rating in ratings]
+            else:
+                f"You haven't rated a movie yet!"
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
 
 
-@user_movie_router.delete(
+@rating_movie_router.delete(
     "/{user_id}/delete_a_movie_rate",
     dependencies=[Depends(JWTBearer())],
     status_code=status.HTTP_201_CREATED,
@@ -80,7 +86,7 @@ def delete_a_user_rating(
 
 ##### Comment Section ##############
 
-@user_movie_router.post(
+@comment_movie_router.post(
     "/{user_id}/comment",
     dependencies=[Depends(JWTBearer())],
     status_code=status.HTTP_201_CREATED,
@@ -100,7 +106,7 @@ def add_or_update_comment(
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
 
-@user_movie_router.get(
+@comment_movie_router.get(
     "/{user_id}/get_a_user_comment",
     dependencies=[Depends(JWTBearer())],
     status_code=status.HTTP_201_CREATED,
@@ -117,14 +123,20 @@ def get_comments_for_a_user(
     try:
         if id_movie :
             comment = user_movie_service.comment_dao.get_comment(current_user.id_user, id_movie)
-            return comment
+            if comment : 
+                return f"{comment}"
+            else:
+                return f"You haven't commented this movie yet!"
         else :
             comments = user_movie_service.get_comments_user(current_user.id_user)
-            return comments
+            if comments : 
+                return [f"{c}" for c in comments]
+            else:
+                return f"You haven't commented a movie yet!"
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
 
-@user_movie_router.get(
+@comment_movie_router.get(
     "/{user_id}/get_last_comment",
     dependencies=[Depends(JWTBearer())],
     status_code=status.HTTP_201_CREATED,
@@ -140,14 +152,14 @@ def get_last_comments_movie(
     try:
         comments = user_movie_service.comment_dao.get_recent_comments_for_a_movie(id_movie = id_movie, limit = 10)
         if comments :
-            return comments
+            return [f"{c}" for c in comments]
         else:
             return "No comments for this movie for the moment"
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
 
 
-@user_movie_router.delete(
+@comment_movie_router.delete(
     "/{user_id}/delete_comment_for_a_movie",
     dependencies=[Depends(JWTBearer())],
     status_code=status.HTTP_201_CREATED,

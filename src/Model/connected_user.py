@@ -36,6 +36,7 @@ class ConnectedUser(User):
     def to_dict(self):
         # Masque le mot de passe
         return {
+            "id_user": self.id_user,
             "username": self.username,
             "own_film_collection": self.own_film_collection,
             "follow_list": self.follow_list,

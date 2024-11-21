@@ -13,7 +13,7 @@ from src.Webservice.recommendation_controller import recommendation_router
 from src.Webservice.movie_controller import movie_router
 from src.Webservice.movie_maker_controller import movie_maker_router
 from src.Webservice.user_controller import user_router
-from src.Webservice.user_movie_controller import user_movie_router
+from src.Webservice.user_movie_controller import rating_movie_router, comment_movie_router
 
 db_connection = DBConnector()
 creation_object = TablesCreation(db_connection)  # creation of all table before start
@@ -33,5 +33,6 @@ def run_app():
     app.include_router(user_favorite_router)
     app.include_router(recommendation_router)
     app.include_router(movie_maker_router)
-    app.include_router(user_movie_router)
+    app.include_router(rating_movie_router)
+    app.include_router(comment_movie_router)
     uvicorn.run(app, port=8000, host="localhost")
