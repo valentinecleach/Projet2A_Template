@@ -182,7 +182,17 @@ def test_get_movie_by_title_in_tmdb():
 
 
 def test_get_movie_by_title_not_found():
-    pass
+    # GIVEN
+    movieservice = MovieService(MockDBConnection)
+
+    # WHEN / THEN
+    # Vérification du mock pour ne trouver le film ni dans la base de données ni dans TMDB
+    assert movieservice.movie_dao.get_by_title("The Joyful Christmas Exam") is None
+    assert movieservice.movie_tmdb.get_movies_by_title("The Joyful Christmas Exam") is None
+
+    result = movieservice.get_movie_by_title("The Joyful Christmas Exam")
+
+    assert result is None
 
 # ------ CREATE MOVIES -----------
 
