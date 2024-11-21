@@ -99,23 +99,6 @@ class MovieMakerDAO(metaclass=Singleton):
         except Exception as e:
             print("Delete error : ", str(e))
 
-    def get_by_id(self, id_movie_maker: int) -> MovieMaker | None:   # faire à la fin si temps sinon on l'enlève.
-        try:
-            query = """
-                    SELECT * FROM movie_maker
-                    WHERE id_movie_maker = %s;
-                """
-            value = (id_movie_maker,)
-            result = self.db_connection.sql_query(query, value, return_type="one")
-            if result:
-                the_movie_maker = dict(result)
-                return MovieMaker(**the_movie_maker)
-            else:
-                print(f"NO MovieMaker with the id {id_movie_maker} in the database.")
-                return None
-        except Exception as e:
-            print("Error during recovery by id : ", str(e))
-            return None
 
     def get_by_name(self, name: str) -> Optional[List[MovieMaker]]:
         try:
@@ -148,6 +131,24 @@ class MovieMakerDAO(metaclass=Singleton):
         except Exception as e:
             print("Error during retrieval by name in the database:", str(e))
             return None
+
+    # def get_by_id(self, id_movie_maker: int) -> MovieMaker | None:   # faire à la fin si temps sinon on l'enlève.
+    #     try:
+    #         query = """
+    #                 SELECT * FROM movie_maker
+    #                 WHERE id_movie_maker = %s;
+    #             """
+    #         value = (id_movie_maker,)
+    #         result = self.db_connection.sql_query(query, value, return_type="one")
+    #         if result:
+    #             the_movie_maker = dict(result)
+    #             return MovieMaker(**the_movie_maker)
+    #         else:
+    #             print(f"NO MovieMaker with the id {id_movie_maker} in the database.")
+    #             return None
+    #     except Exception as e:
+    #         print("Error during recovery by id : ", str(e))
+    #         return None
 
 # db_connection = DBConnector()
 # my_object = MovieMakerDAO(db_connection)

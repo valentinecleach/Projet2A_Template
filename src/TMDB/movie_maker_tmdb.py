@@ -113,18 +113,18 @@ class MovieMakerTMDB:
         else:
             print("You have to enter a name")
 
-    def get_movie_maker_by_id(self, id_movie_maker: int) -> MovieMaker | None:
-        if id_movie_maker:
-            result = self.get_some_movie_maker_infos_by_id(id_movie_maker)
-            if result:
-                name_movie_maker = result['name']
-                result2 = self.get_some_movie_maker_infos_by_name(name_movie_maker)  # pb de requete sql NONE
-                for infos in result2 :
-                    if infos['id_movie_maker'] == id_movie_maker:
-                        result.update(infos) 
-                        break
-            return MovieMaker(**result)
-        return None
+    # def get_movie_maker_by_id(self, id_movie_maker: int) -> MovieMaker | None:
+    #     if id_movie_maker:
+    #         result = self.get_some_movie_maker_infos_by_id(id_movie_maker)
+    #         if result:
+    #             name_movie_maker = result['name']
+    #             result2 = self.get_some_movie_maker_infos_by_name(name_movie_maker)  # pb de requete sql NONE
+    #             for infos in result2 :
+    #                 if infos['id_movie_maker'] == id_movie_maker:
+    #                     result.update(infos) 
+    #                     break
+    #         return MovieMaker(**result)
+    #     return None
 
 # tmdb = MovieMakerTMDB()
 # print(tmdb.get_some_movie_maker_infos_by_name("james cameron")) # peut pas être executer sans instance de db_connection

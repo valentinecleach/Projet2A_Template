@@ -29,8 +29,7 @@ class MovieMakerService:
         # Firstly, we look for the MovieMaker in the database
         movie_makers = self.movie_maker_dao.get_by_name(name)
         if movie_makers:
-            return movie_makers # a list of 1 or many MovieMakers
-
+            return movie_makers # a list of 1 or many movie maker
         # If not in our database, we look for the MovieMaker in the TMDB api.
         else:
             movie_maker_from_tmdb = self.movie_maker_tmdb.get_movie_maker_by_name(name)
