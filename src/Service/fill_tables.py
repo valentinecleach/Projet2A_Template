@@ -72,7 +72,7 @@ class Fill_tables:
         for id_user in id_user_created:
             for k in range(2): # we add max 2 link per user. Less if 2 time the same link
                 id_followed = random.choice(id_user_created)
-                while id_followed == id_user_created:
+                while id_followed == id_user:
                     id_followed = random.choice(id_user_created)
                 self.user_interaction_service.follow_user(id_user, id_followed)
 
