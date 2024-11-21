@@ -114,19 +114,19 @@ class Fill_tables:
                 self.user_movie_service.add_or_update_comment(id_user, id_movie, comment)
 
     def fill_the_database(self):
-        # id_user_created = self.fill_table_user(100)
-        # id_movie_created = self.fill_table_movie(100, 100)
-        # self.fill_table_follower(id_user_created)
-        # self.fill_table_favorite(id_user_created, id_movie_created)
-        # self.fill_table_rating(id_user_created, id_movie_created)
-        # self.fill_table_comment(id_user_created, id_movie_created)
+        id_user_created = self.fill_table_user(100)
+        id_movie_created = self.fill_table_movie(100, 100)
+        self.fill_table_follower(id_user_created)
+        self.fill_table_favorite(id_user_created, id_movie_created)
+        self.fill_table_rating(id_user_created, id_movie_created)
+        self.fill_table_comment(id_user_created, id_movie_created)
         self.fill_table_movie_maker()
         print("Database successfully filled.")
 
-db_connection = DBConnector()
-creation_object = TablesCreation(db_connection)
-my_object = Fill_tables(db_connection)
-my_object.fill_the_database()
-# my_object.fill_table_movie(19900, 100)
-# my_object.fill_table_follower(20)
-# my_object.fill_table_favorite(250)
+
+##### To fill schema (take less than 10 min) ########
+
+# db_connection = DBConnector()
+# creation_object = TablesCreation(db_connection)
+# my_object = Fill_tables(db_connection)
+# my_object.fill_the_database()
