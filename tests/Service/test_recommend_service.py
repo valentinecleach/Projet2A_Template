@@ -85,7 +85,7 @@ def test_find_movie_to_collect_popular_found():
     assert result.id_movie == 19965
 
 
-def test_find_movie_to_collect_popular_found():
+def test_find_movie_to_collect_not_found():
     # GIVEN
     recommendservice = RecommendService(DBConnector)
     id_user = 217
@@ -93,6 +93,6 @@ def test_find_movie_to_collect_popular_found():
     # WHEN
     assert recommendservice.recommend_dao.recommend_movies(id_user, filter) is None
     assert recommendservice.recommend_dao.get_popular_movies(filter) is None
-    result = recommendservice.find_movie_to_collect(id_user, filter)[0]
+    result = recommendservice.find_movie_to_collect(id_user, filter)
     # THEN
-    assert result.id_movie == 19965
+    assert result.id_movie is None
