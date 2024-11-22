@@ -2,9 +2,10 @@ from typing import Dict, List
 
 from src.DAO.db_connection import DBConnector
 from src.DAO.singleton import Singleton
-from src.Model.connected_user import ConnectedUser
 from src.DAO.user_favorites_dao import UserFavoriteDao
 from src.DAO.user_follow_dao import UserFollowDao
+from src.Model.connected_user import ConnectedUser
+
 
 class UserDao(metaclass=Singleton):
     """
@@ -27,7 +28,7 @@ class UserDao(metaclass=Singleton):
                     WHERE username = %s;
                 """
             result = result = self.db_connection.sql_query(
-                query, (new_user["username"],), return_type = "one"
+                query, (new_user["username"],), return_type="one"
             )
             user_exist = result["count"] > 0  # True si film, False sinon
 
@@ -55,11 +56,15 @@ class UserDao(metaclass=Singleton):
                     ),
                     new_user["password_token"],
                 )
-                result = self.db_connection.sql_query(insert_query, values, return_type = "one")
-                if result :
-                    id_user = result['id_user']
-                    new_user.update({'id_user' : id_user})
-                    print(f"Insertion user successful: {new_user['username']}, with id : {result['id_user']}")
+                result = self.db_connection.sql_query(
+                    insert_query, values, return_type="one"
+                )
+                if result:
+                    id_user = result["id_user"]
+                    new_user.update({"id_user": id_user})
+                    print(
+                        f"Insertion user successful: {new_user['username']}, with id : {result['id_user']}"
+                    )
                     return ConnectedUser(**new_user)
         except Exception as e:
             print(f"Insertion error: {str(e)}")
@@ -76,7 +81,9 @@ class UserDao(metaclass=Singleton):
             own_film_collection = self.user_favorites_dao.get_favorites(id_user)
             follow_list = self.user_follow_dao.get_all_user_followed(id_user)
             user = dict(result)
-            user.update({'own_film_collection' : own_film_collection , 'follow_list' : follow_list })
+            user.update(
+                {"own_film_collection": own_film_collection, "follow_list": follow_list}
+            )
             return ConnectedUser(**user)  # Crée et retourne l'utilisateur connecté
         else:
             return None  # Aucun utilisateur trouvé
@@ -95,15 +102,15 @@ class UserDao(metaclass=Singleton):
                 query, (search_pattern,), return_type="all"
             )
             if results:
-                users_read = [self.get_user_by_id(user['id_user']) for user in results]  # .to_dict()
+                users_read = [
+                    self.get_user_by_id(user["id_user"]) for user in results
+                ]  # .to_dict()
                 return users_read
             else:
                 return None
         except Exception as e:
             print(f"Error while searching: {e}")
             return None
-
-
 
     # READ (Fetch all users)
     def get_all_users(self, limit: int = 10, offset: int = 0) -> List[ConnectedUser]:
@@ -135,12 +142,8 @@ class UserDao(metaclass=Singleton):
             return None
 
     # UPDATE
-    def update_user(
-        self,
-        connected_user : ConnectedUser,
-        is_new_mail : bool
-    ):
-        """ 
+    def update_user(self, connected_user: ConnectedUser, is_new_mail: bool):
+        """
         Allow the user to update his email_adress or his phone number
         """
         try:
@@ -151,7 +154,11 @@ class UserDao(metaclass=Singleton):
                 SET email_address = %s, phone_number = %s
                 WHERE id_user = %s;
             """
-            values = (connected_user.email_address, connected_user.phone_number, connected_user.id_user)
+            values = (
+                connected_user.email_address,
+                connected_user.phone_number,
+                connected_user.id_user,
+            )
             self.db_connection.sql_query(update_query, values)
             print(f"Update successful for user {connected_user.username}")
         except Exception as e:
