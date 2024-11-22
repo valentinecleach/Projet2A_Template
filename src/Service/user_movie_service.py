@@ -70,6 +70,14 @@ class UserMovieService:
         except Exception as e:
             print(f"Error while deleting user {id_user}: {e}")
 
+    def get_ratings_user_follower(self, id_user, id_movie : Optional[int] = None):
+        connected_user = self.user_dao.get_user_by_id(id_user)
+        list_follower = connected_user.follow_list
+        if id_movie :
+            pass
+        else:
+            pass
+
     def delete_a_user_rating(self, rating: Rating):
         try:
             movie = rating.movie
