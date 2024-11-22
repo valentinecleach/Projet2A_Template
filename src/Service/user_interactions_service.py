@@ -1,12 +1,8 @@
-from datetime import datetime
-
 from src.DAO.comment_dao import CommentDao
 from src.DAO.db_connection import DBConnector
-from src.DAO.rating_dao import RatingDao
 from src.DAO.user_dao import UserDao
 from src.DAO.user_favorites_dao import UserFavoriteDao
 from src.DAO.user_follow_dao import UserFollowDao
-from src.Model.comment import Comment
 from src.Service.movie_service import MovieService
 
 
@@ -16,9 +12,7 @@ class UserInteractionService:
         self.user_dao = UserDao(db_connection)
         self.user_follow_dao = UserFollowDao(db_connection)
         self.user_favorites_dao = UserFavoriteDao(db_connection)
-        self.rating_dao = RatingDao(db_connection)
         self.comment_dao = CommentDao(db_connection)
-        self.rating_dao = RatingDao(db_connection)
         self.movie_service = MovieService(db_connection)
 
     # def search_user(self, username: str):
@@ -37,9 +31,7 @@ class UserInteractionService:
 
     # # focntionne si correspondance exacte avec le pseudo
 
-    def follow_user(
-        self, follower_id: int, followee_id: int
-    ) -> None:  
+    def follow_user(self, follower_id: int, followee_id: int) -> None:
         """
         Allows a user to follow another user.
 
