@@ -21,7 +21,11 @@ creation_object = TablesCreation(db_connection)  # creation of all table before 
 
 def run_app():
 
-    app = FastAPI(title="Projet Info 2A : NO CODE", description="Enjoy the NO CODE API")
+    app = FastAPI(title="Welcome on the NOCODE API", 
+    description="""
+    This API allows users to get information about movies, movie makers, 
+    rate them, add comments and interact with other users. 
+    I let you create an account for an optimal experience.""")
 
     @app.get("/", include_in_schema=False)
     async def redirect_to_docs(request: Request):

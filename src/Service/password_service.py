@@ -15,7 +15,20 @@ import bcrypt
 
 
 def hash_password(password: str, salt: Optional[List[str]] = None) -> str:
-    """Hashes the password. The salt is optional"""
+    """Hashes the password. The salt is optional
+
+    parameters
+    ----------
+    password: str
+        password enter by the user
+    salt: list
+        generate a square hash
+    
+    returns
+    -------
+    str
+
+    """
     if salt is None:
         hashed_password = hashlib.sha256(password.encode("utf-8")).hexdigest()
     else:
@@ -25,7 +38,14 @@ def hash_password(password: str, salt: Optional[List[str]] = None) -> str:
 
 
 def create_salt(username: str, user_password_token: Optional[str] = None) -> list[str]:
-    """Creates a salt for the password to be hashed"""
+    """Creates a salt for the password to be hashed
+    
+    parameters
+    ----------
+    username: str
+    user_password_token: str
+        the token of the password 
+    """
     # Création des parties de sel
     password_token = (
         user_password_token if user_password_token else secrets.token_hex(16)
@@ -38,6 +58,7 @@ def create_salt(username: str, user_password_token: Optional[str] = None) -> lis
 
 
 def verify_password(username, password_tried, user_password_token, hashed_password):
+    "verify the password"
     salt = create_salt(username, user_password_token)
     hashed_password_tried = hash_password(password=password_tried, salt=salt)
     return hashed_password_tried == hashed_password

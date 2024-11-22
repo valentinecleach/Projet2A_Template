@@ -7,13 +7,35 @@ from src.TMDB.movie_tmdb import MovieTMDB
 
 
 class MovieService:
+    """ 
+    Parameters
+    ----------
+    db_connection: DBConnector
+        A connector to a database
+    movie_dao: MovieMakerDao
+        A DAO object used for operations related to movies makers.
+    movie_tmdb: MovieMakerTMDB
+        An element from the module that allows picking from the database
+    """
     def __init__(self, db_connection: DBConnector):
+        "constructor"
         self.db_connection = db_connection
         self.movie_dao = MovieDAO(db_connection)
         self.movie_tmdb = MovieTMDB()
 
     def get_movie_by_id(self, movie_id: int) -> Movie | None:
-        """Find movie by id"""
+        """Find movie by id
+
+    parameters
+    ----------
+    movie_id: int
+        the movie'id
+
+    returns
+    -------
+    movie: str
+        the name of the movie appears
+    """
         movie = self.movie_dao.get_by_id(movie_id)
         if movie:
             print("Movie get from database")

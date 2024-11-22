@@ -1,21 +1,23 @@
-from typing import List, Dict, Any
+from typing import Any, Dict, List
+
 from src.Model.movie_collection import MovieCollection
+
 
 class MovieCollectionService:
 
     @classmethod
     def create_list_of_collection(cls, data: Dict[str, Any]) -> 'MovieCollection':
-        """Méthode de classe pour créer une instance à partir de données complètes.
+        """Class method to create an instance from complete data.
         
         Parameters:
         ----------
         data : dict
-            Un dictionnaire contenant toutes les données, dont certaines peuvent être ignorées.
+            A dictionary containing all data, some of which may be ignored.
         
-        Returns:
+        Returns
         -------
         MovieCollection
-            Une instance de MovieCollection contenant uniquement l'id et le nom.
+            An instance of MovieCollection containing id and name only
         """
         if data:
             return [MovieCollection(id=data['id'], name=data['name'])]

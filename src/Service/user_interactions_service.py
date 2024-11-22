@@ -7,6 +7,22 @@ from src.Service.movie_service import MovieService
 
 
 class UserInteractionService:
+    """ interaction between users
+
+    Attributes
+    ----------
+    db_connection: DBConnector
+        A connector to a database
+    user_dao: UserDao
+        object to interact with the database user
+    user_follow_dao: UserFollowDao  
+    user_favourites_dao: UserFavouriteDao
+    comment_dao: CommentDao
+    movieservice: MovieService
+
+    """
+
+
     def __init__(self, db_connection: DBConnector):
         self.db_connection = db_connection
         self.user_dao = UserDao(db_connection)

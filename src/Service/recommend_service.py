@@ -7,7 +7,10 @@ class RecommendService:
         """
         Initializes the recommendation service with a database connection.
 
-        :param db_connection: Instance of DBConnector for database connection.
+        parameters
+        ----------
+        db_connection: DBConnector
+            Instance of DBConnector for database connection.
         """
         self.db_connection = db_connection
         self.recommend_dao = RecommendDao(db_connection)
@@ -42,9 +45,11 @@ class RecommendService:
         """
         Finds movies to collect for a given user.
 
-        :param id_user: User ID for whom to find movie recommendations.
-        dict
-        :return: List of recommended movies to collect or popular movies if no recommendations are found.
+        parameters
+        ----------
+        id_user: int
+            User ID for whom to find movie recommendations.
+        filter: dict
         """
         if not id_user:
             print("User ID is required")

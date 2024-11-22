@@ -10,7 +10,7 @@ class Singleton(type):
 
     _instances = {}
 
-    def __call__(cls, *args, **kwargs):  # -> Singleton:
+    def __call__(cls, *args, **kwargs):
         """Creates or returns an instance of the class.
 
         Parameters

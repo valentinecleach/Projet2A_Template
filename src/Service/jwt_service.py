@@ -1,3 +1,5 @@
+
+
 # JSON Web tokens.
 
 # Allows to decode, verify and generate JWT
@@ -7,10 +9,12 @@ import time
 # "pip install jwt" a ne pas oublier avant
 # et "pip install --upgrade PyJWT"
 import jwt
-#from jwt.exceptions import ExpiredSignatureError
 
 # Model
 from src.Model.jwt_response import JWTResponse
+
+#from jwt.exceptions import ExpiredSignatureError
+
 
 
 class JwtService:
@@ -19,6 +23,8 @@ class JwtService:
     """
 
     def __init__(self, secret: str = "", algorithm: str = "HS256"):
+        """Creator
+        """
         if secret == "":
             self.secret = os.environ["JWT_SECRET"]
         else:
