@@ -11,7 +11,7 @@ from src.Model.movie import Movie
 
 
 class RecommendDao(metaclass=Singleton):
-    """ReccomendDao is DAO for managing recommendations of movies or users to follow in the database.
+    """RecommendDao is DAO for managing recommendations of movies or users to follow in the database.
 
     Attributes
     ----------
