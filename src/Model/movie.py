@@ -14,8 +14,8 @@ class Movie(BaseModel):
     A series of moving pictures, usually shown in a cinema or on television and
     often telling a story
 
-    Parameters:
-    -----------
+    Attributes
+    ----------
     id_movie : int
         The id of a movie
     title : str
@@ -86,6 +86,14 @@ class Movie(BaseModel):
         )
 
     def __eq__(self, other):
+        """compare two instances of the Movie class,checking
+        whether their internal attributes are identical
+
+        Attributes
+        ----------
+        other: any
+            The object with which  "self" is compared 
+        """
         if isinstance(other, Movie):
             return self.__dict__ == other.__dict__
         return False
