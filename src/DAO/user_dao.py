@@ -2,9 +2,10 @@ from typing import Dict, List
 
 from src.DAO.db_connection import DBConnector
 from src.DAO.singleton import Singleton
-from src.Model.connected_user import ConnectedUser
 from src.DAO.user_favorites_dao import UserFavoriteDao
 from src.DAO.user_follow_dao import UserFollowDao
+from src.Model.connected_user import ConnectedUser
+
 
 class UserDao(metaclass=Singleton):
     """UserDao is DAO for managing users in the database.
@@ -16,8 +17,9 @@ class UserDao(metaclass=Singleton):
     user_favorites_dao : UserFavoriteDao
         A DAO a users favorite movies
     user_follow_dao : UserFollowDao
-        A DAO of the users that a user follows 
+        A DAO of the users that a user follows
     """
+
     def __init__(self, db_connection: DBConnector):
         """Constructor"""
         self.db_connection = db_connection
@@ -26,7 +28,7 @@ class UserDao(metaclass=Singleton):
 
     def insert(self, new_user: Dict):
         """Inserts a Connected User into the database
-        
+
         Parameters
         ----------
         new_user : Dict
@@ -40,7 +42,7 @@ class UserDao(metaclass=Singleton):
                     WHERE username = %s;
                 """
             result = result = self.db_connection.sql_query(
-                query, (new_user["username"],), return_type = "one"
+                query, (new_user["username"],), return_type="one"
             )
             user_exist = result["count"] > 0  # True if film b but False otherwise
 
@@ -68,23 +70,27 @@ class UserDao(metaclass=Singleton):
                     ),
                     new_user["password_token"],
                 )
-                result = self.db_connection.sql_query(insert_query, values, return_type = "one")
-                if result :
-                    id_user = result['id_user']
-                    new_user.update({'id_user' : id_user})
-                    print(f"Insertion user successful: {new_user['username']}, with id : {result['id_user']}")
+                result = self.db_connection.sql_query(
+                    insert_query, values, return_type="one"
+                )
+                if result:
+                    id_user = result["id_user"]
+                    new_user.update({"id_user": id_user})
+                    print(
+                        f"Insertion user successful: {new_user['username']}, with id : {result['id_user']}"
+                    )
                     return ConnectedUser(**new_user)
         except Exception as e:
             print(f"Insertion error: {str(e)}")
 
     def get_user_by_id(self, id_user: int) -> ConnectedUser | None:
         """Fetches a single user by its ID.
-        
+
         Parameters
         ----------
         id_user : int
             The ID of a user to fetch
-            
+
         Returns
         -------
         ConnectedUser | None
@@ -100,7 +106,9 @@ class UserDao(metaclass=Singleton):
             own_film_collection = self.user_favorites_dao.get_favorites(id_user)
             follow_list = self.user_follow_dao.get_all_user_followed(id_user)
             user = dict(result)
-            user.update({'own_film_collection' : own_film_collection , 'follow_list' : follow_list })
+            user.update(
+                {"own_film_collection": own_film_collection, "follow_list": follow_list}
+            )
             return ConnectedUser(**user)  # Creates and returns a connected user
         else:
             return None  # No user found
@@ -112,7 +120,7 @@ class UserDao(metaclass=Singleton):
         ----------
         username : str
             The username of a user to look for.
-        
+
         Returns
         -------
         List[ConnectedUser] | None
@@ -128,7 +136,9 @@ class UserDao(metaclass=Singleton):
                 query, (search_pattern,), return_type="all"
             )
             if results:
-                users_read = [self.get_user_by_id(user['id_user']) for user in results]  # .to_dict()
+                users_read = [
+                    self.get_user_by_id(user["id_user"]) for user in results
+                ]  # .to_dict()
                 return users_read
             else:
                 return None
@@ -136,8 +146,9 @@ class UserDao(metaclass=Singleton):
             print(f"Error while searching: {e}")
             return None
 
-    
-    def get_all_users(self, limit: int = 10, offset: int = 0) -> List[ConnectedUser] | None:
+    def get_all_users(
+        self, limit: int = 10, offset: int = 0
+    ) -> List[ConnectedUser] | None:
         """Fetches all users within a limit
 
         Parameters
@@ -164,7 +175,7 @@ class UserDao(metaclass=Singleton):
 
     # check email_address, username
     def check_email_address(self, email_address: str) -> True | None:
-        """Checks if an email adress is associated to a user in the database. 
+        """Checks if an email adress is associated to a user in the database.
 
         Parameters
         ----------
@@ -174,9 +185,9 @@ class UserDao(metaclass=Singleton):
         Returns
         -------
         True | None
-            If the email_adress is associated to a user, the method returns True. 
-            If not, it returns None. 
-        """ 
+            If the email_adress is associated to a user, the method returns True.
+            If not, it returns None.
+        """
         try:
             query = f"SELECT * FROM users WHERE email_address = %s"
             results = self.db_connection.sql_query(
@@ -192,12 +203,8 @@ class UserDao(metaclass=Singleton):
             return None
 
     # UPDATE
-    def update_user(
-        self,
-        connected_user : ConnectedUser,
-        is_new_mail : bool
-    ):
-        """ Allows a user to update their email_adress.
+    def update_user(self, connected_user: ConnectedUser, is_new_mail: bool):
+        """Allows a user to update their email_adress.
 
         Parameters
         ----------
@@ -215,14 +222,17 @@ class UserDao(metaclass=Singleton):
                 SET email_address = %s, phone_number = %s
                 WHERE id_user = %s;
             """
-            values = (connected_user.email_address, connected_user.phone_number, connected_user.id_user)
+            values = (
+                connected_user.email_address,
+                connected_user.phone_number,
+                connected_user.id_user,
+            )
             self.db_connection.sql_query(update_query, values)
             print(f"Update successful for user {connected_user.username}")
         except Exception as e:
             print("Update error:", str(e))
 
-    
-    def delete_user(self, id_user : int):
+    def delete_user(self, id_user: int):
         """Deletes a user from the database
 
         Parameters
