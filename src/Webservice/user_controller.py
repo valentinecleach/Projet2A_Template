@@ -13,13 +13,17 @@ from src.Model.jwt_response import JWTResponse
 from src.Service.password_service import check_password_strenght, verify_password
 
 # Webservice
-from src.Webservice.init_app import jwt_service, user_dao, user_service
+from src.Webservice.init_app import (
+    jwt_service, 
+    user_dao, 
+    user_service,
+    user_movie_service )
 from src.Webservice.jwt_bearer_webservice import JWTBearer
 
 user_router = APIRouter(prefix="/users", tags=["Users"])
 
 @user_router.post("/creation", status_code=status.HTTP_201_CREATED)
-def create_user(
+def sign_up(
     first_name: str,
     last_name: str,
     username: str,
@@ -30,19 +34,26 @@ def create_user(
     phone_number: Optional[str] = Query(None),
 ):
     """
-    Performs validation on the username and password
+    Performs creation of an user account.
 
-    Parameters
+    Attributes
     ----------
+    first_name : str
+        Yout first name
+    last_name : str
+        Your last name
     username : str
-        The username a user wants to have
-
+        An username of length greater or equal to 5
     password : str
-        The password...
-
-    Returns
-    -------
-    api_user : APIUser
+        Your password : minimum 8 characters, minimum a number 
+    email_adress: str
+        Your email adress
+    date_of_birth : date
+        Your date of birth, format : YYYY-MM-DD
+    gender : int
+        A number to indicate your gender
+    phone_number : Optional[str]
+        A phone number
     """
     try:
         user = user_service.sign_up(
@@ -60,15 +71,21 @@ def create_user(
         raise HTTPException(status_code=409, detail=str(error)) from error
 
 
-
-# L'utilisateur se connecte en envoyant son nom d'utilisateur et son mot de passe.
-# Si la combinaison est correcte, un token JWT est généré et renvoyé dans la réponse.
-
-
-@user_router.post("/login", status_code=status.HTTP_201_CREATED)
-def login(username: str, password_tried: str) -> JWTResponse:
+@user_router.post("/log_in", status_code=status.HTTP_201_CREATED)
+def log_in(username: str, password_tried: str) -> JWTResponse:
     """
-    Authenticate with username and password and obtain a token.
+    Authenticate with username and password_tried and obtain a token.
+
+    Attributes
+    ----------
+    username : str
+        Your username
+    password_tried : str
+        Your password
+
+    Returns
+    -------
+    A jwt token to copy and paste into the authorization to authenticate.
     """
     try:
         user = user_dao.get_user_by_name(username=username)
@@ -84,14 +101,21 @@ def login(username: str, password_tried: str) -> JWTResponse:
         raise HTTPException(status_code=403) from error
 
 
-@user_router.post("/profile", dependencies=[Depends(JWTBearer())])
+@user_router.put("/update_profile", dependencies=[Depends(JWTBearer())])
 def update_user_own_profile(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
-    new_email_adress : Optional[str] = None,
-    new_phone_number : Optional[str] = None
+    new_email_adress : str | None = None,
+    new_phone_number : str | None = None
 ):
     """
-    Allow the user to update his email_adress or his phone_number
+    Allow the user to update his email_adress and/or his phone_number
+
+    Parameters
+    ----------
+    new_email_adress : str
+        your email_adress
+    new_phone_number : str
+        your phone number
     """
     connected_user = get_user_from_credentials(credentials)
     if new_email_adress:
@@ -110,6 +134,10 @@ def get_user_own_profile(
 ):
     """
     Get the authenticated user profile
+
+    Returns
+    -------
+    A ConnectedUser
     """
     return get_user_from_credentials(credentials)
 
@@ -118,15 +146,19 @@ def delete_own_profile(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())]
 ):
     """
-    Allow a user to delete his own profile.
+    Allow a user to delete his own profile
     """
     current_user = get_user_from_credentials(credentials)
-    user_dao.delete_user(current_user.id_user)
+    user_movie_service.delete_user_and_update_ratings(current_user.id_user)
     
 
 def get_user_from_credentials(credentials: HTTPAuthorizationCredentials) -> ConnectedUser:
     """
     Get a user from credentials
+
+    Returns
+    -------
+    A ConnectedUser
     """
     token = credentials.credentials
     user_id = int(jwt_service.validate_user_jwt(token))
