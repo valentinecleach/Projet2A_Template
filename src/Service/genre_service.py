@@ -7,17 +7,20 @@ class GenreService:
 
     @classmethod
     def create_list_of_genre(cls, data: List[Dict[str, Any]]) -> List[Genre]:
-        """Méthode de classe pour créer une liste d'instances de Genre à partir de données complètes.
+        """Class method for creating a list of Genre instances from complete data.
 
         Parameters
         ----------
         data : list of dict
-            Une liste de dictionnaires, chacun contenant des données de genre.
+            A list of dictionaries, each containing genre data.
 
         Returns
         -------
-        List[Genre]
-            Une liste d'instances de Genre.
+        data : List[Genre]
+            A list of Genre instances.
+
+
+
         """
         if data:
             return [Genre(id=item["id"], name=item["name"]) for item in data]
