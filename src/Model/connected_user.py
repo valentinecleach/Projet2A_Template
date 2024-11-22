@@ -51,18 +51,21 @@ class ConnectedUser(User):
 
     def __str__(self):
         """user information: id and pseudonym """
-        return f"id: {self.id_user}, username: {self.username}"
+        return (f"id_user : {self.id_user}, "
+            f"username : {self.username}, "
+            f"own_film_collection : {self.own_film_collection}, "
+            f"follow_list : {self.follow_list}")
 
     def __repr__(self):
         """ user information: id, pseudonym and saved lists: movie collection and subscriptions
         """
-        return (f"id : {self.id_user}, "
+        return (f"id_user : {self.id_user}, "
             f"username : {self.username}, "
             f"own_film_collection : {self.own_film_collection}, "
             f"follow_list : {self.follow_list}")
 
     def to_dict(self):
-        """Hide password"""
+        """To display only few information on an user"""
         return {
             "id_user": self.id_user,
             "username": self.username,
@@ -70,6 +73,18 @@ class ConnectedUser(User):
             "follow_list": self.follow_list,
         }
 
-    class Config:
-        # Options de configuration supplémentaires si nécessaire
-        pass
+    def to_dict_get_own(self):
+        """ To display more information if a user wants to consult his own profile"""
+        return {
+            "id_user": self.id_user,
+            "username": self.username,
+            "date_of_birth" : self.date_of_birth,
+            "gender" : self.first_name,
+            "first_name" : self.first_name,
+            "last_name" : self.last_name,
+            "email_address" : self.email_address,
+            "phone_number" : self.phone_number,
+            "own_film_collection": self.own_film_collection,
+            "follow_list": self.follow_list,
+        }
+

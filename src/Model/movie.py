@@ -1,5 +1,5 @@
 from datetime import date
-
+from typing import List
 from pydantic import BaseModel, Field
 
 # Model
@@ -57,21 +57,19 @@ class Movie(BaseModel):
         ..., gt=0, description="The id needs to be a positive integer"
     )
     title: str
-    belongs_to_collection: Optional[List[MovieCollection]] = (
-        None  # peut ne pas avoir de MovieCollection.
-    )
-    budget: Optional[int]
+    belongs_to_collection: list[MovieCollection] | None = None
+    budget: int | None = None
     genres: List[Genre]
-    origin_country: Optional[List[str]]
-    original_language: Optional[str]
-    original_title: Optional[str]
-    overview: Optional[str]
-    popularity: Optional[float]
-    release_date: Optional[date]  # pydantic convertit automatiuqement str en date.
-    revenue: Optional[int]
-    runtime: Optional[int]
-    vote_average: Optional[float]
-    vote_count: Optional[int]
+    origin_country: list[str] | None = None
+    original_language: str | None
+    original_title: str | None
+    overview: str | None
+    popularity: float | None
+    release_date: date | None
+    revenue: int | None
+    runtime: int | None
+    vote_average: float | None
+    vote_count: int | None
     adult: bool = False
 
     def __str__(self):
@@ -97,4 +95,3 @@ class Movie(BaseModel):
             return self.__dict__ == other.__dict__
         return False
 
-    # def __get_pydantic_core_schema__# ?,

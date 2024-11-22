@@ -284,7 +284,4 @@ class UserMovieService:
 # # service.add_or_update_comment(418, 19995, "J'aime les fonds marins de avatar")
 # # print(service.get_comments_user(418))
 # # service.delete_a_user_comment(service.get_comments_user(418)[0])
-<<<<<<< HEAD
 # print(service.get_ratings_of_follower_for_a_movie(1,121))
-=======
->>>>>>> b061d04916ee76335393b0b573d9c6a357f0ea40

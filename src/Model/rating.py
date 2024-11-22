@@ -23,13 +23,13 @@ class Rating:
         self.rate = rate
 
     def __str__(self):
-    """Display method for a film collection."""
+        """Display method for a film collection."""
         s = f"<{self.user.username}> rated"
         s = s + f" <{self.rate}> over 10 to the movie <{self.movie.title}>"
         s = s + f"  on <{self.date}>"
         return s
 
     def __repr__(self):
-     """Display method for a film collection."""
+        """Display method for a film collection."""
         return (f"Rating(user={self.user!r}, rate={self.rate!r}, "
                 f"movie={self.movie!r}, date={self.date!r})")

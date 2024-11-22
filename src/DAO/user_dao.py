@@ -174,7 +174,7 @@ class UserDao(metaclass=Singleton):
         return None
 
     # check email_address, username
-    def check_email_address(self, email_address: str) -> True | None:
+    def check_email_address(self, email_address: str) -> bool | None:
         """Checks if an email adress is associated to a user in the database.
 
         Parameters
