@@ -23,6 +23,10 @@ def hash_password(password: str, salt: Optional[List[str]] = None) -> str:
         password enter by the user
     salt: list
         generate a square hash
+    
+    returns
+    -------
+    str
 
     """
     if salt is None:

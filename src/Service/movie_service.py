@@ -25,7 +25,7 @@ class MovieService:
 
     def get_movie_by_id(self, movie_id: int) -> Movie | None:
         """Find movie by id
-        
+
     parameters
     ----------
     movie_id: int
