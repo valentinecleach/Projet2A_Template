@@ -39,18 +39,6 @@ class UserFavoriteDao(metaclass=Singleton):
         except Exception as e:
             print("Insertion error:", str(e))
 
-    def remove(self, id_user: int, id_movie: int):
-        """Supprime un film des favoris d'un utilisateur."""
-        try:
-            delete_query = """
-                DELETE FROM user_movie_collection
-                WHERE id_user = %s AND id_movie = %s;
-            """
-            self.db_connection.sql_query(delete_query, (id_user, id_movie))
-            print("Deletion successful: Movie removed from favorites.")
-        except Exception as e:
-            print("Deletion error:", str(e))
-
     def get_favorites(self, id_user: int):
         """Récupère la liste des films favoris d'un utilisateur."""
         try:
@@ -70,6 +58,20 @@ class UserFavoriteDao(metaclass=Singleton):
         except Exception as e:
             print("Retrieval error:", str(e))
             return []
+
+    def remove(self, id_user: int, id_movie: int):
+        """Supprime un film des favoris d'un utilisateur."""
+        try:
+            delete_query = """
+                DELETE FROM user_movie_collection
+                WHERE id_user = %s AND id_movie = %s;
+            """
+            self.db_connection.sql_query(delete_query, (id_user, id_movie))
+            print("Deletion successful: Movie removed from favorites.")
+        except Exception as e:
+            print("Deletion error:", str(e))
+
+
 
 # db_connection = DBConnector()
 # service = UserFavoriteDao(db_connection)
