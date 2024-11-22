@@ -7,6 +7,7 @@ from src.DAO.user_dao import UserDao
 from src.Model.comment import Comment
 
 from tests.DAO.follow_dao_test import MockDBConnectorFollowDAO
+from tests.DAO.favorite_dao_test import MockDBConnectorFavoriteDAO
 from src.Service.user_interactions_service import UserInteractionService
 
 # def test_search_user_found():
@@ -62,6 +63,37 @@ def test_unfollow_user():
     mock_db_connection.data[(follower_id, followee_id)] = datetime.now().date() 
     result = user_interaction_service.unfollow_user(follower_id, followee_id)
     assert result is None, "The follow relationship should be removed"
+
+def test_add_favorite_success():
+    mock_favorite_dao = MockDBConnectorFavoriteDAO()
+    user_interaction_service = UserInteractionService(mock_favorite_dao)
+    id_user = 1
+    id_movie = 101
+    user_interaction_service.add_favorite(id_user, id_movie)
+    assert (id_user, id_movie) in mock_favorite_dao.data, "The movie should be added to favorites"
+
+def test_delete_favorite_success():
+    """Test qu'un film peut être supprimé des favoris avec succès."""
+    mock_db_connector = MockDBConnectorFavoriteDAO()
+    service = UserInteractionService(mock_db_connector)
+    user_favorite_dao = service.user_favorites_dao
+    user_favorite_dao.insert(1, 101) 
+    service.delete_favorite(1, 101)
+    favorites = user_favorite_dao.get_favorites(1)
+    assert 101 not in favorites, "Le film devrait avoir été supprimé des favoris."
+
+
+def test_delete_favorite_not_in_favorites():
+    """Test qu'une exception est levée si le film n'est pas dans les favoris."""
+    mock_db_connector = MockDBConnectorFavoriteDAO()
+    user_favorite_dao = UserFavoriteDao(mock_db_connector)
+    service = UserInteractionService(user_favorite_dao=user_favorite_dao)
+    try:
+        service.delete_favorite(1, 101)  # Essayer de supprimer un favori inexistant
+        assert False, "Une ValueError aurait dû être levée pour un film non présent dans les favoris."
+    except ValueError as error:
+        assert str(error) == "This movie is not in the user's favorites.", \
+            "Le message d'erreur ne correspond pas à l'attendu."
 
 
 # def test_add_favorite_success():
