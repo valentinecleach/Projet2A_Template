@@ -34,6 +34,31 @@ You can now open a new terminal and retry
 
 That's all 😊
 
+# Before runing the app 
+
+You must change your file .env with the information of your database
+
+# Connection to Database
+dbname="id2464"
+user="id2464"
+password="id2464"
+host="sgbd-eleves.domensai.ecole"
+port="5432"
+
+# Schemas names
+
+#schema="projet_info"
+#schema="projet_info_test" 
+schema="test_projet_info"
+
+# TMDB
+TMDB_API_KEY="fb0e5ded3d79bc5e571538030f7e5af8"
+TMDB_TOKEN="eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmYjBlNWRlZDNkNzliYzVlNTcxNTM4MDMwZjdlNWFmOCIsIm5iZiI6MTcyNjY2ODg3MS44OTQ2MjMsInN1YiI6IjY2ZTBhYmMyOWM3MzUzMmRkYmFhYWY0NyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.cZ0F3epj5FCX4MRlrqSAIdzErJP98tU9ZlfNHkrfUw0"
+
+# JWT_SECRET
+
+JWT_SECRET = ClementValot 
+JWT_EXPIRATION_TIME=3600
 # How to run the app 
 
 

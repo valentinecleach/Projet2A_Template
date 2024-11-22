@@ -13,7 +13,11 @@ from src.Model.jwt_response import JWTResponse
 from src.Service.password_service import check_password_strenght, verify_password
 
 # Webservice
-from src.Webservice.init_app import jwt_service, user_dao, user_service
+from src.Webservice.init_app import (
+    jwt_service, 
+    user_dao, 
+    user_service,
+    user_movie_service )
 from src.Webservice.jwt_bearer_webservice import JWTBearer
 
 user_router = APIRouter(prefix="/users", tags=["Users"])
@@ -30,19 +34,7 @@ def create_user(
     phone_number: Optional[str] = Query(None),
 ):
     """
-    Performs validation on the username and password
-
-    Parameters
-    ----------
-    username : str
-        The username a user wants to have
-
-    password : str
-        The password...
-
-    Returns
-    -------
-    api_user : APIUser
+    Performs creation of an user account.
     """
     try:
         user = user_service.sign_up(
@@ -68,7 +60,7 @@ def create_user(
 @user_router.post("/login", status_code=status.HTTP_201_CREATED)
 def login(username: str, password_tried: str) -> JWTResponse:
     """
-    Authenticate with username and password and obtain a token.
+    Authenticate with username and password_tried and obtain a token.
     """
     try:
         user = user_dao.get_user_by_name(username=username)
@@ -84,14 +76,14 @@ def login(username: str, password_tried: str) -> JWTResponse:
         raise HTTPException(status_code=403) from error
 
 
-@user_router.post("/profile", dependencies=[Depends(JWTBearer())])
+@user_router.put("/profile", dependencies=[Depends(JWTBearer())])
 def update_user_own_profile(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
     new_email_adress : Optional[str] = None,
     new_phone_number : Optional[str] = None
 ):
     """
-    Allow the user to update his email_adress or his phone_number
+    Allow the user to update his email_adress and/or his phone_number
     """
     connected_user = get_user_from_credentials(credentials)
     if new_email_adress:
@@ -121,7 +113,7 @@ def delete_own_profile(
     Allow a user to delete his own profile.
     """
     current_user = get_user_from_credentials(credentials)
-    user_dao.delete_user(current_user.id_user)
+    user_movie_service.delete_user_and_update_ratings(current_user.id_user)
     
 
 def get_user_from_credentials(credentials: HTTPAuthorizationCredentials) -> ConnectedUser:

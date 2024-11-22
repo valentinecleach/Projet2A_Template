@@ -106,6 +106,9 @@ class UserMovieService:
             return None
 
     def delete_user_and_update_ratings(self, id_user: int):
+        """
+        Allow to delete a user and update all the ratings of the movies he rated.
+        """
         try:
             ratings = self.get_ratings_user(id_user)
             for rating in ratings:
