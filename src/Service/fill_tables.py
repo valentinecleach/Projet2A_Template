@@ -1,16 +1,38 @@
+import random
+from typing import Optional
+
+from faker import Faker
+
 from src.DAO.db_connection import DBConnector
-from src.Service.user_service import UserService
+from src.DAO.tables_creation import TablesCreation
+from src.Service.movie_maker_service import MovieMakerService
 from src.Service.movie_service import MovieService
 from src.Service.user_interactions_service import UserInteractionService
 from src.Service.user_movie_service import UserMovieService
-from src.DAO.tables_creation import TablesCreation
-from src.Service.movie_maker_service import MovieMakerService
-from faker import Faker
-from typing import Optional
-import random
+from src.Service.user_service import UserService
+
 
 class Fill_tables:
+    """ file to fill the database
+
+    Attributes
+    ----------
+    db_connection: DBConnector
+        A connector to a database
+    user_service: UserService
+        user authentication
+    movie_service: MovieService
+        way to find a film   
+    user_interaction_service: UserInteractionService
+        interactivity between users 
+    user_movie_service: UserMovieService
+        users actions on movie page
+    movie_maker_service: MovieMakerService
+        way to found a moviemaker
+    """
+    
     def __init__(self, db_connection : DBConnector):
+        """Constructor"""
         self.db_connection = db_connection
         self.user_service = UserService(db_connection)
         self.movie_service = MovieService(db_connection)
@@ -19,6 +41,14 @@ class Fill_tables:
         self.movie_maker_service = MovieMakerService(db_connection)
 
     def fill_table_user(self, n : int):
+        """ creation of a new users 
+
+        Parameters
+        ----------
+        n : int 
+            number of new users
+        """ 
+
         fake = Faker()
         genders = [1, 2]  # 1 pour masculin, 2 pour féminin
         id_user_created = []
@@ -49,6 +79,13 @@ class Fill_tables:
         return id_user_created
 
     def fill_table_movie(self,start_id, n):
+        """ creation of new movies
+
+        Parameters
+        ----------
+        n : int 
+            number of newmovies
+        """ 
         id_movie_created = []
         for k in range(start_id, start_id + n):
             movie =  self.movie_service.get_movie_by_id(k) 
@@ -57,6 +94,13 @@ class Fill_tables:
         return id_movie_created
 
     def fill_table_movie_maker(self):
+        """ creation of a new movies makers
+
+        Parameters
+        ----------
+        n : int 
+            number of new movies makers
+        """ 
         movie_makers = [
             "Steven Spielberg", "Martin Scorsese", "Quentin Tarantino", "Christopher Nolan",
             "James Cameron", "Stanley Kubrick","Alfred Hitchcock","Francis Ford Coppola",
