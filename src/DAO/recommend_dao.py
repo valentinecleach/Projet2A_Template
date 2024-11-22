@@ -6,24 +6,27 @@ from src.DAO.movie_dao import MovieDAO
 from src.DAO.singleton import Singleton
 from src.DAO.user_dao import UserDao
 
-# Model
 from src.Model.connected_user import ConnectedUser
 from src.Model.movie import Movie
 
 
 class RecommendDao(metaclass=Singleton):
+    """ReccomendDao is DAO for managing recommendations of movies or users to follow in the database.
 
+    Attributes
+    ----------
+    db_connection : DBConnector
+        A connector to the database.
+    """
     def __init__(self, db_connection: DBConnector):
-        # create a DB connection object
+        """Constructor"""
         self.db_connection = db_connection
 
     def recommend_movies(
         self, id_user: int, filter: dict = {}, limit: int = 50
     ) -> List[Movie]:
-        """
-        Description
-        -----------------------
-        This function recommends movies to a user based on their own film collection, age, and gender. The algorithm follows several steps to generate personalized recommendations.
+        """This function recommends movies to a user based on their own film collection, age, and gender. 
+        The algorithm follows several steps to generate personalized recommendations.
 
         Algorithm Steps
         -----------------------
@@ -34,17 +37,23 @@ class RecommendDao(metaclass=Singleton):
         5. Calculate User's Genre Frequencies: Calculates the frequency of genres in the user's collection.
         6. Calculate Genre Similarity: Compares the user's genre frequencies with those of other users.
         7. Combine Results: Combines the results from genre similarity and age/gender analysis to recommend movies.
+        
         Parameters
         ----------------------
-        id_user (int): The ID of the user to whom movies are being recommended.
-        filter (dict, optional): A dictionary of additional filters to apply to the movies.
-        limit (int, optional): The maximum number of movies to recommend. Defaults to 50.
+        id_user : int
+            The ID of the user to whom movies are being recommended.
+        filter : dict, optional
+            A dictionary of additional filters to apply to the movies.
+        limit : int, optional 
+            The maximum number of movies to recommend. Defaults to 50.
+        
         Returns
         ----------------------
-        List[Movie]: A list of recommended movies.
+        List[Movie] | None
+            A list of recommended movies.
+            If no movies can be recommended, the method returns None.
         """
-        # provide movies using his age and his gender
-
+        # Provide movies using the users age and their gender.
         try:
             dao = UserDao(self.db_connection)
             user = dao.get_user_by_id(id_user)
@@ -176,16 +185,17 @@ class RecommendDao(metaclass=Singleton):
         5. **Identification of users who are followed by the friends of the current user**:
         6. **Combination of Results from the genre similarity and social network analysis to recommend users**:
 
-        Parameters:
+        Parameters
         -----------
         id_user : int
             The ID of the user for whom we are recommending other users to follow.
 
-        Returns:
+        Returns
         --------
-        List[ConnectedUser]
-            A list of recommended users to follow.
-        """
+        List[ConnectedUser] | None
+            A list of recommended users to follow. 
+            If no users can be recommended, the algorithm returns None.
+        """ 
         try:
             dao = UserDao(self.db_connection)
             user = dao.get_user_by_id(id_user)
@@ -227,7 +237,7 @@ class RecommendDao(metaclass=Singleton):
             print(f"Error while collecting date_of_birth and gender: {e}")
             return None
 
-        # Sort users by the score of mutual films in their collections
+        # Sorts users by the score of mutual films in their collections
         try:
             query = f"""
             WITH Potentialusers AS (
@@ -309,11 +319,19 @@ class RecommendDao(metaclass=Singleton):
 
     def get_popular_movies(self, filter: dict = {}, limit: int = 50) -> list[Movie]:
         """
-        Description: Fetches the most popular movies based on their average rating and popularity.
+        Fetches the most popular movies based on their average rating and popularity. Filters can be added to specify a search.
 
-        Returns:
-
-        list[Movie]: List of the most popular movies.
+        Parameters
+        ----------
+        filter : dict = {}
+            A filter of conditions to fill. By default, there is no filter.
+        limit : int = 50
+            A limit on the maximum amount of movies to add to the list. By default, the limit is 50.
+        
+        Returns
+        -------
+        list[Movie]
+            A list of the most popular movies.
         """
         val = []
         cond = []
@@ -341,17 +359,17 @@ class RecommendDao(metaclass=Singleton):
             return [dao.get_by_id(res["id_movie"]) for res in result]
 
     def get_popular_users(self, id_user) -> list[Movie]:
-        """
-        Description: Fetches the most popular users based on the number of followers, excluding the specified user.
+        """Fetches the most popular users based on the number of followers, excluding the specified user.
 
-        Parameters:
-        -------------------------
-        id_user (int): ID of the user to exclude.
-        Returns:
-        --------------------------
-        list[User]: List of the most popular users.
-        Does this work for you?
+        Parameters
+        -----------
+        id_user : int  
+            The ID of the user to exclude.
 
+        Returns
+        -------
+        list[User] | None
+            A list of the most popular users. If no users can be retrieved the algorithm returns None.
         """
         try:
             query = """
@@ -370,15 +388,3 @@ class RecommendDao(metaclass=Singleton):
         if result:
             user_dao = UserDao(self.db_connection)
             return [user_dao.get_user_by_id(res["id_user_followed"]) for res in result]
-
-
-# db_connection = DBConnector()
-# u = UserDao(db_connection)
-# dao = RecommendDao(db_connection)
-# user = u.check_email_address("cmitchell@example.net")
-# print(user)
-# # #print(dao.get_popular_users(24))
-# print(dao.recommend_movies(224, filter={"name_genre": "Drama"}))
-# print(len(dao.recommend_movies(24)))
-# date_of_birth = user.date_of_birth
-# print(isinstance(date_of_birth, date))
