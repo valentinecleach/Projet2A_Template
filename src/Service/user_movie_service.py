@@ -61,6 +61,50 @@ class UserMovieService:
         except Exception as e:
             print(f"Error while finding user {id_user} ratings: {e}")
 
+
+    def get_ratings_of_follower_for_a_movie(self, id_user : int, id_movie: int | None = None):
+        """
+        if id_movie is specified, the function returns the average rating given by followers for this film. 
+        Otherwise, the function returns all ratings given by followers.
+        """
+        connected_user = self.user_dao.get_user_by_id(id_user)
+        follow_list = connected_user.follow_list
+        if follow_list:
+            if id_movie :
+                ratings = []
+                count = 0
+                sum_rating = 0
+                try:
+                    for follow_id in follow_list:
+                        rating = self.rating_dao.get_rating(follow_id, id_movie)
+                        if rating:
+                            ratings.append(rating)
+                            count +=1
+                            sum_rating += rating.rate
+                except Exception as e:
+                    print(f"Error while getting follower ratings for a specific movie {id_movie} for user : {id_user}: {e}")
+                if count != 0:    
+                    return [sum_rating/count, ratings]
+                else :
+                    print(f"Any follower of user {id_user} rated moovie {id_movie}")
+                    return None
+            else:
+                ratings = []
+                try:
+                    for follow_id in follow_list:
+                        ratings_user = self.get_ratings_user(follow_id)
+                        if ratings_user:
+                            for rating_user in ratings_user:
+                                ratings.append(rating_user)
+                except Exception as e:
+                    print(f"Error while getting all follower ratings of user: {id_user}: {e}")
+                if ratings != []:    
+                    return ratings
+                else:
+                    return None
+        else :
+            return None
+
     def delete_user_and_update_ratings(self, id_user: int):
         try:
             ratings = self.get_ratings_user(id_user)
@@ -69,14 +113,6 @@ class UserMovieService:
             self.user_dao.delete_user(id_user)
         except Exception as e:
             print(f"Error while deleting user {id_user}: {e}")
-
-    def get_ratings_user_follower(self, id_user, id_movie : Optional[int] = None):
-        connected_user = self.user_dao.get_user_by_id(id_user)
-        list_follower = connected_user.follow_list
-        if id_movie :
-            pass
-        else:
-            pass
 
     def delete_a_user_rating(self, rating: Rating):
         try:
@@ -233,7 +269,7 @@ class UserMovieService:
 # # u = CommentDao(db_connection)
 # service = UserMovieService(db_connection)
 # #service.rate_film_or_update(221, 19995, 5)
-# service.delete_user_and_update_ratings(221)
+# #service.delete_user_and_update_ratings(221)
 # # print(type(service.get_ratings_user(305)[0])) # on obtient bien une liste d'objet Rating
 
 # #rating = service.get_ratings_user(305)[0]
@@ -242,3 +278,4 @@ class UserMovieService:
 # # service.add_or_update_comment(418, 19995, "J'aime les fonds marins de avatar")
 # # print(service.get_comments_user(418))
 # # service.delete_a_user_comment(service.get_comments_user(418)[0])
+# print(service.get_ratings_of_follower_for_a_movie(1,121))

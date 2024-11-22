@@ -82,6 +82,36 @@ def get_ratings_for_a_user(
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
 
+@rating_movie_router.get(
+    "/{user_id}/get_user_follow_average_vote_and_rate",
+    dependencies=[Depends(JWTBearer())],
+    status_code=status.HTTP_201_CREATED,
+)
+def get_user_follow_average_vote_and_ratings_for_a_movie(
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
+    id_movie: int | None = None
+):
+    current_user = get_user_from_credentials(credentials)
+    if id_movie :
+        try:
+            ratings_follower_movie = user_movie_service.get_ratings_of_follower_for_a_movie(current_user.id_user, id_movie)
+            if ratings_follower_movie:
+                return [f"follow rating average for movie {id_movie} : {ratings_follower_movie[0]}"] + [f"{rating}" for rating in ratings_follower_movie[1]]
+            else:
+                return f"Your followers have not rated the movie with id : {id_movie}."
+        except Exception as error:
+            raise HTTPException(status_code=400, detail=str(error)) from error
+    else:
+        try: 
+            ratings_follower_movie = user_movie_service.get_ratings_of_follower_for_a_movie(current_user.id_user)
+            if ratings_follower_movie :
+                return [f"{rating}" for rating in ratings_follower_movie]
+            else :
+                return f"Your followers have not rated any movie."
+        except Exception as error:
+            raise HTTPException(status_code=400, detail=str(error)) from error
+
+
 
 @rating_movie_router.delete(
     "/{user_id}/delete_a_movie_rate",
