@@ -1,6 +1,6 @@
 from datetime import date
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field
 
 # Model
 from src.Model.genre import Genre
