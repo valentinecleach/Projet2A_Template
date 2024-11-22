@@ -1,5 +1,4 @@
 from datetime import date
-from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field, validator
 
@@ -92,7 +91,7 @@ class Movie(BaseModel):
         Attributes
         ----------
         other: any
-            The object with which  "self" is compared 
+            The object with which  "self" is compared
         """
         if isinstance(other, Movie):
             return self.__dict__ == other.__dict__
