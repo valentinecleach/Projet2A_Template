@@ -59,7 +59,7 @@ class MovieCollectionDao(metaclass=Singleton):
             print("Insertion error: ", str(e))
 
     #######################################################################################
-    # READ (Fetch a specific movie collection)
+    # READ (Fetches a specific movie collection)
     def get_movie_collection_by_id(
         self,
         id: int,
@@ -90,12 +90,24 @@ class MovieCollectionDao(metaclass=Singleton):
         except Exception:
             return None
 
-    # READ (Fetch all comments of a specific movie)
+    # READ (Fetches all collections of movies)
     def get_all(
         self,
         limit: int = 10,
     ) -> List[MovieCollection]:
+        """Fetches all collections of movies.
 
+        Parameters
+        ----------
+        limit : int
+            A number of the maximum of movie collections to return
+
+        Returns
+        -------
+        List[MovieCollection] | None
+            A list of movie collections.
+            If no movie collections are found, then the function will return None.
+        """
         try:
             query = f"SELECT * FROM  movie_collection LIMIT {max(limit, 0)}"
             with self.db_connection.connection as connection:
@@ -112,8 +124,15 @@ class MovieCollectionDao(metaclass=Singleton):
         except Exception:
             return None
 
-    # DELETE / SUPPRIME
+    # DELETE
     def delete(self, id):
+        """Deletes a collection of movies.
+
+        Parameters
+        ----------
+        id : int
+            The ID of the movie collection to delete.
+        """
         try:
             query = "DELETE FROM  movie_collection WHERE id = %s"
             with self.db_connection.connection as connection:
@@ -127,8 +146,3 @@ class MovieCollectionDao(metaclass=Singleton):
         except Exception as e:
             print(f"Error while deleting from movie collection: {e}")
             return None
-
-
-# works : add a new Movie Collecction in the schema
-# mon_objet = MovieCollectionDao()
-# mon_objet.insert(MovieCollection(id = 87096, name = 'Avatar Collection'))
