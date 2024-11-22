@@ -58,8 +58,7 @@ class MovieCollectionDao(metaclass=Singleton):
         except Exception as e:
             print("Insertion error: ", str(e))
 
-    #######################################################################################
-    # READ (Fetches a specific movie collection)
+    
     def get_movie_collection_by_id(
         self,
         id: int,
@@ -90,7 +89,7 @@ class MovieCollectionDao(metaclass=Singleton):
         except Exception:
             return None
 
-    # READ (Fetches all collections of movies)
+    
     def get_all(
         self,
         limit: int = 10,
@@ -124,7 +123,7 @@ class MovieCollectionDao(metaclass=Singleton):
         except Exception:
             return None
 
-    # DELETE
+    
     def delete(self, id):
         """Deletes a collection of movies.
 
