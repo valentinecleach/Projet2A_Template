@@ -21,7 +21,7 @@ class UserMovieService:
         self.rating_dao = RatingDao(db_connection)
         self.comment_dao = CommentDao(db_connection)
 
-### For Rating ############
+    ### For Rating ############
 
     def get_overall_rating(self, id_movie: int):
         try:
@@ -70,10 +70,10 @@ class UserMovieService:
         except Exception as e:
             print(f"Error while deleting user {id_user}: {e}")
 
-    def get_ratings_user_follower(self, id_user, id_movie : Optional[int] = None):
+    def get_ratings_user_follower(self, id_user, id_movie: Optional[int] = None):
         connected_user = self.user_dao.get_user_by_id(id_user)
         list_follower = connected_user.follow_list
-        if id_movie :
+        if id_movie:
             pass
         else:
             pass
@@ -84,7 +84,9 @@ class UserMovieService:
             self.rating_dao.delete(rating)
             self.updating_rating_of_movie(movie)
         except Exception as error:
-            raise ValueError(f"An error occurred while deleting rating for the movie: {error}")
+            raise ValueError(
+                f"An error occurred while deleting rating for the movie: {error}"
+            )
 
     def count_rating(self, id_movie: int):
         try:
@@ -150,8 +152,7 @@ class UserMovieService:
         except Exception as error:
             raise ValueError(f"An error occurred while rating the movie: {error}")
 
-
-#### For comment ####
+    #### For comment ####
 
     def add_or_update_comment(self, id_user: int, id_movie: int, comment: str):
         """
@@ -173,7 +174,9 @@ class UserMovieService:
             movie = self.movie_service.get_movie_by_id(id_movie)
             date = datetime.now().date()
             connected_user = self.user_dao.get_user_by_id(id_user)
-            new_comment = Comment(user=connected_user, movie=movie, date=date, comment = comment)
+            new_comment = Comment(
+                user=connected_user, movie=movie, date=date, comment=comment
+            )
             query = """
                 SELECT COUNT(*) as count FROM comment
                 WHERE id_user = %s AND id_movie = %s;
@@ -207,8 +210,8 @@ class UserMovieService:
                 comment = Comment(
                     user=connected_user,
                     movie=movie,
-                    date=comment_res['date'],
-                    comment = comment_res['comment'],
+                    date=comment_res["date"],
+                    comment=comment_res["comment"],
                 )
                 comments.append(comment)
             if comments != []:
@@ -221,12 +224,15 @@ class UserMovieService:
         except Exception as e:
             print(f"Error while finding user {id_user} comments: {e}")
 
-    def delete_a_user_comment(self, comment : Comment):
+    def delete_a_user_comment(self, comment: Comment):
         try:
             movie = comment.movie
             self.comment_dao.delete(comment)
         except Exception as error:
-            raise ValueError(f"An error occurred while deleting comment for the movie: {error}")
+            raise ValueError(
+                f"An error occurred while deleting comment for the movie: {error}"
+            )
+
 
 # db_connection = DBConnector()
 
