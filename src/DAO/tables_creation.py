@@ -3,15 +3,24 @@ from src.DAO.singleton import Singleton
 
 
 class TablesCreation(metaclass=Singleton):
+    """TablesCreation is an object for creating tables in the database.
+
+    Attributes
+    ----------
+    db_connection : DBConnector
+        A connector to the database.
+    create_tables() : 
+    """
+
     def __init__(self, db_connection: DBConnector):
+        """Constructor"""
         self.db_connection = db_connection
         self.create_tables()
 
-    def create_tables(self):
-        """
-        Creates the movie_maker table in the database if it does not exist.
-        """
 
+    def create_tables(self):
+        """Creates table in the database if they don't exist.
+        """
         create_table_Movie = """
         CREATE TABLE IF NOT EXISTS movie (
             id_movie INTEGER PRIMARY KEY,
@@ -155,19 +164,6 @@ class TablesCreation(metaclass=Singleton):
             FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE
         );
         """
-
-# a supprimer on ne propose pas d'ajouter des MovieMaker en favori
-        # create_table_User_MovieMaker_collection = """
-        # CREATE TABLE IF NOT EXISTS user_movie_maker_collection(
-        #     id_user INTEGER NOT NULL,
-        #     id_movie_maker INTEGER NOT NULL,
-        #     date DATE,
-
-        #     FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE,
-        #     FOREIGN KEY (id_movie_maker) REFERENCES movie_maker(id_movie_maker) ON DELETE CASCADE
-        # );
-        # """
-
         create_queries = [
             create_table_Genre,
             create_table_Movie,
