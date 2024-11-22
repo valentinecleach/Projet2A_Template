@@ -26,5 +26,3 @@ class Genre(BaseModel):
 
 
 # Unrelated code to show sys.path to understand error with classes ipmports.
-
-

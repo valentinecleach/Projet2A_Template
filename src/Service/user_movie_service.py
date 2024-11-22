@@ -21,7 +21,7 @@ class UserMovieService:
         self.rating_dao = RatingDao(db_connection)
         self.comment_dao = CommentDao(db_connection)
 
-### For Rating ############
+    ### For Rating ############
 
     def get_overall_rating(self, id_movie: int):
         try:
@@ -61,16 +61,17 @@ class UserMovieService:
         except Exception as e:
             print(f"Error while finding user {id_user} ratings: {e}")
 
-
-    def get_ratings_of_follower_for_a_movie(self, id_user : int, id_movie: int | None = None):
+    def get_ratings_of_follower_for_a_movie(
+        self, id_user: int, id_movie: int | None = None
+    ):
         """
-        if id_movie is specified, the function returns the average rating given by followers for this film. 
+        if id_movie is specified, the function returns the average rating given by followers for this film.
         Otherwise, the function returns all ratings given by followers.
         """
         connected_user = self.user_dao.get_user_by_id(id_user)
         follow_list = connected_user.follow_list
         if follow_list:
-            if id_movie :
+            if id_movie:
                 ratings = []
                 count = 0
                 sum_rating = 0
@@ -79,13 +80,15 @@ class UserMovieService:
                         rating = self.rating_dao.get_rating(follow_id, id_movie)
                         if rating:
                             ratings.append(rating)
-                            count +=1
+                            count += 1
                             sum_rating += rating.rate
                 except Exception as e:
-                    print(f"Error while getting follower ratings for a specific movie {id_movie} for user : {id_user}: {e}")
-                if count != 0:    
-                    return [sum_rating/count, ratings]
-                else :
+                    print(
+                        f"Error while getting follower ratings for a specific movie {id_movie} for user : {id_user}: {e}"
+                    )
+                if count != 0:
+                    return [sum_rating / count, ratings]
+                else:
                     print(f"Any follower of user {id_user} rated moovie {id_movie}")
                     return None
             else:
@@ -97,12 +100,14 @@ class UserMovieService:
                             for rating_user in ratings_user:
                                 ratings.append(rating_user)
                 except Exception as e:
-                    print(f"Error while getting all follower ratings of user: {id_user}: {e}")
-                if ratings != []:    
+                    print(
+                        f"Error while getting all follower ratings of user: {id_user}: {e}"
+                    )
+                if ratings != []:
                     return ratings
                 else:
                     return None
-        else :
+        else:
             return None
 
     def delete_user_and_update_ratings(self, id_user: int):
@@ -120,7 +125,9 @@ class UserMovieService:
             self.rating_dao.delete(rating)
             self.updating_rating_of_movie(movie)
         except Exception as error:
-            raise ValueError(f"An error occurred while deleting rating for the movie: {error}")
+            raise ValueError(
+                f"An error occurred while deleting rating for the movie: {error}"
+            )
 
     def count_rating(self, id_movie: int):
         try:
@@ -186,8 +193,7 @@ class UserMovieService:
         except Exception as error:
             raise ValueError(f"An error occurred while rating the movie: {error}")
 
-
-#### For comment ####
+    #### For comment ####
 
     def add_or_update_comment(self, id_user: int, id_movie: int, comment: str):
         """
@@ -209,7 +215,9 @@ class UserMovieService:
             movie = self.movie_service.get_movie_by_id(id_movie)
             date = datetime.now().date()
             connected_user = self.user_dao.get_user_by_id(id_user)
-            new_comment = Comment(user=connected_user, movie=movie, date=date, comment = comment)
+            new_comment = Comment(
+                user=connected_user, movie=movie, date=date, comment=comment
+            )
             query = """
                 SELECT COUNT(*) as count FROM comment
                 WHERE id_user = %s AND id_movie = %s;
@@ -281,7 +289,3 @@ class UserMovieService:
 # # service.add_or_update_comment(418, 19995, "J'aime les fonds marins de avatar")
 # # print(service.get_comments_user(418))
 # # service.delete_a_user_comment(service.get_comments_user(418)[0])
-<<<<<<< HEAD
-# print(service.get_ratings_of_follower_for_a_movie(1,121))
-=======
->>>>>>> b061d04916ee76335393b0b573d9c6a357f0ea40

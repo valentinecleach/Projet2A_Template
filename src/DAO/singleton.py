@@ -1,4 +1,3 @@
-
 class Singleton(type):
     """
     A singleton metaclass that ensures a class has only one instance.
@@ -11,9 +10,9 @@ class Singleton(type):
 
     _instances = {}
 
-    def __call__(cls, *args, **kwargs) -> Singleton:
+    def __call__(cls, *args, **kwargs):  # -> Singleton:
         """Creates or returns an instance of the class.
-        
+
         Parameters
         ----------
         cls : type
@@ -22,11 +21,11 @@ class Singleton(type):
             Positional arguments.
         **kwargs
             Keyword arguments.
-        
+
         Returns
         -------
         Singleton
-        """ 
+        """
         if cls not in cls._instances:
             instance = super().__call__(*args, **kwargs)
             cls._instances[cls] = instance

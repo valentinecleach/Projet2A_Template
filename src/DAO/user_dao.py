@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Union
 
 from src.DAO.db_connection import DBConnector
 from src.DAO.singleton import Singleton
@@ -174,7 +174,7 @@ class UserDao(metaclass=Singleton):
         return None
 
     # check email_address, username
-    def check_email_address(self, email_address: str) -> True | None:
+    def check_email_address(self, email_address: str) -> Union[bool, None]:
         """Checks if an email adress is associated to a user in the database.
 
         Parameters
