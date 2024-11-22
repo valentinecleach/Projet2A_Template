@@ -243,8 +243,8 @@ class UserMovieService:
                 comment = Comment(
                     user=connected_user,
                     movie=movie,
-                    date=comment_res['date'],
-                    comment = comment_res['comment'],
+                    date=comment_res["date"],
+                    comment=comment_res["comment"],
                 )
                 comments.append(comment)
             if comments != []:
@@ -257,12 +257,15 @@ class UserMovieService:
         except Exception as e:
             print(f"Error while finding user {id_user} comments: {e}")
 
-    def delete_a_user_comment(self, comment : Comment):
+    def delete_a_user_comment(self, comment: Comment):
         try:
             movie = comment.movie
             self.comment_dao.delete(comment)
         except Exception as error:
-            raise ValueError(f"An error occurred while deleting comment for the movie: {error}")
+            raise ValueError(
+                f"An error occurred while deleting comment for the movie: {error}"
+            )
+
 
 # db_connection = DBConnector()
 

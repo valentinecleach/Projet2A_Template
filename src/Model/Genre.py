@@ -1,10 +1,11 @@
 from pydantic import BaseModel
 
+
 class Genre(BaseModel):
     """
     Class representing a genre with an id and a name.
 
-    Parameters
+    Attributes
     ----------
     id : int
         An id that allows easy recognition of the genre
@@ -20,6 +21,7 @@ class Genre(BaseModel):
     name: str
 
     def __repr__(self):
+        """Display method for a genre."""
         return f"Genre(id={self.id}, name='{self.name}')"
 
 

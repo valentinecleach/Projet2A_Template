@@ -10,14 +10,27 @@ from src.DAO.link_movie_movie_collection_dao import LinkMovieMovieCollectionDAO
 from src.DAO.movie_collection_dao import MovieCollectionDao
 from src.DAO.singleton import Singleton
 
-# Model
 from src.Model.movie import Movie
 
 
-# A Faire: (valentine)
 class MovieDAO(metaclass=Singleton):
+    """MovieDao is DAO for managing movies in the database.
+
+    Attributes
+    ----------
+    db_connection : DBConnector
+        A connector to the database.
+    genre_dao : GenreDao
+        A DAO object used for operations related to genre.
+    movie_collection_dao : MovieCollectionDao
+        A DAO object used for operations related to movie collections.
+    link_movie_genre_dao : LinkMovieGenreDAO
+        A DAO object used to create links between movies and their genres.
+    link_movie_movie_collection_dao : LinkMovieMovieCollectionDAO
+        A DAO object used to create links between movies and movie collections.
+    """
     def __init__(self, db_connection: DBConnector):
-        # create a DB connection object
+        """Constructor."""
         self.db_connection = db_connection
         self.genre_dao = GenreDao(db_connection)
         self.movie_collection_dao = MovieCollectionDao(db_connection)
@@ -27,15 +40,15 @@ class MovieDAO(metaclass=Singleton):
         )
 
     def insert(self, new_movie: Movie):
-        try:
-            """
-            Adds a movie into the database along with its genres and collections.
+        """
+        Adds a movie into the database along with its genres and collections.
 
-            Parameters:
-            -----------
-            new_movie : Movie
-                A new movie to add to the database
-            """
+        Parameters:
+        -----------
+        new_movie : Movie
+            A new movie to add to the database.
+        """
+        try:
             query = """
                 SELECT COUNT(*)
                 FROM movie
@@ -93,8 +106,20 @@ class MovieDAO(metaclass=Singleton):
             print("Insertion error: ", str(e))
 
     def get_by_id(self, id_movie: int) -> Movie:
+        """Gets a movie from the database with it's ID.
+
+        Parameters
+        ----------
+        id_movie: int
+            The ID of the movie to select.
+
+        Returns
+        -------
+        Movie
+            The movie that corresponds to the ID given.
+        """
         try:
-            # Récupérer le film
+            # Retrieves the movie
             query = """
                 SELECT * FROM movie
                 WHERE id_movie = %s;
@@ -104,7 +129,7 @@ class MovieDAO(metaclass=Singleton):
             if result:
                 movie_data = dict(result)
 
-                # Récupérer les genres associés
+                # Retrieves the genres associated to the movie
                 try:
                     genres_query = """
                         SELECT g.id_genre, g.name_genre
@@ -123,7 +148,7 @@ class MovieDAO(metaclass=Singleton):
                     print("Error during recovery associated genre: ", str(e))
                     
 
-                # Récupérer les collections associées
+                # Retrieves the collections of movies associated to the movie.
                 try:
                     collections_query = """
                         SELECT mc.id_movie_collection, mc.name_movie_collection
@@ -153,6 +178,14 @@ class MovieDAO(metaclass=Singleton):
             return None
 
     def update(self, movie: Movie):
+        """Updates a movies information in the database.
+
+        Parameters
+        ----------
+        movie: Movie
+            The new information of the movie.
+
+        """ 
         try:
             query = """
                     UPDATE Movie
@@ -172,6 +205,13 @@ class MovieDAO(metaclass=Singleton):
             print("Update error : ", str(e))
 
     def delete(self, id_movie: int):
+        """Deletes a movie from the database using it's ID.
+
+        Parameters
+        ----------
+        id_movie: int
+            The ID of the movie that will get deleted.
+        """ 
         try:
             with self.self.db_connection.connection.cursor() as cursor:
                 cursor.execute(
@@ -187,11 +227,21 @@ class MovieDAO(metaclass=Singleton):
         except Exception as e:
             print("Delete error : ", str(e))
 
-    # structure prise du TP
 
     def get_by_title(self, title: str) -> List[Movie] | None:
+        """Selects a list of movies from the database using a movie title.
+
+        Parameters
+        ----------
+        title: str
+            The title of a movie.
+
+        Returns
+        -------
+        List[Movie]
+            A list of movies with a given title or a similar title.
+        """ 
         try:
-            # Utiliser DBConnector pour exécuter la requête
             query = """
                 SELECT id_movie FROM movie
                 WHERE title ILIKE %s;
@@ -200,10 +250,10 @@ class MovieDAO(metaclass=Singleton):
                 query, (f"%{title}%",), return_type="all"
             )
 
-            if results:  # Vérifiez si des résultats ont été trouvés
+            if results:  # Verifying that resultats have been found
                 movies = []
                 for result in results:
-                    # Récupérez chaque film par ID
+                    # Retrieves every film using their ID
                     movie = self.get_by_id(result["id_movie"])
                     if movie:
                         movies.append(movie)
@@ -214,10 +264,6 @@ class MovieDAO(metaclass=Singleton):
         except Exception as e:
             print("Error during recovery by title:", str(e))
             return None
-
-# db_connection = DBConnector()
-# my_object = MovieDAO(db_connection)
-# print(my_object.get_by_id(19995))
 
 """
 tout ceci est inclu si on utilisedes with

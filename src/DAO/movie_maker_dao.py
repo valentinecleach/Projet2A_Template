@@ -1,4 +1,3 @@
-# src/DAO/movie_maker_dao.py
 from typing import List, Optional
 
 from src.DAO.db_connection import DBConnector
@@ -8,22 +7,31 @@ from src.Model.movie_maker import MovieMaker
 from src.DAO.movie_dao import MovieDAO
 
 
-# to do : Documentation
 class MovieMakerDAO(metaclass=Singleton):
+    """MovieMakerDao is DAO for managing people in the film industry in the database.
+
+    Attributes
+    ----------
+    db_connection : DBConnector
+        A connector to the database.
+    known_for_dao : KnownForDao
+        A DAO object used for operations related to what movie makers are known for.
+    movie_dao : MovieDao
+        A DAO object used for operations related to movies.
+    """
     def __init__(self, db_connection: DBConnector):
-        # create a DB connection object
+        """Constructor"""
         self.db_connection = db_connection
         self.known_for_dao = KnownForDao(db_connection)
         self.movie_dao = MovieDAO(db_connection)
 
-    def insert(self, movie_maker: MovieMaker) -> MovieMaker:
-        """
-        Insert a new MovieMaker in the Database.
+    def insert(self, movie_maker: MovieMaker):
+        """Inserts a new MovieMaker into the Database.
 
         Parameters:
         -----------
         movie_maker : MovieMaker
-            MovieMaker objet to insert.
+            A MovieMaker objet to insert.
         """
         try:
             query = """
@@ -63,6 +71,13 @@ class MovieMakerDAO(metaclass=Singleton):
             print("Insersion error : ", str(e))
 
     def update(self, movie_maker: MovieMaker):
+        """Updates information on a MovieMaker into the database.
+
+        Parameters:
+        -----------
+        movie_maker : MovieMaker
+            The movie maker to delete.
+        """
         try:
             query = """UPDATE movie_maker
                     SET adult = %s, name = %s, gender = %s, biography = %s,
@@ -88,6 +103,13 @@ class MovieMakerDAO(metaclass=Singleton):
             print("Update error : ", str(e))
 
     def delete(self, id_movie_maker: int):
+        """Deletes a MovieMaker from the database.
+
+        Parameters:
+        -----------
+        movie_maker : MovieMaker
+            The movie maker to delete.
+        """
         try:
             query = """
                 DELETE FROM movie_maker
@@ -101,6 +123,13 @@ class MovieMakerDAO(metaclass=Singleton):
 
 
     def get_by_name(self, name: str) -> Optional[List[MovieMaker]]:
+        """Selects a MovieMaker from the Database using their name.
+
+        Parameters:
+        -----------
+        name : str
+            The name of a movie maker.
+        """
         try:
             query = """
                     SELECT * FROM movie_maker
@@ -131,25 +160,3 @@ class MovieMakerDAO(metaclass=Singleton):
         except Exception as e:
             print("Error during retrieval by name in the database:", str(e))
             return None
-
-    # def get_by_id(self, id_movie_maker: int) -> MovieMaker | None:   # faire à la fin si temps sinon on l'enlève.
-    #     try:
-    #         query = """
-    #                 SELECT * FROM movie_maker
-    #                 WHERE id_movie_maker = %s;
-    #             """
-    #         value = (id_movie_maker,)
-    #         result = self.db_connection.sql_query(query, value, return_type="one")
-    #         if result:
-    #             the_movie_maker = dict(result)
-    #             return MovieMaker(**the_movie_maker)
-    #         else:
-    #             print(f"NO MovieMaker with the id {id_movie_maker} in the database.")
-    #             return None
-    #     except Exception as e:
-    #         print("Error during recovery by id : ", str(e))
-    #         return None
-
-# db_connection = DBConnector()
-# my_object = MovieMakerDAO(db_connection)
-# print(my_object.get_by_name("james cameron"))
