@@ -6,6 +6,7 @@ from src.Service.user_movie_service import UserMovieService
 from src.DAO.tables_creation import TablesCreation
 from src.Service.movie_maker_service import MovieMakerService
 from faker import Faker
+from typing import Optional
 import random
 
 class Fill_tables:
@@ -68,29 +69,47 @@ class Fill_tables:
         for movie_maker in movie_makers:
             movie_maker =  self.movie_maker_service.get_movie_maker_by_name(movie_maker) 
 
-    def fill_table_follower(self, id_user_created):
-        for id_user in id_user_created:
-            for k in range(2): # we add max 2 link per user. Less if 2 time the same link
+    def fill_table_follower(self, id_user_created, id_user_test : Optional[int] = None):
+        if id_user_test:
+            for k in range(10):
                 id_followed = random.choice(id_user_created)
-                while id_followed == id_user:
+                while id_followed == id_user_test:
                     id_followed = random.choice(id_user_created)
-                self.user_interaction_service.follow_user(id_user, id_followed)
+                self.user_interaction_service.follow_user(id_user_test, id_followed)
+        else:
+            for id_user in id_user_created:
+                for k in range(2): # we add max 2 link per user. Less if 2 time the same link
+                    id_followed = random.choice(id_user_created)
+                    while id_followed == id_user:
+                        id_followed = random.choice(id_user_created)
+                    self.user_interaction_service.follow_user(id_user, id_followed)
 
-    def fill_table_favorite(self, id_user_created, id_movie_created):
-        for id_user in id_user_created:
-            for k in range(2): 
+    def fill_table_favorite(self, id_user_created, id_movie_created, id_user_test : Optional[int] = None):
+        if id_user_test :
+            for k in range(10): 
                 id_favorite_movie = random.choice(id_movie_created)
-                self.user_interaction_service.add_favorite(id_user, id_favorite_movie)
+                self.user_interaction_service.add_favorite(id_user_test, id_favorite_movie)
+        else:
+            for id_user in id_user_created:
+                for k in range(2): 
+                    id_favorite_movie = random.choice(id_movie_created)
+                    self.user_interaction_service.add_favorite(id_user, id_favorite_movie)
 
-    def fill_table_rating(self, id_user_created, id_movie_created):
-        for id_user in id_user_created:
-            for k in range(2): 
+    def fill_table_rating(self, id_user_created, id_movie_created, id_user_test : Optional[int] = None):
+        if id_user_test:
+            for k in range(10):
                 rating = random.randint(0,10)
                 id_movie = random.choice(id_movie_created)
-                self.user_movie_service.rate_film_or_update(id_user, id_movie, rating)
+                self.user_movie_service.rate_film_or_update(id_user_test, id_movie, rating)
+        else:
+            for id_user in id_user_created:
+                for k in range(2): 
+                    rating = random.randint(0,10)
+                    id_movie = random.choice(id_movie_created)
+                    self.user_movie_service.rate_film_or_update(id_user, id_movie, rating)
 
 
-    def fill_table_comment(self, id_user_created, id_movie_created):
+    def fill_table_comment(self, id_user_created, id_movie_created, id_user_test : Optional[int] = None):
         movie_comments = [
             "The storyline was really engaging, I couldn't take my eyes off the screen!",
             "The acting was top-notch, especially the lead actor.",
@@ -103,11 +122,17 @@ class Fill_tables:
             "The humor in this film was spot-on; it made me laugh out loud multiple times.",
             "The action scenes were intense, but sometimes hard to follow due to the quick cuts."
         ]
-        for id_user in id_user_created:
-            for k in range(2): 
+        if id_user_test:
+            for k in range(10): 
                 comment = random.choice(movie_comments)
                 id_movie = random.choice(id_movie_created)
-                self.user_movie_service.add_or_update_comment(id_user, id_movie, comment)
+                self.user_movie_service.add_or_update_comment(id_user_test, id_movie, comment)
+        else:
+            for id_user in id_user_created:
+                for k in range(2): 
+                    comment = random.choice(movie_comments)
+                    id_movie = random.choice(id_movie_created)
+                    self.user_movie_service.add_or_update_comment(id_user, id_movie, comment)
 
     def fill_the_database(self):
         Faker.seed(1234) # to fix seed. Same fake user each time to simplify testing
@@ -119,6 +144,23 @@ class Fill_tables:
         self.fill_table_rating(id_user_created, id_movie_created)
         self.fill_table_comment(id_user_created, id_movie_created)
         self.fill_table_movie_maker()
+        ### Ajout de notre utilisateur de test :
+        connected_user = self.user_service.sign_up(
+                first_name="user_nocode",
+                last_name="user_nocode",
+                username="user_nocode",
+                password="user_nocode123",
+                gender = 1,
+                date_of_birth="2024-11-22",
+                email_address="nocode@gmail.com",
+                phone_number="0707070707"
+            )
+        id_connected_user = connected_user.id_user
+        self.fill_table_follower(id_user_created, id_user_test = id_connected_user)
+        self.fill_table_favorite(id_user_created, id_movie_created,id_user_test = id_connected_user)
+        self.fill_table_rating(id_user_created, id_movie_created,id_user_test = id_connected_user)
+        self.fill_table_comment(id_user_created, id_movie_created,id_user_test = id_connected_user)
+
         print("Database successfully filled.")
 
 

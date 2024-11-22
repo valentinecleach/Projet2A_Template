@@ -1,4 +1,5 @@
 from datetime import datetime
+import pytest
 
 from src.DAO.comment_dao import CommentDao
 from src.DAO.db_connection import DBConnector
@@ -36,158 +37,160 @@ from src.Service.user_interactions_service import UserInteractionService
 #     print(result)  # Affiche le résultat, qui devrait être None
 #     assert result is None  # Vérifie que l'utilisateur n'est pas trouvé
 
-
-def test_follow_user():
-    mock_db_connection = MockDBConnectorFollowDAO()
-    user_interaction_service = UserInteractionService(mock_db_connection)
+def test_follow_user_success():
+    """Test de la méthode follow_user pour vérifier l'ajout d'une relation de suivi."""
+    db_connection = DBConnector()
+    user_interaction_service = UserInteractionService(db_connection)
+    user_dao = UserDao(db_connection)
     follower_id = 1
+    user_test = user_dao.get_user_by_id(1)
     followee_id = 2
-    try:
-        user_interaction_service.follow_user(follower_id, follower_id)
-    except ValueError as e:
-        assert str(e) == "A user cannot follow themselves.", f"Unexpected error message: {e}"
+    while followee_id in user_test.follow_list:
+        followee_id += 1
     user_interaction_service.follow_user(follower_id, followee_id)
-    assert (follower_id, followee_id) in mock_db_connection.data, "The follow relationship should be added"
-    assert mock_db_connection.data[(follower_id, followee_id)] == datetime.now().date(), "Follow date should match"
+    query = "SELECT 1 FROM follower WHERE id_user = %s AND id_user_followed = %s;"
+    result = db_connection.sql_query(query, (follower_id, followee_id), return_type="one")
+    db_connection.sql_query("DELETE FROM follower WHERE id_user = %s AND id_user_followed = %s;", (follower_id, followee_id))
+    assert result is not None, "Follow relationship was not created successfully."
+    
 
+def test_follow_user_self():
+    """Test du cas où un utilisateur essaie de se suivre lui-même."""
 
-def test_unfollow_user():
-    mock_db_connection = MockDBConnectorFollowDAO()
-    user_interaction_service = UserInteractionService(mock_db_connection)
+    db_connection = DBConnector() 
+    user_interaction_service = UserInteractionService(db_connection)
+    user_dao = UserDao(db_connection)
     follower_id = 1
-    followee_id = 2
+    followee_id = 1
     try:
-        user_interaction_service.unfollow_user(follower_id, 999) 
+        user_interaction_service.follow_user(follower_id, followee_id)
     except ValueError as e:
-        assert str(e) == "This user is not being followed.", f"Unexpected error message: {e}"
-    mock_db_connection.data[(follower_id, followee_id)] = datetime.now().date() 
-    result = user_interaction_service.unfollow_user(follower_id, followee_id)
-    assert result is None, "The follow relationship should be removed"
+        assert str(e) == "A user cannot follow themselves."
+    else:
+        assert False, "ValueError was not raised."
 
+def test_unfollow_user_not_following():
+    """Test du cas où un utilisateur essaie de se désabonner d'un utilisateur qu'il ne suit pas."""
+
+    db_connection = DBConnector()  # Connexion à la base de données
+    user_interaction_service = UserInteractionService(db_connection)
+    user_dao = UserDao(db_connection)
+    follower_id = 1
+    user_test = user_dao.get_user_by_id(1)
+    followee_id = 2
+    while followee_id in user_test.follow_list:
+        followee_id += 1
+    try:
+        user_interaction_service.unfollow_user(follower_id, followee_id)
+    except ValueError as e:
+        assert str(e) == "This user is not being followed."
+    else:
+        assert False, "ValueError was not raised."
+
+def test_unfollow_user_success():
+    """Test de la méthode unfollow_user pour vérifier la suppression d'une relation de suivi."""
+
+    db_connection = DBConnector() 
+    user_interaction_service = UserInteractionService(db_connection)
+    user_dao = UserDao(db_connection)
+    follower_id = 1
+    user_test = user_dao.get_user_by_id(1)
+    followee_id = 2
+    while followee_id in user_test.follow_list:
+        followee_id += 1
+    user_interaction_service.follow_user(follower_id, followee_id)
+    user_interaction_service.unfollow_user(follower_id, followee_id)
+    query = "SELECT 1 FROM follower WHERE id_user = %s AND id_user_followed = %s;"
+    result = db_connection.sql_query(query, (follower_id, followee_id), return_type="one")
+    db_connection.sql_query(
+        "DELETE FROM follower WHERE id_user = %s AND id_user_followed = %s;", (follower_id, followee_id)
+    )
+    assert result is None, "Follow relationship was not deleted successfully."
+    
 def test_add_favorite_success():
-    mock_favorite_dao = MockDBConnectorFavoriteDAO()
-    user_interaction_service = UserInteractionService(mock_favorite_dao)
+    """Test de la méthode add_favorite pour vérifier l'ajout d'un film aux favoris."""
+
+    db_connection = DBConnector() 
+    user_interaction_service = UserInteractionService(db_connection)
+    user_dao = UserDao(db_connection)
     id_user = 1
-    id_movie = 101
+    user_test = user_dao.get_user_by_id(1)
+    id_movie = 102 # we choose a film not in favorite
     user_interaction_service.add_favorite(id_user, id_movie)
-    assert (id_user, id_movie) in mock_favorite_dao.data, "The movie should be added to favorites"
+    query = "SELECT 1 FROM user_movie_collection WHERE id_user = %s AND id_movie = %s;"
+    result = db_connection.sql_query(query, (id_user, id_movie), return_type="one")
+    db_connection.sql_query(
+        "DELETE FROM user_movie_collection WHERE id_user = %s AND id_movie = %s;", (id_user, id_movie)
+    )
+    assert result is not None, "Movie was not added to favorites successfully."
 
 def test_delete_favorite_success():
-    """Test qu'un film peut être supprimé des favoris avec succès."""
-    mock_db_connector = MockDBConnectorFavoriteDAO()
-    service = UserInteractionService(mock_db_connector)
-    user_favorite_dao = service.user_favorites_dao
-    user_favorite_dao.insert(1, 101) 
-    service.delete_favorite(1, 101)
-    favorites = user_favorite_dao.get_favorites(1)
-    assert 101 not in favorites, "Le film devrait avoir été supprimé des favoris."
+    """Test de la méthode delete_favorite pour vérifier la suppression d'un film des favoris."""
+
+    db_connection = DBConnector() 
+    user_interaction_service = UserInteractionService(db_connection)
+    user_dao = UserDao(db_connection)
+
+    id_user = 1
+    user_test = user_dao.get_user_by_id(1)
+    own_film_collection = user_test.own_film_collection
+    id_movie = own_film_collection[0]
+    user_interaction_service.delete_favorite(id_user, id_movie)
+    query = "SELECT 1 FROM user_movie_collection WHERE id_user = %s AND id_movie = %s;"
+    result = db_connection.sql_query(query, (id_user, id_movie), return_type="one")
+    user_interaction_service.add_favorite(id_user, id_movie)
+    assert result is None, "Movie was not removed from favorites successfully."
+
+def test_delete_favorite_movie_not_in_favorites():
+    """Test de la méthode delete_favorite pour vérifier la levée d'une exception quand le film n'est pas dans les favoris."""
+
+    db_connection = DBConnector()  # Connexion à la base de données
+    user_interaction_service = UserInteractionService(db_connection)
+    user_dao = UserDao(db_connection)
+
+    id_user = 1  # ID de l'utilisateur
+    user_test = user_dao.get_user_by_id(1)
+    own_film_collection = user_test.own_film_collection
+    id_movie = 118 # a movie not in collection
+    query = "SELECT 1 FROM user_movie_collection WHERE id_user = %s AND id_movie = %s;"
+    result = db_connection.sql_query(query, (id_user, id_movie), return_type="one")
+    assert result is None, "This movie should not be in the user's favorites initially."
+    with pytest.raises(ValueError, match="This movie is not in the user's favorites."):
+        user_interaction_service.delete_favorite(id_user, id_movie)
+
+def test_get_user_favorites_with_favorites():
+    """
+    Test the get_user_favorites method when a user has favorites.
+    """
+    db_connection = DBConnector()
+    user_interaction_service = UserInteractionService(db_connection)
+    user_dao = UserDao(db_connection)
+    user_id = 1
+    user_test = user_dao.get_user_by_id(user_id)
+    own_film_collection = user_test.own_film_collection
+    assert len(own_film_collection) > 0, "The user should have at least one favorite for this test."
+    favorites = user_interaction_service.get_user_favorites(user_id)
+    assert favorites == own_film_collection, "The favorites returned do not match the database records."
 
 
-def test_delete_favorite_not_in_favorites():
-    """Test qu'une exception est levée si le film n'est pas dans les favoris."""
-    mock_db_connector = MockDBConnectorFavoriteDAO()
-    user_favorite_dao = UserFavoriteDao(mock_db_connector)
-    service = UserInteractionService(user_favorite_dao=user_favorite_dao)
-    try:
-        service.delete_favorite(1, 101)  # Essayer de supprimer un favori inexistant
-        assert False, "Une ValueError aurait dû être levée pour un film non présent dans les favoris."
-    except ValueError as error:
-        assert str(error) == "This movie is not in the user's favorites.", \
-            "Le message d'erreur ne correspond pas à l'attendu."
+def test_get_user_favorites_without_favorites():
+    """
+    Test the get_user_favorites method when a user has no favorites.
+    """
+    db_connection = DBConnector()
+    user_interaction_service = UserInteractionService(db_connection)
+    user_dao = UserDao(db_connection)
+    user_id = 1
+    user_test = user_dao.get_user_by_id(user_id)
+    own_film_collection = user_test.own_film_collection
+    for id_movie in own_film_collection:
+        user_interaction_service.delete_favorite(user_id, id_movie)
+    query = "SELECT COUNT(*) FROM user_movie_collection WHERE id_user = %s;"
+    result = db_connection.sql_query(query, (user_id,), return_type="one")
+    favorites = user_interaction_service.get_user_favorites(user_id)
+    for id_movie in own_film_collection:
+        user_interaction_service.add_favorite(user_id, id_movie)
+    assert result["count"] == 0, "The user should have no favorites for this test."
+    assert favorites == [], "The method should return an empty list when the user has no favorites."
 
 
-# def test_add_favorite_success():
-#     """
-#     Test de l'ajout d'un film à la liste des favoris avec succès.
-#     """
-#     db_connection = DBConnector()
-#     user_interaction_service = UserInteractionService(db_connection)
-
-#     user_id = 217
-#     movie_id = 19965
-#     user_interaction_service.add_favorite(user_id, movie_id)
-#     print(f"Movie {movie_id} added to User {user_id}'s favorites.")
-
-#     # Vérification si les favoris ont bien été récupérés
-#     favorites = user_interaction_service.get_user_favorites(user_id)
-#     assert favorites is not None, "Les favoris n'ont pas pu être récupérés."
-
-#     # Vérifier que le film est bien dans les favoris
-#     assert movie_id in favorites, "Le film n'a pas été ajouté aux favoris."
-
-
-# def test_add_favorite_duplicate():
-#     """
-#     Test où un utilisateur essaie d'ajouter un film déjà présent dans ses favoris.
-#     Cela devrait lever une exception.
-#     """
-#     db_connection = DBConnector()
-#     user_interaction_service = UserInteractionService(db_connection)
-
-#     user_id = 1
-#     movie_id = 100
-#     user_interaction_service.add_favorite(user_id, movie_id)  # Premier ajout réussi
-#     try:
-#         user_interaction_service.add_favorite(user_id, movie_id)  # Deuxième ajout
-#     except ValueError as e:
-#         print(e)  # Attendu: "This movie is already in favorites."
-#         assert str(e) == "This movie is already in favorites."
-
-
-# def test_get_user_favorites():
-#     """
-#     Teste la récupération des favoris d'un utilisateur.
-#     """
-#     db_connection = DBConnector()
-#     user_interaction_service = UserInteractionService(db_connection)
-
-#     # ID de l'utilisateur
-#     user_id = 217
-
-#     # Ajouter deux films aux favoris
-#     user_interaction_service.add_favorite(user_id, 19965)
-#     user_interaction_service.add_favorite(user_id, 19995)
-
-#     # Récupérer les favoris
-#     favorites = user_interaction_service.get_user_favorites(user_id)
-#     print(f"Favorites for user {user_id}: {favorites}")
-
-#     # Vérifie que la liste contient les films ajoutés
-#     assert 19965 in favorites, "Le film 19965 n'est pas dans les favoris."
-#     assert 19995 in favorites, "Le film 19995 n'est pas dans les favoris."
-
-
-# def test_add_comment():
-#     """
-#     Teste l'ajout d'un commentaire à un film par un utilisateur.
-#     """
-#     db_connection = DBConnector()
-#     user_interaction_service = UserInteractionService(db_connection)
-
-#     # ID de l'utilisateur et du film
-#     user_id = 217
-#     movie_id = 19965
-#     comment_text = "Super film, vraiment captivant !"
-
-#     # Créer un objet Comment à partir des paramètres
-#     user = UserDao(db_connection).get_user_by_id(
-#         user_id
-#     )  # Récupère l'utilisateur par ID
-#     movie = MovieDAO(db_connection).get_by_id(movie_id)  # Récupère le film par ID
-#     comment = Comment(
-#         user=user, movie=movie, date=datetime.now().date(), comment=comment_text
-#     )
-
-#     # Utilisation de la méthode add_comment qui elle, utilise l'insertion via CommentDao
-#     user_interaction_service.add_comment(comment)
-
-#     # Vérifier si le commentaire a bien été ajouté, ici il faudra récupérer le commentaire et vérifier son existence
-#     comment_dao = CommentDao(db_connection)
-#     retrieved_comment = comment_dao.get_comment(user_id, movie_id)
-
-#     assert (
-#         retrieved_comment is not None
-#     ), "Le commentaire n'a pas été ajouté correctement."
-#     assert (
-#         retrieved_comment.comment == comment_text
-#     ), f"Le commentaire attendu est '{comment_text}', mais on a '{retrieved_comment.comment}'."

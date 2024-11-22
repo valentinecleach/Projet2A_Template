@@ -39,7 +39,7 @@ class UserInteractionService:
 
     def follow_user(
         self, follower_id: int, followee_id: int
-    ) -> None:  ## follower_id doit être récupéré avec la connection
+    ) -> None:  
         """
         Allows a user to follow another user.
 
@@ -109,9 +109,8 @@ class UserInteractionService:
         """
         # Vérification si le film est dans les favoris
         favorites = self.user_favorites_dao.get_favorites(user_id)
-        favorite_ids = [fav["id_movie"] for fav in favorites]
 
-        if id_movie not in favorite_ids:
+        if id_movie not in favorites:
             raise ValueError("This movie is not in the user's favorites.")
 
         # Suppression du favori
@@ -142,26 +141,26 @@ class UserInteractionService:
         except Exception as error:
             raise ValueError(f"An error occurred while retrieving favorites: {error}")
 
-    def add_comment(self, comment: Comment):
-        """
-        provide a comment to a specific movie.
+    # def add_comment(self, comment: Comment):
+    #     """
+    #     provide a comment to a specific movie.
 
-        Parameters
-        ----------
-        id_user : int
-            The ID of the user who is rating.
-        id_movie : int
-            The ID of the movie to rate.
-        comment : str
+    #     Parameters
+    #     ----------
+    #     id_user : int
+    #         The ID of the user who is rating.
+    #     id_movie : int
+    #         The ID of the movie to rate.
+    #     comment : str
 
-        Returns
-            None
-        -------
-        """
-        try:
-            self.comment_dao.insert(comment)
-        except Exception as error:
-            raise ValueError(f"An error occurred while commenting the movie: {error}")
+    #     Returns
+    #         None
+    #     -------
+    #     """
+    #     try:
+    #         self.comment_dao.insert(comment)
+    #     except Exception as error:
+    #         raise ValueError(f"An error occurred while commenting the movie: {error}")
 
 
 # doctest follow_user()

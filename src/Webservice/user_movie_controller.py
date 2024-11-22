@@ -42,26 +42,43 @@ def add_or_update_movie_rate(
 )
 def get_ratings_for_a_user(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
-    id_movie: Optional[int] = None
+    id_movie: Optional[int] = None,
+    id_user : Optional[int] = None
 ):
     """
     Display all the ratings of the user.
     If id_movie is entered, display the rating provided by the user for this particular moovie.
+    id_movie : to have the ratings of a specifique moovie
+    id_user : to have the ratings of a specific user.
     """
     current_user = get_user_from_credentials(credentials)
     try:
         if id_movie :
-            rating = user_movie_service.rating_dao.get_rating(current_user.id_user, id_movie)
-            if rating:
-                return f"{rating}"
+            if id_user:
+                rating = user_movie_service.rating_dao.get_rating(id_user, id_movie)
+                if rating:
+                    return f"{rating}"
+                else:
+                    f"User {id_user} hasn't rated this movie yet!"
             else:
-                f"You haven't rated this movie yet!"
+                rating = user_movie_service.rating_dao.get_rating(current_user.id_user, id_movie)
+                if rating:
+                    return f"{rating}"
+                else:
+                    f"You haven't rated this movie yet!"
         else :
-            ratings = user_movie_service.get_ratings_user(current_user.id_user)
-            if ratings:
-                return [f"{rating}" for rating in ratings]
+            if id_user:
+                ratings = user_movie_service.get_ratings_user(id_user)
+                if ratings:
+                    return [f"{rating}" for rating in ratings]
+                else:
+                    f"User {id_user} hasn't rated a movie yet!"
             else:
-                f"You haven't rated a movie yet!"
+                ratings = user_movie_service.get_ratings_user(current_user.id_user)
+                if ratings:
+                    return [f"{rating}" for rating in ratings]
+                else:
+                    f"You haven't rated a movie yet!"
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
 

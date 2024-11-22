@@ -105,24 +105,24 @@ class DBConnector:
             print(e)
             raise e
 
-    def start_transaction(self):
-        """Starts a transaction."""
-        try:
-            if self.connection is None:
-                self._connect()
-            self.connection.autocommit = False
-        except Exception as e:
-            print(f"Error starting transaction: {e}")
-            raise e
+    # def start_transaction(self):
+    #     """Starts a transaction."""
+    #     try:
+    #         if self.connection is None:
+    #             self._connect()
+    #         self.connection.autocommit = False
+    #     except Exception as e:
+    #         print(f"Error starting transaction: {e}")
+    #         raise e
 
-    def rollback_transaction(self):
-        """Rolls back the transaction."""
-        try:
-            if self.connection is not None and not self.connection.autocommit:
-                self.connection.rollback()
-        except Exception as e:
-            print(f"Error rolling back transaction: {e}")
-            raise e
+    # def rollback_transaction(self):
+    #     """Rolls back the transaction."""
+    #     try:
+    #         if self.connection is not None and not self.connection.autocommit:
+    #             self.connection.rollback()
+    #     except Exception as e:
+    #         print(f"Error rolling back transaction: {e}")
+    #         raise e
 
     # def commit_transaction(self):
     #     """ Commits the transaction, making all changes permanent. """
