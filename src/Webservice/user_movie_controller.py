@@ -17,6 +17,7 @@ rating_movie_router = APIRouter(prefix="/rating", tags=["Rating Movie"])
 comment_movie_router = APIRouter(prefix="/comment", tags=["Comment Movie"])
 #### Rating Section ###########
 
+
 @rating_movie_router.post(
     "/{user_id}/add_or_update_movie_rating",
     dependencies=[Depends(JWTBearer())],
@@ -43,7 +44,7 @@ def add_or_update_movie_rate(
 def get_ratings_for_a_user(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
     id_movie: Optional[int] = None,
-    id_user : Optional[int] = None
+    id_user: Optional[int] = None,
 ):
     """
     Display all the ratings of the user.
@@ -53,7 +54,7 @@ def get_ratings_for_a_user(
     """
     current_user = get_user_from_credentials(credentials)
     try:
-        if id_movie :
+        if id_movie:
             if id_user:
                 rating = user_movie_service.rating_dao.get_rating(id_user, id_movie)
                 if rating:
@@ -61,12 +62,14 @@ def get_ratings_for_a_user(
                 else:
                     f"User {id_user} hasn't rated this movie yet!"
             else:
-                rating = user_movie_service.rating_dao.get_rating(current_user.id_user, id_movie)
+                rating = user_movie_service.rating_dao.get_rating(
+                    current_user.id_user, id_movie
+                )
                 if rating:
                     return f"{rating}"
                 else:
                     f"You haven't rated this movie yet!"
-        else :
+        else:
             if id_user:
                 ratings = user_movie_service.get_ratings_user(id_user)
                 if ratings:
@@ -82,6 +85,7 @@ def get_ratings_for_a_user(
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
 
+
 @rating_movie_router.get(
     "/{user_id}/get_user_follow_average_vote_and_rate",
     dependencies=[Depends(JWTBearer())],
@@ -89,28 +93,37 @@ def get_ratings_for_a_user(
 )
 def get_user_follow_average_vote_and_ratings_for_a_movie(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
-    id_movie: int | None = None
+    id_movie: int | None = None,
 ):
     current_user = get_user_from_credentials(credentials)
-    if id_movie :
+    if id_movie:
         try:
-            ratings_follower_movie = user_movie_service.get_ratings_of_follower_for_a_movie(current_user.id_user, id_movie)
+            ratings_follower_movie = (
+                user_movie_service.get_ratings_of_follower_for_a_movie(
+                    current_user.id_user, id_movie
+                )
+            )
             if ratings_follower_movie:
-                return [f"follow rating average for movie {id_movie} : {ratings_follower_movie[0]}"] + [f"{rating}" for rating in ratings_follower_movie[1]]
+                return [
+                    f"follow rating average for movie {id_movie} : {ratings_follower_movie[0]}"
+                ] + [f"{rating}" for rating in ratings_follower_movie[1]]
             else:
                 return f"Your followers have not rated the movie with id : {id_movie}."
         except Exception as error:
             raise HTTPException(status_code=400, detail=str(error)) from error
     else:
-        try: 
-            ratings_follower_movie = user_movie_service.get_ratings_of_follower_for_a_movie(current_user.id_user)
-            if ratings_follower_movie :
+        try:
+            ratings_follower_movie = (
+                user_movie_service.get_ratings_of_follower_for_a_movie(
+                    current_user.id_user
+                )
+            )
+            if ratings_follower_movie:
                 return [f"{rating}" for rating in ratings_follower_movie]
-            else :
+            else:
                 return f"Your followers have not rated any movie."
         except Exception as error:
             raise HTTPException(status_code=400, detail=str(error)) from error
-
 
 
 @rating_movie_router.delete(
@@ -119,19 +132,23 @@ def get_user_follow_average_vote_and_ratings_for_a_movie(
     status_code=status.HTTP_201_CREATED,
 )
 def delete_a_user_rating(
-    id_movie : int,
+    id_movie: int,
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
 ):
     current_user = get_user_from_credentials(credentials)
     try:
-        rating = user_movie_service.rating_dao.get_rating(current_user.id_user, id_movie)
+        rating = user_movie_service.rating_dao.get_rating(
+            current_user.id_user, id_movie
+        )
         if rating:
             user_movie_service.delete_a_user_rating(rating)
             return f" Rating deletion for the movie with id {id_movie} completed."
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
 
+
 ##### Comment Section ##############
+
 
 @comment_movie_router.post(
     "/{user_id}/comment",
@@ -148,10 +165,13 @@ def add_or_update_comment(
     """
     current_user = get_user_from_credentials(credentials)
     try:
-        user_movie_service.add_or_update_comment(current_user.id_user, id_movie, comment)
+        user_movie_service.add_or_update_comment(
+            current_user.id_user, id_movie, comment
+        )
         return "Your comment has been shared successfully"
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
+
 
 @comment_movie_router.get(
     "/{user_id}/get_a_user_comment",
@@ -160,7 +180,7 @@ def add_or_update_comment(
 )
 def get_comments_for_a_user(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
-    id_movie: Optional[int] = None
+    id_movie: Optional[int] = None,
 ):
     """
     Display all the comments of the user.
@@ -168,20 +188,23 @@ def get_comments_for_a_user(
     """
     current_user = get_user_from_credentials(credentials)
     try:
-        if id_movie :
-            comment = user_movie_service.comment_dao.get_comment(current_user.id_user, id_movie)
-            if comment : 
+        if id_movie:
+            comment = user_movie_service.comment_dao.get_comment(
+                current_user.id_user, id_movie
+            )
+            if comment:
                 return f"{comment}"
             else:
                 return f"You haven't commented this movie yet!"
-        else :
+        else:
             comments = user_movie_service.get_comments_user(current_user.id_user)
-            if comments : 
+            if comments:
                 return [f"{c}" for c in comments]
             else:
                 return f"You haven't commented a movie yet!"
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
+
 
 @comment_movie_router.get(
     "/{user_id}/get_last_comment",
@@ -190,15 +213,17 @@ def get_comments_for_a_user(
 )
 def get_last_comments_movie(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
-    id_movie: int
+    id_movie: int,
 ):
     """
     Display 10 last comments for a movie
     """
-    current_user = get_user_from_credentials(credentials) # pas utile ?
+    current_user = get_user_from_credentials(credentials)  # pas utile ?
     try:
-        comments = user_movie_service.comment_dao.get_recent_comments_for_a_movie(id_movie = id_movie, limit = 10)
-        if comments :
+        comments = user_movie_service.comment_dao.get_recent_comments_for_a_movie(
+            id_movie=id_movie, limit=10
+        )
+        if comments:
             return [f"{c}" for c in comments]
         else:
             return "No comments for this movie for the moment"
@@ -212,12 +237,14 @@ def get_last_comments_movie(
     status_code=status.HTTP_201_CREATED,
 )
 def delete_a_user_comment(
-    id_movie : int,
+    id_movie: int,
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
 ):
     current_user = get_user_from_credentials(credentials)
     try:
-        comment = user_movie_service.comment_dao.get_comment(current_user.id_user, id_movie)
+        comment = user_movie_service.comment_dao.get_comment(
+            current_user.id_user, id_movie
+        )
         if comment:
             user_movie_service.delete_a_user_comment(comment)
             return f" Comment deletion for the movie with id {id_movie} completed."
