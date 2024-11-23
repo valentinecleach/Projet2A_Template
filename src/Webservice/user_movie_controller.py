@@ -96,7 +96,7 @@ def get_user_follow_average_vote_and_ratings_for_a_movie(
 ):
     """
     Display the average rating of the users followed.\n
-    If id_movie is entered, display the rating provided by the user for this particular moovie.\n
+    If id_movie is entered, display the rating provided by the user for this particular movie.\n
     id_movie : to have the ratings of a specifique movie
     """
     current_user = get_user_from_credentials(credentials)
@@ -209,6 +209,37 @@ def get_comments_for_a_user(
                 return [f"{c}" for c in comments]
             else:
                 return f"You haven't commented a movie yet!"
+    except Exception as error:
+        raise HTTPException(status_code=400, detail=str(error)) from error
+
+
+@comment_movie_router.get(
+    "/{user_id}/get_user_follow_comments",
+    dependencies=[Depends(JWTBearer())],
+    status_code=status.HTTP_201_CREATED,
+)
+def get_user_follow_comment(
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
+    id_movie: int | None = None,
+):
+    """
+    Display all comments of the users followed for a particular movie.
+    """
+    current_user = get_user_from_credentials(credentials)
+    try:
+        comments = [
+            user_movie_service.comment_dao.get_comment(
+                id_user=id_user, id_movie=id_movie
+            )
+            for id_user in current_user.follow_list
+        ]
+        comments = [x for x in comments if x != None]
+        if comments:
+            return [f"{c}" for c in comments.remove(None)]
+        else:
+            return (
+                "No comments send by your followed users for this movie for the moment"
+            )
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
 
