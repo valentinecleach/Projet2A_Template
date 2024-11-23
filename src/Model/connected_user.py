@@ -7,34 +7,34 @@ from src.Model.user import User
 
 
 class ConnectedUser(User):
-    """
+    """A ConnectedUser is a user that has an account in the app. This allows them to use certain features.
 
     Attributes
     ----------
-    id_user: int
-        the id of th user
-    username: str
-        the pseudonyme of the user
-    hashed_password: str
-        the password the user has created after been hashed
-    date_of_birth: date
-        the date of birth entered by the user
-    gender: int
-        the gender entered by the user
-    first_name: str
-        the first name of the user
-    last_name: str
-        the last name of the user
-    email_adress: str
-        the email adress of the user
-    password_token: str
-        object used for password
-    phone_number:str
-        the phone number of user
-    own_film_collection: list
-        list of id_movie of favorite movies
-    follow_list: list
-        list of user_id of user followed
+    id_user : int
+        The ID of the user
+    username : str
+        The pseudonym of the user
+    hashed_password : str
+        The password the user has created after been hashed
+    date_of_birth : date
+        The date of birth entered by the user
+    gender : int
+        The gender entered by the user
+    first_name : str
+        The first name of the user
+    last_name : str
+        The last name of the user
+    email_adress : str
+        The email adress of the user
+    password_token : str
+        An object used for password
+    phone_number : str
+        The phone number of user
+    own_film_collection : list
+        A list of ID's of favorite movies
+    follow_list : list
+        A list of ID's of users followed
     """
     id_user: int
     username: str
@@ -65,7 +65,7 @@ class ConnectedUser(User):
             f"follow_list : {self.follow_list}")
 
     def to_dict(self):
-        """To display only few information on an user"""
+        """Displays only a few information on an user"""
         return {
             "id_user": self.id_user,
             "username": self.username,
@@ -74,7 +74,7 @@ class ConnectedUser(User):
         }
 
     def to_dict_get_own(self):
-        """ To display more information if a user wants to consult his own profile"""
+        """Displays more information if a user wants to consult his own profile"""
         return {
             "id_user": self.id_user,
             "username": self.username,

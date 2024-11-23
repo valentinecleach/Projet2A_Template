@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 class Genre(BaseModel):
     """
-    Class representing a genre with an id and a name.
+    Genre is a class that represents a genre with an id and a name.
 
     Attributes
     ----------
@@ -23,6 +23,3 @@ class Genre(BaseModel):
     def __repr__(self):
         """Display method for a genre."""
         return f"Genre(id={self.id}, name='{self.name}')"
-
-
-# Unrelated code to show sys.path to understand error with classes ipmports.

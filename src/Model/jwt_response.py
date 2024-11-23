@@ -2,10 +2,11 @@ from pydantic import BaseModel
 
 
 class JWTResponse(BaseModel):
-    """
+    """A Json Web Token Response
+
     Parameters
     ----------
     acess_token: str
-        access token encapsulation for authentication 
+        Access token encapsulation for authentication 
     """
     access_token: str

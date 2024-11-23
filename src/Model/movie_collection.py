@@ -4,14 +4,14 @@ from pydantic import BaseModel
 
 
 class MovieCollection(BaseModel):
-    """ films from the same saga 
+    """ A collection of movies from the same saga 
 
     Attributes
     ----------
     id: int
-        id of thecollection
+        The ID of the collection
     name: str
-        name of the collection
+        The name of the collection
     """
     id: int
     name: str
