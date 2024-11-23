@@ -22,11 +22,18 @@ class UserService:
     def check_valid_username(self, username):
         if len(username) < 5:
             raise ValueError("Username must contain at least 5 characters")
-        existing_user = self.user_dao.get_user_by_name(username)
+        existing_user = self.user_dao.get_user_by_name(username, verif=True)
         if existing_user is not None:
             raise ValueError("This username is already taken.")
         else:
             print("good username")
+
+    def check_valid_email_address(self, email):
+        existing_user = self.user_dao.check_email_address(email)
+        if existing_user is None:
+            raise ValueError("This email address is already taken.")
+        else:
+            print("good email_address")
 
     def sign_up(
         self,
@@ -42,6 +49,7 @@ class UserService:
         """Permet de créer un compte utilisateur."""
         try:
             self.check_valid_username(username)
+            self.check_valid_email_address(email_address)
             check_password_strenght(password)
             salt = create_salt(username)
             hashed_password = hash_password(password, salt)
@@ -58,20 +66,17 @@ class UserService:
                 "phone_number": phone_number,
                 "gender": gender,
             }
-            try:
-                # Utilisation de la méthode insert de DBConnection
-                connected_user = self.user_dao.insert(user)
-                print(
-                    f"User '{connected_user.username}' successfully sign_up. His id is {connected_user.id_user}"
-                )
-                return connected_user
-            except Exception as e:
-                print(f"Erreur lors de l'inscription : {str(e)}")
+            # Utilisation de la méthode insert de DBConnection
+            connected_user = self.user_dao.insert(user)
+            print(
+                f"User '{connected_user.username}' successfully sign_up. His id is {connected_user.id_user}"
+            )
+            return connected_user
         except ValueError as e:
-            print(f"Error during user registration: {str(e)}")
+            raise ValueError(f"Error during user registration: {str(e)}")
             return None
         except Exception as e:
-            print(f"Unexpected error: {str(e)}")
+            raise ValueError(f"Unexpected error: {str(e)}")
             return None
 
     ##### sign_up fonctionne

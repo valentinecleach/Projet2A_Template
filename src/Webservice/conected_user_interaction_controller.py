@@ -3,16 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials
 
-from src.Model.connected_user import ConnectedUser
-from src.Model.movie import Movie
-from src.Webservice.init_app import (
-    recommend_service,
-    user_dao,
-    movie_dao,
-    user_favorite_dao,
-    user_follow_dao,
-    user_interaction_service,
-)
+from src.Webservice.init_app import movie_dao, user_dao, user_interaction_service
 from src.Webservice.jwt_bearer_webservice import JWTBearer
 from src.Webservice.user_controller import get_user_from_credentials
 
@@ -27,12 +18,12 @@ user_favorite_router = APIRouter(
 @user_interaction_router.post("/{username}", status_code=status.HTTP_201_CREATED)
 def find_a_user(username: str) -> list:
     """
-    Find aa user registerred on the API.
+    Find a user registerred on the API.
     """
     try:
         user = [u.to_dict() for u in user_dao.get_user_by_name(username=username)]
         if not user:
-            raise HTTPException(status_code=403, detail="Invalid username")
+            raise HTTPException(status_code=403, detail="No user found")
 
         # Return the list with all the user matching
         return user
@@ -53,6 +44,10 @@ def follow_user(
     Allows the authenticated user to follow another user.
     """
     current_user = get_user_from_credentials(credentials)
+
+    if user_to_follow_id in current_user.follow_list:
+        return f"User {current_user.username} is already following user {user_to_follow_id}"
+
     try:
         user_interaction_service.follow_user(current_user.id_user, user_to_follow_id)
         return f"User {current_user.username} is now following user {user_to_follow_id}"
@@ -93,9 +88,11 @@ def view_my_scout_list(
     """
     Allows the authenticated user to view all users he follows.
     """
-    current_user = get_user_from_credentials(credentials)  
+    current_user = get_user_from_credentials(credentials)
     try:
-        users = [user_dao.get_user_by_id(id).to_dict() for id in current_user.follow_list]
+        users = [
+            user_dao.get_user_by_id(id).to_dict() for id in current_user.follow_list
+        ]
         if users:
             return users
         else:
@@ -109,7 +106,6 @@ def view_my_scout_list(
     dependencies=[Depends(JWTBearer())],
     status_code=status.HTTP_201_CREATED,
 )
-
 def add_favorite(
     id_movie: int,
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],

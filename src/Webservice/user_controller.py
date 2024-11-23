@@ -1,26 +1,24 @@
 from datetime import date
-from typing import TYPE_CHECKING, Annotated, List, Optional
+from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials
 
 # Model
-from src.Model.api_user import APIUser
 from src.Model.connected_user import ConnectedUser
 from src.Model.jwt_response import JWTResponse
 
-# Service
-from src.Service.password_service import check_password_strenght, verify_password
-
 # Webservice
 from src.Webservice.init_app import (
-    jwt_service, 
-    user_dao, 
+    jwt_service,
+    user_dao,
+    user_movie_service,
     user_service,
-    user_movie_service )
+)
 from src.Webservice.jwt_bearer_webservice import JWTBearer
 
 user_router = APIRouter(prefix="/users", tags=["Users"])
+
 
 @user_router.post("/creation", status_code=status.HTTP_201_CREATED)
 def sign_up(
@@ -66,7 +64,10 @@ def sign_up(
             email_address=email_address,
             phone_number=phone_number,
         )
-        return f"User with username: {username} succesfully created."
+        if user:
+            return f"User with username: {username} succesfully created."
+        else:
+            return f"User with username: {username} not created."
     except Exception as error:
         raise HTTPException(status_code=409, detail=str(error)) from error
 
@@ -95,7 +96,7 @@ def log_in(username: str, password_tried: str) -> JWTResponse:
         elif user_service.log_in(username, password_tried) is not True:
             raise HTTPException(status_code=403, detail="Invalid password")
         else:
-            return(jwt_service.encode_jwt(user[0].id_user))
+            return jwt_service.encode_jwt(user[0].id_user)
     except Exception as error:
         print(error)
         raise HTTPException(status_code=403) from error
@@ -104,8 +105,8 @@ def log_in(username: str, password_tried: str) -> JWTResponse:
 @user_router.put("/update_profile", dependencies=[Depends(JWTBearer())])
 def update_user_own_profile(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
-    new_email_adress : str | None = None,
-    new_phone_number : str | None = None
+    new_email_adress: str | None = None,
+    new_phone_number: str | None = None,
 ):
     """
     Allow the user to update his email_adress and/or his phone_number
@@ -128,6 +129,7 @@ def update_user_own_profile(
     user_dao.update_user(connected_user, is_new_mail)
     return f"Account update successfull for user {connected_user.username}"
 
+
 @user_router.get("/profile", dependencies=[Depends(JWTBearer())])
 def get_user_own_profile(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())]
@@ -145,6 +147,7 @@ def get_user_own_profile(
     except Exception as error:
         raise HTTPException(status_code=403) from error
 
+
 @user_router.delete("/delete_user", dependencies=[Depends(JWTBearer())])
 def delete_own_profile(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())]
@@ -154,9 +157,11 @@ def delete_own_profile(
     """
     current_user = get_user_from_credentials(credentials)
     user_movie_service.delete_user_and_update_ratings(current_user.id_user)
-    
 
-def get_user_from_credentials(credentials: HTTPAuthorizationCredentials) -> ConnectedUser:
+
+def get_user_from_credentials(
+    credentials: HTTPAuthorizationCredentials,
+) -> ConnectedUser:
     """
     Get a user from credentials
 
@@ -169,6 +174,4 @@ def get_user_from_credentials(credentials: HTTPAuthorizationCredentials) -> Conn
     connected_user: ConnectedUser | None = user_dao.get_user_by_id(user_id)
     if not connected_user:
         raise HTTPException(status_code=404, detail="User not found")
-    return connected_user # ça serait mieux de retourner un Connected USER !! POur avoir acces own_favorite ... quand on regarde le profil
-
-
+    return connected_user  # ça serait mieux de retourner un Connected USER !! POur avoir acces own_favorite ... quand on regarde le profil

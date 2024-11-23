@@ -3,13 +3,7 @@ from typing import Annotated, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials
 
-from src.Model.rating import Rating
-from src.Webservice.init_app import (
-    recommend_service,
-    user_dao,
-    user_follow_dao,
-    user_movie_service,
-)
+from src.Webservice.init_app import user_movie_service
 from src.Webservice.jwt_bearer_webservice import JWTBearer
 from src.Webservice.user_controller import get_user_from_credentials
 
@@ -28,6 +22,11 @@ def add_or_update_movie_rate(
     rate: int,
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
 ):
+    """
+    Allow the authentificated user to rate a movie.\n
+    id_movie is the ID of a specifique movie.\n
+    if he has already rated, his rate is updated
+    """
     current_user = get_user_from_credentials(credentials)
     try:
         user_movie_service.rate_film_or_update(current_user.id_user, id_movie, rate)
@@ -47,9 +46,9 @@ def get_ratings_for_a_user(
     id_user: Optional[int] = None,
 ):
     """
-    Display all the ratings of the user.
-    If id_movie is entered, display the rating provided by the user for this particular moovie.
-    id_movie : to have the ratings of a specifique moovie
+    Display all the ratings of the user.\n
+    If id_movie is entered, display the rating provided by the user for this particular movie.\n
+    id_movie : to have the ratings of a specifique movie\n
     id_user : to have the ratings of a specific user.
     """
     current_user = get_user_from_credentials(credentials)
@@ -95,6 +94,11 @@ def get_user_follow_average_vote_and_ratings_for_a_movie(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
     id_movie: int | None = None,
 ):
+    """
+    Display the average rating of the users followed.\n
+    If id_movie is entered, display the rating provided by the user for this particular moovie.\n
+    id_movie : to have the ratings of a specifique movie
+    """
     current_user = get_user_from_credentials(credentials)
     if id_movie:
         try:
@@ -135,6 +139,9 @@ def delete_a_user_rating(
     id_movie: int,
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
 ):
+    """
+    Delete a rating made for a spécific movie by given his ID
+    """
     current_user = get_user_from_credentials(credentials)
     try:
         rating = user_movie_service.rating_dao.get_rating(
@@ -161,7 +168,7 @@ def add_or_update_comment(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
 ) -> str:
     """
-    Allows the authenticated user to follow another user.
+    Allows the authenticated user to comment a movie or update his comment.
     """
     current_user = get_user_from_credentials(credentials)
     try:
@@ -184,7 +191,7 @@ def get_comments_for_a_user(
 ):
     """
     Display all the comments of the user.
-    If id_movie is entered, display the comment provided by the user for this particular moovie.
+    If id_movie is entered, display the comment provided by the user for this particular movie.
     """
     current_user = get_user_from_credentials(credentials)
     try:
@@ -218,7 +225,6 @@ def get_last_comments_movie(
     """
     Display 10 last comments for a movie
     """
-    current_user = get_user_from_credentials(credentials)  # pas utile ?
     try:
         comments = user_movie_service.comment_dao.get_recent_comments_for_a_movie(
             id_movie=id_movie, limit=10
@@ -240,6 +246,9 @@ def delete_a_user_comment(
     id_movie: int,
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
 ):
+    """
+    Delete a comment given to a movie
+    """
     current_user = get_user_from_credentials(credentials)
     try:
         comment = user_movie_service.comment_dao.get_comment(

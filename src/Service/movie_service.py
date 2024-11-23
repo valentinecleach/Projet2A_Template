@@ -7,7 +7,7 @@ from src.TMDB.movie_tmdb import MovieTMDB
 
 
 class MovieService:
-    """ A Movie object in our service layer
+    """A Movie object in our service layer
 
     Attributes
     ----------
@@ -18,6 +18,7 @@ class MovieService:
     movie_tmdb : MovieMakerTMDB
         An element from the module that allows picking from the database
     """
+
     def __init__(self, db_connection: DBConnector):
         "Constructor"
         self.db_connection = db_connection
@@ -52,7 +53,8 @@ class MovieService:
                 return None
 
     def get_movie_by_title(self, movie_title: str) -> List[Movie] | None:
-       """Finds movies with their name
+        """
+        Finds movies with their name
 
         Parameters
         ----------
@@ -65,6 +67,7 @@ class MovieService:
             A list of movies with the given title.
             If no movies are found, the method returns None
         """
+
         movie = self.movie_dao.get_by_title(movie_title)
         if movie:
             print("Movie get from database")

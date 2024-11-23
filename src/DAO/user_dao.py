@@ -113,25 +113,36 @@ class UserDao(metaclass=Singleton):
         else:
             return None  # No user found
 
-    def get_user_by_name(self, username: str) -> List[ConnectedUser]:
+    def get_user_by_name(
+        self, username: str, verif: bool = False
+    ) -> List[ConnectedUser]:
         """Fetches users by their name.
 
         Parameters
         ----------
         username : str
             The username of a user to look for.
+        Verif : Bool
+            if we want to verifieif the username exist.
 
         Returns
         -------
         List[ConnectedUser] | None
             A list of users with the username. If no users are found, the method returns None.
         """
-        try:
-            query = """
-                SELECT id_user FROM users 
-                WHERE username LIKE %s 
-            """
+        username = username.strip()
+        if verif:
+            car = "="
+            search_pattern = username
+
+        else:
+            car = "LIKE"
             search_pattern = "%" + username + "%"
+        try:
+            query = f"""
+                SELECT id_user FROM users
+                WHERE username {car} %s
+            """
             results = self.db_connection.sql_query(
                 query, (search_pattern,), return_type="all"
             )

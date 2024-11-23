@@ -2,9 +2,9 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials
-from src.Model.movie import Movie
-from src.Model.connected_user import ConnectedUser
 
+from src.Model.connected_user import ConnectedUser
+from src.Model.movie import Movie
 from src.Webservice.init_app import (
     recommend_service,
     user_dao,
@@ -17,6 +17,8 @@ from src.Webservice.user_controller import get_user_from_credentials
 recommendation_router = APIRouter(
     prefix="/recommendation", tags=["Users and Movies Recommendation"]
 )
+
+
 @recommendation_router.get(
     "/{user_id}/recommendation_user",
     dependencies=[Depends(JWTBearer())],
@@ -26,11 +28,14 @@ def view_users(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
 ):
     """
-    Allows the authentificated user to see a recommended list of user.
+    Allows the authentificated user to see a recommended list of users.
     """
     current_user = get_user_from_credentials(credentials)
     try:
-        users = [u.to_dict() for u in recommend_service.find_users_to_follow(current_user.id_user)]
+        users = [
+            u.to_dict()
+            for u in recommend_service.find_users_to_follow(current_user.id_user)
+        ]
         return users
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
@@ -47,7 +52,10 @@ def view_movies(
     original_language: str = None,
 ) -> list[Movie]:
     """
-    Allows the authenticated user to see a recommended list of user.
+    Allows the authentificated user to see a recommended list of movies.\n
+    the list can be filtered \n
+    -by a given genre in {Comedy, Crime, Drama, Romance, Thriller, Adventure, Science Fiction, Mystery, History, Family, Fantasy, Animation, Documentary, TV Movie, Music, Horror, War, Western, Action}\n
+    -by a given original language in {ja, fr, da, en, pl, te, es, ko, it, zh, no, de, cn, sv}
     """
     filter = {}
     if genre:
