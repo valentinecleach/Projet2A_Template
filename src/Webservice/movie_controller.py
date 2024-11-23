@@ -14,6 +14,15 @@ movie_router = APIRouter(prefix="/movies", tags=["Movies"])
 def get_movie_by_title(title: str) -> List[Movie]:
     """
     Allow a user to find a movie by its title
+
+    Attributes
+    ----------
+    title : str \n
+        The movie title
+
+    Returns
+    -------
+    A list of movies
     """
     try:
         my_movie = movie_service.get_movie_by_title(title)
@@ -26,6 +35,14 @@ def get_movie_by_title(title: str) -> List[Movie]:
 def get_movie_by_id(tmdb_id: int) -> Movie:
     """
     Allow a user to find a movie by its id
+    Attributes
+    ----------
+    tmdb_id : int \n
+        The movie id
+
+    Returns
+    -------
+    A movie
     """
     try:
         my_movie = movie_service.get_movie_by_id(tmdb_id)
@@ -40,10 +57,18 @@ def view_movies(
     original_language: str = None,
 ) -> List[Movie]:
     """
-    Allows user to see popular list of movies.\n
-    the list can be filtered \n
-    -by a given genre in {Comedy, Crime, Drama, Romance, Thriller, Adventure, Science Fiction, Mystery, History, Family, Fantasy, Animation, Documentary, TV Movie, Music, Horror, War, Western, Action}\n
-    -by a given original language in {ja, fr, da, en, pl, te, es, ko, it, zh, no, de, cn, sv}
+    Allows user to see popular list of movies.
+
+    Attributes
+    ----------
+    genre : str \n
+        a given genre in {Comedy, Crime, Drama, Romance, Thriller, Adventure, Science Fiction, Mystery, History, Family, Fantasy, Animation, Documentary, TV Movie, Music, Horror, War, Western, Action}\n
+    original_language : str \n
+        a given original language in {ja, fr, da, en, pl, te, es, ko, it, zh, no, de, cn, sv}
+
+    Returns
+    -------
+    A list of popular movies
     """
     filter = {}
     if genre:
