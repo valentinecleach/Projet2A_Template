@@ -19,6 +19,15 @@ user_favorite_router = APIRouter(
 def find_a_user(username: str) -> list:
     """
     Find a user registerred on the API.
+
+    Attributes
+    ----------
+    username : int \n
+        The username of the user you are looking for
+
+    Returns
+    -------
+    A connected user
     """
     try:
         user = [u.to_dict() for u in user_dao.get_user_by_name(username=username)]
@@ -42,6 +51,12 @@ def follow_user(
 ) -> str:
     """
     Allows the authenticated user to follow another user.
+
+    Attributes
+    ----------
+    user_to_follow_id : int \n
+        The id of the user you want to follow
+
     """
     current_user = get_user_from_credentials(credentials)
 
@@ -58,14 +73,20 @@ def follow_user(
 @user_interaction_router.delete(
     "/{user_id}/follow",
     dependencies=[Depends(JWTBearer())],
-    status_code=status.HTTP_204_NO_CONTENT,
+    status_code=status.HTTP_201_CREATED,
 )
 def unfollow_user(
     user_to_unfollow_id: int,
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
-) -> None:
+) -> str:
     """
     Allows the authenticated user to unfollow another user.
+
+    Attributes
+    ----------
+    user_to_unfollow_id : int \n
+        The id of the user you want to unfollow
+
     """
     current_user = get_user_from_credentials(credentials)
     try:
@@ -87,6 +108,10 @@ def view_my_scout_list(
 ):
     """
     Allows the authenticated user to view all users he follows.
+
+    Returns
+    -------
+    A list of the users you are following. 
     """
     current_user = get_user_from_credentials(credentials)
     try:
@@ -112,6 +137,12 @@ def add_favorite(
 ) -> str:
     """
     Allows the authenticated user to add a film to his favorite films.
+
+    Attributes
+    ----------
+    id_movie : int \n
+        The id of the moovie you want to add in your favorite list.
+
     """
     current_user = get_user_from_credentials(credentials)
     try:
@@ -131,11 +162,17 @@ def view_my_favorite_movies(
 ):
     """
     Allows the authenticated user to view all his favorite films.
+
+    Returns
+    -------
+    A list of your favorite movies
     """
     current_user = get_user_from_credentials(credentials)
     try:
-        movies = [movie_dao.get_by_id(id) for id in current_user.own_film_collection]
-        if movies:
+        movies = []
+        for id in current_user.own_film_collection : 
+            movies.append(f"{movie_dao.get_by_id(id)}")
+        if movies != []:
             return movies
         else:
             return f"User {current_user.username} don't have any favorite movie yet"
@@ -146,14 +183,19 @@ def view_my_favorite_movies(
 @user_favorite_router.delete(
     "/{user_id}/favorite",
     dependencies=[Depends(JWTBearer())],
-    status_code=status.HTTP_204_NO_CONTENT,
+    status_code=status.HTTP_201_CREATED,
 )
 def delete_favorite(
     id_movie: int,
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
-) -> None:
+) -> str:
     """
     Allows the authenticated user to delete a film favorite.
+
+    Attributes
+    ----------
+    id_movie : int \n
+        The id of the movie you want to remove from your favorite list.
     """
     current_user = get_user_from_credentials(credentials)
     try:
