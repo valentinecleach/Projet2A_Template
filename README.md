@@ -66,4 +66,6 @@ The API is then documented on `localhost:8000/docs`
 
 When the application is launched, all tables are created if they weren't already. 
 You can separately launch the fill_tables.py to fill your database with some data and try the app.
+`> pdm run python src/Service/fill_tables.py`
+
 You can use (username : "user_nocode", password : "user_nocode123") to login with a fictious user and optimize your trying.
