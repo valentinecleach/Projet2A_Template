@@ -219,32 +219,53 @@ def add_or_update_comment(
 def get_comments_for_a_user(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
     id_movie: Optional[int] = None,
+    id_user: Optional[int] = None,
 ):
     """
-    Display all the comments of the user.
-    If id_movie is entered, display the comment provided by the user for this particular movie.
+    Display all the comments \n
+    If id_movie is entered, display the comments for this particular movie.\n
+    If id_user is entered, display the comments provided by this particular user.\n
+    If id_user is not entered, display your own comments.
 
     Attributes
     ----------
     id_movie : int \n
         The id of the movie
+    id_user : int \n
+        The id of the user
     """
     current_user = get_user_from_credentials(credentials)
     try:
         if id_movie:
-            comment = user_movie_service.comment_dao.get_comment(
-                current_user.id_user, id_movie
-            )
-            if comment:
-                return f"{comment}"
+            if id_user:
+                comment = user_movie_service.comment_dao.get_comment(
+                    id_user, id_movie
+                )
+                if comment:
+                    return f"{comment}"
+                else:
+                    return f"User with id {id_user} hasn't commented this movie yet!"
             else:
-                return f"You haven't commented this movie yet!"
+                comment = user_movie_service.comment_dao.get_comment(
+                    current_user.id_user, id_movie
+                )
+                if comment:
+                    return f"{comment}"
+                else:
+                    return f"You haven't commented this movie yet!"
         else:
-            comments = user_movie_service.get_comments_user(current_user.id_user)
-            if comments:
-                return [f"{c}" for c in comments]
+            if id_user:
+                comments = user_movie_service.get_comments_user(id_user)
+                if comments:
+                    return [f"{c}" for c in comments]
+                else:
+                    return f"User with id {id_user} hasn't commented a movie yet!"
             else:
-                return f"You haven't commented a movie yet!"
+                comments = user_movie_service.get_comments_user(current_user.id_user)
+                if comments:
+                    return [f"{c}" for c in comments]
+                else:
+                    return f"You haven't commented a movie yet!"
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
 
