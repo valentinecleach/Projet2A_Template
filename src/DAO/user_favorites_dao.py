@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List 
 
 from src.DAO.db_connection import DBConnector
 from src.DAO.singleton import Singleton
