@@ -56,14 +56,14 @@ class Fill_tables:
             first_name = fake.first_name()
             last_name = fake.last_name()
             username = fake.user_name()
-            if self.user_service.check_valid_username(username):
-                while len(username) < 5:
-                    username = fake.user_name()
-                password = fake.password(length=12)
-                gender = random.choice(genders)
-                date_of_birth = fake.date_of_birth(minimum_age=18, maximum_age=80)  # Age between 18 and 80 
-                email_address = fake.email()
-                phone_number = None
+            while len(username) < 5:
+                username = fake.user_name()
+            password = fake.password(length=12)
+            gender = random.choice(genders)
+            date_of_birth = fake.date_of_birth(minimum_age=18, maximum_age=80)  # Age between 18 and 80 
+            email_address = fake.email()
+            phone_number = None
+            try :
                 connected_user = self.user_service.sign_up(
                     first_name=first_name,
                     last_name=last_name,
@@ -75,7 +75,10 @@ class Fill_tables:
                     phone_number=phone_number
                 )
                 if connected_user:
-                    id_user_created.append(connected_user.id_user)
+                    id_user_created.append(connected_user.id_user)        
+            except Exception as e:
+                print(f"Erreur lors de l'inscription de l'utilisateur {username}: {e}")
+                continue
         print(f"Approximatively {n} user succesfully created.")
         return id_user_created
 
@@ -245,10 +248,10 @@ class Fill_tables:
             )
         id_connected_user = connected_user.id_user
         # still problems
-        # self.fill_table_follower(id_user_created, id_user_test = id_connected_user)
-        # self.fill_table_favorite(id_user_created, id_movie_created,id_user_test = id_connected_user)
-        # self.fill_table_rating(id_user_created, id_movie_created,id_user_test = id_connected_user)
-        # self.fill_table_comment(id_user_created, id_movie_created,id_user_test = id_connected_user)
+        self.fill_table_follower(id_user_created, id_user_test = id_connected_user)
+        self.fill_table_favorite(id_user_created, id_movie_created,id_user_test = id_connected_user)
+        self.fill_table_rating(id_user_created, id_movie_created,id_user_test = id_connected_user)
+        self.fill_table_comment(id_user_created, id_movie_created,id_user_test = id_connected_user)
 
         print("Database successfully filled.")
 
