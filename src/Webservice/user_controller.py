@@ -49,7 +49,7 @@ def sign_up(
     date_of_birth : date \n
         Your date of birth, format : YYYY-MM-DD \n
     gender : int \n
-        A number to indicate your gender (1 : Man, 2 : Woman) \n
+        A number to indicate your gender (1 : Man, 2 : Woman, 3 : non-binary) \n
     phone_number : Optional[str] \n
         A phone number \n
     """
@@ -92,7 +92,6 @@ def log_in(username: str, password_tried: str) -> JWTResponse:
         user = user_dao.get_user_by_name(username=username)
         if not user:
             raise HTTPException(status_code=403, detail="Invalid username")
-
         elif user_service.log_in(username, password_tried) is not True:
             raise HTTPException(status_code=403, detail="Invalid password")
         else:
@@ -157,6 +156,7 @@ def delete_own_profile(
     """
     current_user = get_user_from_credentials(credentials)
     user_movie_service.delete_user_and_update_ratings(current_user.id_user)
+    return f"Account successfully deleted for user :{current_user.username}"
 
 
 def get_user_from_credentials(
@@ -174,4 +174,4 @@ def get_user_from_credentials(
     connected_user: ConnectedUser | None = user_dao.get_user_by_id(user_id)
     if not connected_user:
         raise HTTPException(status_code=404, detail="User not found")
-    return connected_user  # ça serait mieux de retourner un Connected USER !! POur avoir acces own_favorite ... quand on regarde le profil
+    return connected_user 

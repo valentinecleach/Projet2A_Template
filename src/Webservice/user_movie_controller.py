@@ -23,9 +23,15 @@ def add_or_update_movie_rate(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
 ):
     """
-    Allow the authentificated user to rate a movie.\n
-    id_movie is the ID of a specifique movie.\n
-    if he has already rated, his rate is updated
+    Allow the authentificated user to rate a movie. If he has already rated the movie, his rate is updated
+
+    Attributes
+    ----------
+    id_movie : int \n
+        The id of the movie to rate
+    rate : int \n
+        The rating to give the film.
+
     """
     current_user = get_user_from_credentials(credentials)
     try:
@@ -46,10 +52,17 @@ def get_ratings_for_a_user(
     id_user: Optional[int] = None,
 ):
     """
-    Display all the ratings of the user.\n
-    If id_movie is entered, display the rating provided by the user for this particular movie.\n
-    id_movie : to have the ratings of a specifique movie\n
-    id_user : to have the ratings of a specific user.
+    Display all the ratings \n
+    If id_movie is entered, display the rating for this particular movie.\n
+    If id_user is entered, display the rating provided by this particular user.\n
+    If id_user is not entered, display your own ratings.
+
+    Attributes
+    ----------
+    id_movie : int \n
+        The optional id of the movie
+    id_user : int \n
+        The optional id of a user
     """
     current_user = get_user_from_credentials(credentials)
     try:
@@ -95,9 +108,15 @@ def get_user_follow_average_vote_and_ratings_for_a_movie(
     id_movie: int | None = None,
 ):
     """
-    Display the average rating of the users followed.\n
-    If id_movie is entered, display the rating provided by the user for this particular movie.\n
-    id_movie : to have the ratings of a specifique movie
+    Display the ratings provided by the users followed.\n
+    If id_movie is entered, display the rating provided by the user for this particular movie and teh average rating \n
+
+    Attributes
+    ----------
+    id_movie : int \n
+        The optional id of the movie
+    id_user : int \n
+        The optional id of a user
     """
     current_user = get_user_from_credentials(credentials)
     if id_movie:
@@ -140,7 +159,12 @@ def delete_a_user_rating(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
 ):
     """
-    Delete a rating made for a spécific movie by given his ID
+    Delete a rating made for a spécific movie.
+
+    Attributes
+    ----------
+    id_movie : int \n
+        The id of the movie
     """
     current_user = get_user_from_credentials(credentials)
     try:
@@ -168,7 +192,14 @@ def add_or_update_comment(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
 ) -> str:
     """
-    Allows the authenticated user to comment a movie or update his comment.
+    Allow the authentificated user to comment a movie. If he has already commented the movie, his comment is updated
+
+    Attributes
+    ----------
+    id_movie : int \n
+        The id of the movie to comment
+    comment : int \n
+        The comment to give the film.
     """
     current_user = get_user_from_credentials(credentials)
     try:
@@ -188,27 +219,51 @@ def add_or_update_comment(
 def get_comments_for_a_user(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
     id_movie: Optional[int] = None,
+    id_user: Optional[int] = None,
 ):
     """
-    Display all the comments of the user.
-    If id_movie is entered, display the comment provided by the user for this particular movie.
+    Display all the comments \n
+    If id_movie is entered, display the comments for this particular movie.\n
+    If id_user is entered, display the comments provided by this particular user.\n
+    If id_user is not entered, display your own comments.
+
+    Attributes
+    ----------
+    id_movie : int \n
+        The id of the movie
+    id_user : int \n
+        The id of the user
     """
     current_user = get_user_from_credentials(credentials)
     try:
         if id_movie:
-            comment = user_movie_service.comment_dao.get_comment(
-                current_user.id_user, id_movie
-            )
-            if comment:
-                return f"{comment}"
+            if id_user:
+                comment = user_movie_service.comment_dao.get_comment(id_user, id_movie)
+                if comment:
+                    return f"{comment}"
+                else:
+                    return f"User with id {id_user} hasn't commented this movie yet!"
             else:
-                return f"You haven't commented this movie yet!"
+                comment = user_movie_service.comment_dao.get_comment(
+                    current_user.id_user, id_movie
+                )
+                if comment:
+                    return f"{comment}"
+                else:
+                    return f"You haven't commented this movie yet!"
         else:
-            comments = user_movie_service.get_comments_user(current_user.id_user)
-            if comments:
-                return [f"{c}" for c in comments]
+            if id_user:
+                comments = user_movie_service.get_comments_user(id_user)
+                if comments:
+                    return [f"{c}" for c in comments]
+                else:
+                    return f"User with id {id_user} hasn't commented a movie yet!"
             else:
-                return f"You haven't commented a movie yet!"
+                comments = user_movie_service.get_comments_user(current_user.id_user)
+                if comments:
+                    return [f"{c}" for c in comments]
+                else:
+                    return f"You haven't commented a movie yet!"
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
 
@@ -255,6 +310,11 @@ def get_last_comments_movie(
 ):
     """
     Display 10 last comments for a movie
+
+    Attributes
+    ----------
+    id_movie : int \n
+        The id of the movie
     """
     try:
         comments = user_movie_service.comment_dao.get_recent_comments_for_a_movie(
@@ -279,6 +339,11 @@ def delete_a_user_comment(
 ):
     """
     Delete a comment given to a movie
+
+    Attributes
+    ----------
+    id_movie : int \n
+        The id of the movie
     """
     current_user = get_user_from_credentials(credentials)
     try:

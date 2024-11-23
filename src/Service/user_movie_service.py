@@ -179,8 +179,9 @@ class UserMovieService:
         """
         try:
             ratings = self.get_ratings_user(id_user)
-            for rating in ratings:
-                self.delete_a_user_rating(rating)
+            if ratings:
+                for rating in ratings:
+                    self.delete_a_user_rating(rating)
             self.user_dao.delete_user(id_user)
         except Exception as e:
             print(f"Error while deleting user {id_user}: {e}")

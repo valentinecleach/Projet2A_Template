@@ -39,19 +39,15 @@ class MovieMakerService:
         List[MovieMaker] | None
             A list of MovieMaker object if found, otherwise None.
         """
-        # Firstly, we look for the MovieMaker in the database
         movie_makers = self.movie_maker_dao.get_by_name(name)
         if movie_makers:
-            return movie_makers # a list of one or more movie makers
-        # If not in our database, we look for the MovieMaker in the TMDB API.
+            return movie_makers 
         else:
             movie_maker_from_tmdb = self.movie_maker_tmdb.get_movie_maker_by_name(name)
             if movie_maker_from_tmdb:
                 for data in movie_maker_from_tmdb:
                     self.movie_maker_dao.insert(data)
                 return movie_maker_from_tmdb
-
-            # If nothing is found
             print(f"No MovieMaker found with name: {name}.")
             return None
 

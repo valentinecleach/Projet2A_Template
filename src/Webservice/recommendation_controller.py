@@ -29,6 +29,10 @@ def view_users(
 ):
     """
     Allows the authentificated user to see a recommended list of users.
+
+    Returns
+    -------
+    A list of users.
     """
     current_user = get_user_from_credentials(credentials)
     try:
@@ -53,9 +57,18 @@ def view_movies(
 ) -> list[Movie]:
     """
     Allows the authentificated user to see a recommended list of movies.\n
-    the list can be filtered \n
-    -by a given genre in {Comedy, Crime, Drama, Romance, Thriller, Adventure, Science Fiction, Mystery, History, Family, Fantasy, Animation, Documentary, TV Movie, Music, Horror, War, Western, Action}\n
-    -by a given original language in {ja, fr, da, en, pl, te, es, ko, it, zh, no, de, cn, sv}
+    Result can be filtered by attributes:
+
+    Attributes
+    ----------
+    genre : str \n
+        a given genre in {Comedy, Crime, Drama, Romance, Thriller, Adventure, Science Fiction, Mystery, History, Family, Fantasy, Animation, Documentary, TV Movie, Music, Horror, War, Western, Action}\n
+    original_language : str \n
+        a given original language in {ja, fr, da, en, pl, te, es, ko, it, zh, no, de, cn, sv}
+
+    Returns
+    -------
+    A list of Movies
     """
     filter = {}
     if genre:
