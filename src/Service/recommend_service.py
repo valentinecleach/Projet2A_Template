@@ -3,15 +3,15 @@ from src.DAO.recommend_dao import RecommendDao
 
 
 class RecommendService:
-    def __init__(self, db_connection: DBConnector):
-        """
-        Initializes the recommendation service with a database connection.
+    """An object to recommend users to follow and movies to the users
 
-        parameters
-        ----------
-        db_connection: DBConnector
-            Instance of DBConnector for database connection.
-        """
+    Attributes
+    ----------
+    db_connection : DBConnector
+        A connector to a database
+    """
+    def __init__(self, db_connection: DBConnector):
+        """Constructor"""
         self.db_connection = db_connection
         self.recommend_dao = RecommendDao(db_connection)
 
@@ -22,7 +22,7 @@ class RecommendService:
         Parameters
         ----------
         id_user: int
-            User ID for whom to find follow recommendations.
+            User ID for which to find follow recommendations.
 
         Returns
         -------
@@ -43,13 +43,21 @@ class RecommendService:
 
     def find_movie_to_collect(self, id_user: int, filter: dict = {}):
         """
-        Finds movies to collect for a given user.
+        Finds movies to collect for a given user given a filter. 
+        If the recommendation algorithm doesn't find any movies, it recommends according to the popularity index.
 
-        parameters
+        Parameters
         ----------
-        id_user: int
+        id_user : int
             User ID for whom to find movie recommendations.
-        filter: dict
+        filter : dict
+            A dictionary that gives a filter for the movie. For example {"genre" : "drama"}
+
+        Returns
+        -------
+        list[Movie] | None
+            Returns a list of movies that correspond to the filter.
+            If no movies can be found, then the method returns None.
         """
         if not id_user:
             print("User ID is required")

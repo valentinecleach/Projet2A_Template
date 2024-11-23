@@ -7,14 +7,14 @@ from src.Service.movie_service import MovieService
 
 
 class UserInteractionService:
-    """ interaction between users
+    """ An object that allows interaction between users.
 
     Attributes
     ----------
     db_connection: DBConnector
         A connector to a database
     user_dao: UserDao
-        object to interact with the database user
+        An object to interact with the database user
     user_follow_dao: UserFollowDao  
     user_favourites_dao: UserFavouriteDao
     comment_dao: CommentDao
@@ -22,8 +22,8 @@ class UserInteractionService:
 
     """
 
-
     def __init__(self, db_connection: DBConnector):
+        """Constructor"""
         self.db_connection = db_connection
         self.user_dao = UserDao(db_connection)
         self.user_follow_dao = UserFollowDao(db_connection)
@@ -47,7 +47,7 @@ class UserInteractionService:
 
     # # focntionne si correspondance exacte avec le pseudo
 
-    def follow_user(self, follower_id: int, followee_id: int) -> None:
+    def follow_user(self, follower_id: int, followee_id: int):
         """
         Allows a user to follow another user.
 
@@ -58,7 +58,7 @@ class UserInteractionService:
         followee_id : int
             The ID of the user to be followed.
         """
-        # Vérifier si l'utilisateur essaie de se suivre lui-même
+        # Verifying if the user tries to follow themselves.
         if follower_id == followee_id:
             raise ValueError("A user cannot follow themselves.")
         try:
@@ -66,7 +66,7 @@ class UserInteractionService:
         except Exception as error:
             raise ValueError(f"An error occurred while trying to follow: {error}")
 
-    def unfollow_user(self, follower_id: int, followee_id: int) -> None:
+    def unfollow_user(self, follower_id: int, followee_id: int):
         """
         Allows a user to unfollow another user.
 
@@ -77,11 +77,11 @@ class UserInteractionService:
         followee_id : int
             The ID of the user to be unfollowed.
         """
-        # Vérifier si le lien de suivi existe (ou utilisez une méthode comme follow_dao.is_following)
+        # Verifying if the link between the two users already exists 
         if not self.user_follow_dao.is_following(follower_id, followee_id):
             raise ValueError("This user is not being followed.")
 
-        # Supprimer le suivi en base de données
+        # Deletes the following relationship in the database.
         try:
             self.user_follow_dao.delete(follower_id, followee_id)
         except Exception as error:
