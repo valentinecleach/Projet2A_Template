@@ -42,28 +42,29 @@ class MovieTMDB:
             response.raise_for_status()  # Raises an exception for HTTP error codes.
             data = response.json()
             if "id" in data:  # Checks if the ID is in response
-                my_movie = {
-                    "id_movie": data["id"],
-                    "title": data["title"],
-                    "belongs_to_collection": MovieCollectionService.create_list_of_collection(
-                        data["belongs_to_collection"]
-                    ),
-                    "budget": data["budget"],
-                    "genres": GenreService.create_list_of_genre(data["genres"]),
-                    "origin_country": data["origin_country"],
-                    "original_language": data["original_language"],
-                    "original_title": data["original_title"],
-                    "overview": data["overview"] if data["overview"] != "" else None,
-                    "popularity": data["popularity"],
-                    "release_date": data["release_date"] if data["release_date"] != "" else None,
-                    "revenue": data["revenue"],
-                    "runtime": data["runtime"],
-                    "vote_average": 0, # We overwrite 0 on the vote average as we only want votes from our users.
-                    "vote_count": 0,
-                    "adult": data["adult"],
-                }
-                print(f"Movie {data['title']} get from TMDB")
-                return Movie(**my_movie)
+                if data["adult"] == False:
+                    my_movie = {
+                        "id_movie": data["id"],
+                        "title": data["title"],
+                        "belongs_to_collection": MovieCollectionService.create_list_of_collection(
+                            data["belongs_to_collection"]
+                        ),
+                        "budget": data["budget"],
+                        "genres": GenreService.create_list_of_genre(data["genres"]),
+                        "origin_country": data["origin_country"],
+                        "original_language": data["original_language"],
+                        "original_title": data["original_title"],
+                        "overview": data["overview"] if data["overview"] != "" else None,
+                        "popularity": data["popularity"],
+                        "release_date": data["release_date"] if data["release_date"] != "" else None,
+                        "revenue": data["revenue"],
+                        "runtime": data["runtime"],
+                        "vote_average": 0, # We overwrite 0 on the vote average as we only want votes from our users.
+                        "vote_count": 0,
+                        "adult": data["adult"],
+                    }
+                    print(f"Movie {data['title']} get from TMDB")
+                    return Movie(**my_movie)
             else:
                 print(f"No Movie found from TMDB with the ID : {id_movie}.")
                 return None
