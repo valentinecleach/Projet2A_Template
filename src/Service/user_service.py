@@ -90,12 +90,12 @@ class UserService:
             salt = create_salt(username)
             hashed_password = hash_password(password, salt)
 
-            # Préparation des valeurs à insérer
+            # Preparing the values to insert
             user = {
                 "username": username,
                 "first_name": first_name,
                 "last_name": last_name,
-                "password_token": salt[-1],  # Dernière valeur de la liste `salt`
+                "password_token": salt[-1],  # The last value of the list "salt"
                 "hashed_password": hashed_password,
                 "email_address": email_address,
                 "date_of_birth": date_of_birth,
@@ -103,7 +103,7 @@ class UserService:
                 "gender": gender,
             }
             try:
-                # Utilisation de la méthode insert de DBConnection
+                # Using the insert method from DBConnection
                 connected_user = self.user_dao.insert(user)
                 print(
                     f"User '{connected_user.username}' successfully sign_up. His id is {connected_user.id_user}"
@@ -144,7 +144,7 @@ class UserService:
                 )
                 if verification:
                     print(f"Utilisateur '{username}' connecté avec succès.")
-                    # Returs an instance of ConnectedUser with the informations.
+                    # Returns an instance of ConnectedUser with the informations.
                     return True
             else:
                 print(
