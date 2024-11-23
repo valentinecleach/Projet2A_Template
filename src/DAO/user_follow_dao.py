@@ -14,7 +14,7 @@ class UserFollowDao(metaclass=Singleton):
     db_connection : DBConnector
         A connector to the database.
     """
-    
+
     def __init__(self, db_connection: DBConnector):
         """Constructor"""
         if not isinstance(db_connection, DBConnector):
@@ -23,7 +23,7 @@ class UserFollowDao(metaclass=Singleton):
 
     def insert(self, id_user: int, id_user_followed: int):
         """Inserts a follow relationship between users if it doesn't already exist.
-        
+
         Parameters
         ----------
         id_user : int
@@ -56,12 +56,12 @@ class UserFollowDao(metaclass=Singleton):
                 print("Insertion successful: Follow relationship added.")
             else:
                 print("Follow relationship already exists, no insertion performed.")
+                return None
         except Exception as e:
             print("Insertion error:", str(e))
+            raise ValueError(f"This User doesn't exist. Provide a good id")
 
-    def get_all_user_followed(
-        self, id_user: int
-    ) -> list|None:
+    def get_all_user_followed(self, id_user: int) -> list | None:
         """Gets all users followed by a specific user with pagination.
 
         Parameters
@@ -72,7 +72,7 @@ class UserFollowDao(metaclass=Singleton):
         Returns
         -------
         list[int] | none
-            The list of IDs of users followed. 
+            The list of IDs of users followed.
             If none can bne found, the method returns None
         """
         try:
@@ -80,11 +80,9 @@ class UserFollowDao(metaclass=Singleton):
                 SELECT * FROM follower
                 WHERE id_user = %s;
             """
-            results = self.db_connection.sql_query(
-                query, (id_user,), return_type="all"
-            )
+            results = self.db_connection.sql_query(query, (id_user,), return_type="all")
             if results:
-                follow_list = [result['id_user_followed'] for result in results]
+                follow_list = [result["id_user_followed"] for result in results]
                 return follow_list
             else:
                 return None
@@ -94,13 +92,13 @@ class UserFollowDao(metaclass=Singleton):
 
     def delete(self, id_user: int, id_user_followed: int):
         """Deletes a follow relationship between two users.
-        
+
         Parameters
         ----------
         id_user : int
-            The ID of a user  
+            The ID of a user
         id_user_followed : int
-            The ID of a user 
+            The ID of a user
         """
         try:
             query = """
@@ -113,7 +111,7 @@ class UserFollowDao(metaclass=Singleton):
 
     def is_following(self, id_user: int, id_user_followed: int) -> bool:
         """Checks if a follow relationship exists between two users.
-        
+
         Parameters
         ----------
         id_user : int
