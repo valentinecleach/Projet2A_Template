@@ -21,7 +21,7 @@ creation_object = TablesCreation(db_connection)  # creation of all table before 
 
 def run_app():
 
-    app = FastAPI(title="Welcome on the NOCODE API", 
+    app = FastAPI(title="Welcome on the CineMagix API", 
     description="""
     This API allows users to get information about movies, movie makers, 
     rate them, add comments and interact with other users. 

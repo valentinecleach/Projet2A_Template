@@ -39,26 +39,22 @@ That's all 😊
 You must change your file .env with the information of your database
 
 # Connection to Database
-dbname="id2464"
-user="id2464"
-password="id2464"
-host="sgbd-eleves.domensai.ecole"
-port="5432"
+dbname = "..."
+user = "..."
+password = "..."
+host = "..."
+port = "..."
 
 # Schemas names
-
-#schema="projet_info"
-#schema="projet_info_test" 
-schema="test_projet_info"
+You must add the definition of a schema that will interact with the API.
+schema = "..."
 
 # TMDB
+You must add the definition of the API key in order to acces the Movie Data Base API. The definition of the token is not needed.
+
 TMDB_API_KEY="fb0e5ded3d79bc5e571538030f7e5af8"
-TMDB_TOKEN="eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmYjBlNWRlZDNkNzliYzVlNTcxNTM4MDMwZjdlNWFmOCIsIm5iZiI6MTcyNjY2ODg3MS44OTQ2MjMsInN1YiI6IjY2ZTBhYmMyOWM3MzUzMmRkYmFhYWY0NyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.cZ0F3epj5FCX4MRlrqSAIdzErJP98tU9ZlfNHkrfUw0"
+<!-- TMDB_TOKEN="eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmYjBlNWRlZDNkNzliYzVlNTcxNTM4MDMwZjdlNWFmOCIsIm5iZiI6MTcyNjY2ODg3MS44OTQ2MjMsInN1YiI6IjY2ZTBhYmMyOWM3MzUzMmRkYmFhYWY0NyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.cZ0F3epj5FCX4MRlrqSAIdzErJP98tU9ZlfNHkrfUw0" -->
 
-# JWT_SECRET
-
-JWT_SECRET = ClementValot 
-JWT_EXPIRATION_TIME=3600
 # How to run the app 
 
 
@@ -67,3 +63,5 @@ JWT_EXPIRATION_TIME=3600
 This starts a server accessible on `localhost:8000`
 
 The API is then documented on `localhost:8000/docs`
+
+when the application is launched, all tables are created if they weren't already. Then a fill function is activated to fill them with false data, so that the API can be tested in the best possible way.
