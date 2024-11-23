@@ -17,13 +17,14 @@ from src.Service.movie_collection_service import MovieCollectionService
 
 class MovieTMDB:
     def __init__(self):
+        """Constructor"""
         load_dotenv(override=True)
         self.api_key = os.environ.get("TMDB_API_KEY")
         self.base_url = "https://api.themoviedb.org/3"
 
-    def get_movie_by_id(self, id_movie: int) -> List[Movie] | None:
+    def get_movie_by_id(self, id_movie: int) -> Movie | None:
         """
-        Retrieves details of a Movie from TMDB by his ID given by TMDB.
+        Retrieves details of a Movie from TMDB by it's ID given by TMDB.
 
         Parameters:
         -----------
@@ -40,7 +41,7 @@ class MovieTMDB:
             response = requests.get(url)
             response.raise_for_status()  # Raises an exception for HTTP error codes.
             data = response.json()
-            if "id" in data:  # check if id is in response
+            if "id" in data:  # Checks if the ID is in response
                 my_movie = {
                     "id_movie": data["id"],
                     "title": data["title"],
@@ -57,7 +58,7 @@ class MovieTMDB:
                     "release_date": data["release_date"] if data["release_date"] != "" else None,
                     "revenue": data["revenue"],
                     "runtime": data["runtime"],
-                    "vote_average": 0, # on met 0 au début car on s'intéresse qu'aux votes de nos utilisateurs.
+                    "vote_average": 0, # We overwrite 0 on the vote average as we only want votes from our users.
                     "vote_count": 0,
                     "adult": data["adult"],
                 }

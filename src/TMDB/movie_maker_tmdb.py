@@ -10,7 +10,12 @@ from typing import List
 
 
 class MovieMakerTMDB:
+    """A movie maker from TMDB.
+
+
+    """
     def __init__(self, db_conection: DBConnector):
+        """Constructor"""
         load_dotenv(override=True)
         self.api_key = os.environ.get("TMDB_API_KEY")
         self.base_url = "https://api.themoviedb.org/3"
@@ -18,28 +23,26 @@ class MovieMakerTMDB:
         self.movie_service = MovieService(db_conection)
 
     def get_some_movie_maker_infos_by_id(self, tmdb_id: int) -> List | None:
-        # Reamarque : insomnia does not return the known_for with this request.
+        # Note : insomnia does not return the known_for with this request.
         """
-            Retrieve a MovieMaker by name or ID, combining the information from both sources if necessary.
+        Retrieves a MovieMaker by name or ID, combining the information from both sources if necessary.
 
-            Parameters:
-            -----------
-            name : str | None
-                The name of the MovieMaker.
-            id_movie_maker : int | None
-                The ID of the MovieMaker.
-
-            Returns:
-            --------
-            List[MovieMaker] | None
-                A list of MovieMaker objects or None if not found.
+        Parameters:
+        -----------
+        tmdb_id : int
+            The ID of a movie maker on TMDB.
+        
+        Returns:
+        --------
+        List[MovieMaker] | None
+            A list of MovieMaker objects or None if not found.
         """
         try:
             url = f"{self.base_url}/person/{tmdb_id}?api_key={self.api_key}&language=en-US"
             response = requests.get(url)
             response.raise_for_status()  # Raises an exception for HTTP error codes.
             data = response.json()
-            if 'id' in data:  # check if id is in response
+            if 'id' in data:  # Check if ID is in response
                 return {"id_movie_maker": data['id'],
                         "adult" : data['adult'],
                         "name": data['name'],
@@ -59,20 +62,20 @@ class MovieMakerTMDB:
             return None
 
     def get_some_movie_maker_infos_by_name(self, name: str) -> list[List] | None:
-        # Reamarque : insomnia does not return thebiography, birthday, place of birth, deathday with this request.
+        # Note : insomnia does not return the biography, birthday, place of birth, deathday with this request.
         """
-                Intermediate function that retrieves the information we are interested in for a movie maker on TMDB using its name. 
-                Return a list with the id of the movie_maker an then a list of his know_for Movie.
+        An intermediate function that retrieves the information we are interested in for a movie maker on TMDB using its name. 
+        Returns a list with the id of the movie_maker an then a list of his know_for Movie.
 
-                Parameters:
-                -----------
-                name : str
-                    The name of the MovieMaker on TMDB.
+        Parameters:
+        -----------
+        name : str
+            The name of the MovieMaker on TMDB.
 
-                Returns:
-                --------
-                List[List] | None
-                    List of List with attributs 'id' and 'know for' for each moviemaker with the name of the request. 
+        Returns:
+        --------
+        List[List] | None
+            List of List with attributs 'id' and 'know for' for each moviemaker with the name of the request. 
         """
         try:
             encoded_name = urllib.parse.quote(name)
@@ -99,6 +102,19 @@ class MovieMakerTMDB:
             return None
 
     def get_movie_maker_by_name(self, name: str) -> list[MovieMaker] | None:
+        """
+        An method that retrieves a list of movie makers with the same name.
+
+        Parameters:
+        -----------
+        name : str
+            The name of the MovieMaker on TMDB.
+
+        Returns:
+        --------
+        List[MovieMaker] | None
+            List of MovieMakers
+        """
         if name:
             movie_maker_results = []
             results = self.get_some_movie_maker_infos_by_name(name)
