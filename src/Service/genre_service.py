@@ -4,6 +4,7 @@ from src.Model.genre import Genre
 
 
 class GenreService:
+    """ A Genre object in our service layer."""
 
     @classmethod
     def create_list_of_genre(cls, data: List[Dict[str, Any]]) -> List[Genre]:
@@ -18,8 +19,6 @@ class GenreService:
         -------
         data : List[Genre]
             A list of Genre instances.
-
-
 
         """
         if data:

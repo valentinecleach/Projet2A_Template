@@ -4,6 +4,7 @@ from src.Model.movie_collection import MovieCollection
 
 
 class MovieCollectionService:
+    """ A MovieCollection object in our service layer."""
 
     @classmethod
     def create_list_of_collection(cls, data: Dict[str, Any]) -> 'MovieCollection':
@@ -16,8 +17,9 @@ class MovieCollectionService:
         
         Returns
         -------
-        MovieCollection
+        MovieCollection | None
             An instance of MovieCollection containing id and name only
+            Returns None if no movie collections are found
         """
         if data:
             return [MovieCollection(id=data['id'], name=data['name'])]
