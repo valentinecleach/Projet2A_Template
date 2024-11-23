@@ -279,18 +279,29 @@ def get_user_follow_comment(
 ):
     """
     Display all comments of the users followed for a particular movie.
+
+    Attributes
+    ----------
+    id_movie : int \n
+        The optional id of the movie
     """
     current_user = get_user_from_credentials(credentials)
     try:
-        comments = [
-            user_movie_service.comment_dao.get_comment(
-                id_user=id_user, id_movie=id_movie
-            )
-            for id_user in current_user.follow_list
-        ]
+        if id_movie:
+            comments = [
+                user_movie_service.comment_dao.get_comment(
+                    id_user=id_user, id_movie=id_movie
+                )
+                for id_user in current_user.follow_list
+            ]
+        else:
+            comments = [
+                user_movie_service.comment_dao.get_all_user_comment(id_user=id_user)
+                for id_user in current_user.follow_list
+            ]
         comments = [x for x in comments if x != None]
         if comments:
-            return [f"{c}" for c in comments.remove(None)]
+            return [f"{c}" for c in comments]
         else:
             return (
                 "No comments send by your followed users for this movie for the moment"

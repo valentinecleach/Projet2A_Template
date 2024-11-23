@@ -5,7 +5,6 @@ from src.DAO.db_connection import DBConnector
 from src.DAO.movie_dao import MovieDAO
 from src.DAO.singleton import Singleton
 from src.DAO.user_dao import UserDao
-
 from src.Model.connected_user import ConnectedUser
 from src.Model.movie import Movie
 
@@ -18,6 +17,7 @@ class RecommendDao(metaclass=Singleton):
     db_connection : DBConnector
         A connector to the database.
     """
+
     def __init__(self, db_connection: DBConnector):
         """Constructor"""
         self.db_connection = db_connection
@@ -25,7 +25,7 @@ class RecommendDao(metaclass=Singleton):
     def recommend_movies(
         self, id_user: int, filter: dict = {}, limit: int = 50
     ) -> List[Movie]:
-        """This function recommends movies to a user based on their own film collection, age, and gender. 
+        """This function recommends movies to a user based on their own film collection, age, and gender.
         The algorithm follows several steps to generate personalized recommendations.
 
         Algorithm Steps
@@ -37,16 +37,16 @@ class RecommendDao(metaclass=Singleton):
         5. Calculate User's Genre Frequencies: Calculates the frequency of genres in the user's collection.
         6. Calculate Genre Similarity: Compares the user's genre frequencies with those of other users.
         7. Combine Results: Combines the results from genre similarity and age/gender analysis to recommend movies.
-        
+
         Parameters
         ----------------------
         id_user : int
             The ID of the user to whom movies are being recommended.
         filter : dict, optional
             A dictionary of additional filters to apply to the movies.
-        limit : int, optional 
+        limit : int, optional
             The maximum number of movies to recommend. Defaults to 50.
-        
+
         Returns
         ----------------------
         List[Movie] | None
@@ -193,9 +193,9 @@ class RecommendDao(metaclass=Singleton):
         Returns
         --------
         List[ConnectedUser] | None
-            A list of recommended users to follow. 
+            A list of recommended users to follow.
             If no users can be recommended, the algorithm returns None.
-        """ 
+        """
         try:
             dao = UserDao(self.db_connection)
             user = dao.get_user_by_id(id_user)
@@ -327,7 +327,7 @@ class RecommendDao(metaclass=Singleton):
             A filter of conditions to fill. By default, there is no filter.
         limit : int = 50
             A limit on the maximum amount of movies to add to the list. By default, the limit is 50.
-        
+
         Returns
         -------
         list[Movie]
@@ -341,7 +341,7 @@ class RecommendDao(metaclass=Singleton):
         filters = " AND ".join(cond) if val else "1=1"
         try:
             query = f"""
-                SELECT m.id_movie
+                SELECT DISTINCT m.id_movie
                 FROM movie m
                 JOIN link_movie_genre l USING( id_movie)
                 JOIN genre g USING( id_genre)
@@ -363,7 +363,7 @@ class RecommendDao(metaclass=Singleton):
 
         Parameters
         -----------
-        id_user : int  
+        id_user : int
             The ID of the user to exclude.
 
         Returns
