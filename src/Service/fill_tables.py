@@ -247,7 +247,6 @@ class Fill_tables:
                 phone_number="0707070707"
             )
         id_connected_user = connected_user.id_user
-        # still problems
         self.fill_table_follower(id_user_created, id_user_test = id_connected_user)
         self.fill_table_favorite(id_user_created, id_movie_created,id_user_test = id_connected_user)
         self.fill_table_rating(id_user_created, id_movie_created,id_user_test = id_connected_user)
