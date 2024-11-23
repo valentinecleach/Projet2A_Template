@@ -206,46 +206,45 @@ class CommentDao(metaclass=Singleton):
             print(f"Error while deleting from comments: {e}")
             return None
 
+    def get_all_user_comment(
+        self,
+        id_user: int,
+    ) -> List[Comment]:
+        """Fetches all comments that a certain user wrote.
 
-def get_all_user_comment(
-    self,
-    id_user: int,
-) -> List[Comment]:
-    """Fetches all comments that a certain user wrote.
+        Parameters
+        ----------
+        id_user : int
+            The ID of the user who wrote the comment
 
-    Parameters
-    ----------
-    id_user : int
-        The ID of the user who wrote the comment
-
-    Returns
-    -------
-    List[Comment]
-    """
-    try:
-        query = "SELECT * FROM  comment WHERE id_user = %s ORDER BY date DESC"
-        results = self.db_connection.sql_query(query, (id_user,), return_type="all")
-        if results:
-            user = self.user_dao.get_user_by_id(id_user)
-            if user:
-                comment = [
-                    Comment(
-                        user=user,
-                        movie=self.movie_dao.get_by_id(result["id_movie"]),
-                        date=result["date"],
-                        comment=result["comment"],
-                    )
-                    for result in results
-                ]
-                return comment
-        else:
-            print(
-                f" Error while fetching user or Movie (id_user={id_user}, id_movie={id_movie})."
-            )
-            return None
-    except Exception as e:
-        print(f"Error while fetching user comment: {e}")
-        return []
+        Returns
+        -------
+        List[Comment]
+        """
+        try:
+            query = "SELECT * FROM  comment WHERE id_user = %s ORDER BY date DESC"
+            results = self.db_connection.sql_query(query, (id_user,), return_type="all")
+            if results:
+                user = self.user_dao.get_user_by_id(id_user)
+                if user:
+                    comment = [
+                        Comment(
+                            user=user,
+                            movie=self.movie_dao.get_by_id(result["id_movie"]),
+                            date=result["date"],
+                            comment=result["comment"],
+                        )
+                        for result in results
+                    ]
+                    return comment
+            else:
+                print(
+                    f" Error while fetching user or Movie (id_user={id_user}, id_movie={id_movie})."
+                )
+                return None
+        except Exception as e:
+            print(f"Error while fetching user comment: {e}")
+            return []
 
 
 # def get_overall(self, id_movie: int):

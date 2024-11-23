@@ -1,3 +1,4 @@
+import itertools
 from typing import Annotated, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -278,7 +279,8 @@ def get_user_follow_comment(
     id_movie: int | None = None,
 ):
     """
-    Display all comments of the users followed for a particular movie.
+    Display all comments of the users followed.\n
+    If id_movie is entered, display the comments for this particular movie.
 
     Attributes
     ----------
@@ -295,10 +297,11 @@ def get_user_follow_comment(
                 for id_user in current_user.follow_list
             ]
         else:
-            comments = [
+            listcomments = [
                 user_movie_service.comment_dao.get_all_user_comment(id_user=id_user)
                 for id_user in current_user.follow_list
             ]
+            comments = list(itertools.chain(*listcomments))
         comments = [x for x in comments if x != None]
         if comments:
             return [f"{c}" for c in comments]
