@@ -18,7 +18,7 @@ class MovieMaker(BaseModel):
     Parameters:
     -----------
     id_movie_maker : int
-        Unique TMDB identifier for the person.
+        A unique TMDB identifier for the person.
     adult : bool
         Indicates if the person is involved in adult content.
     name : str

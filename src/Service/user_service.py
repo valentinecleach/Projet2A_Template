@@ -25,10 +25,19 @@ class UserService:
         A DAO object used for operations related to users.
     """
     def __init__(self, db_connection: DBConnector):
+        """Constructor"""
         self.db_connection = db_connection
         self.user_dao = UserDao(db_connection)
 
     def check_valid_username(self, username):
+        """ Checks if a username is valid. 
+        It is valid if it has enough characters and doesn't already exist.
+        
+        Parameters
+        ----------
+        username : str
+            The username to test
+        """
         if len(username) < 5:
             raise ValueError("Username must contain at least 5 characters")
         existing_user = self.user_dao.get_user_by_name(username)
@@ -46,9 +55,35 @@ class UserService:
         gender: int,
         date_of_birth: date,
         email_address: str,
-        phone_number: str | None = None,  # Optionnel
+        phone_number: str | None = None,  # Optional
     ) -> ConnectedUser:
-        """Permet de créer un compte utilisateur."""
+        """Allow to create a user account.
+        
+        Parameters
+        ----------
+        first_name : str
+            The user's first name.
+        last_name : str
+            The user's surname.
+        username : str
+            A username.
+        password : str
+            A password
+        gender : int
+            A number corresponding to a gender (1: man, 2: woman, 3: non-binary)
+        date_of_birth : date
+            A date of birth
+        email_address : str
+            An email address.
+        phone_number : str , optional
+            A phone number
+
+        Returns
+        -------
+        ConnectedUser | None
+            A connected user with the information given.
+            If the user can't be created, thge method will return None.
+        """
         try:
             self.check_valid_username(username)
             check_password_strenght(password)
@@ -83,10 +118,17 @@ class UserService:
             print(f"Unexpected error: {str(e)}")
             return None
 
-    ##### sign_up fonctionne
 
     def log_in(self, username: str, password_tried: str):
-        """Permet à un utilisateur de se connecter."""
+        """Allows a user to log in.
+        
+        Parameters
+        ----------
+        username : str
+            The username
+        password_tried : str
+            A password to try and log in.
+        """
         user = self.user_dao.get_user_by_name(username)
         user_password_token = user[0].password_token
         try:
@@ -102,7 +144,7 @@ class UserService:
                 )
                 if verification:
                     print(f"Utilisateur '{username}' connecté avec succès.")
-                    # Retourner une instance de ConnectedUser avec les informations pertinentes
+                    # Returs an instance of ConnectedUser with the informations.
                     return True
             else:
                 print(

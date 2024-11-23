@@ -5,3 +5,6 @@ pip install pyjwt
 
 # 
 pip install uvicorn
+# service
+pip install jwt
+pip install --upgrade PyJWT"
