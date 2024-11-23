@@ -341,7 +341,7 @@ class RecommendDao(metaclass=Singleton):
         filters = " AND ".join(cond) if val else "1=1"
         try:
             query = f"""
-                SELECT DISTINCT m.id_movie
+                SELECT DISTINCT m.id_movie, vote_average, popularity
                 FROM movie m
                 JOIN link_movie_genre l USING( id_movie)
                 JOIN genre g USING( id_genre)
