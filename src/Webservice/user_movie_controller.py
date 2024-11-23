@@ -31,7 +31,8 @@ def add_or_update_movie_rate(
     id_movie : int \n
         The id of the movie to rate
     rate : int \n
-        The rating to give the film.
+        The rating to give the film.\n
+        it must be an integer between 0 and 10
 
     """
     current_user = get_user_from_credentials(credentials)
@@ -110,7 +111,7 @@ def get_user_follow_average_vote_and_ratings_for_a_movie(
 ):
     """
     Display the ratings provided by the users followed.\n
-    If id_movie is entered, display the rating provided by the user for this particular movie and teh average rating \n
+    If id_movie is entered, display the rating provided by the user for this particular movie and ten average rating \n
 
     Attributes
     ----------
@@ -175,6 +176,8 @@ def delete_a_user_rating(
         if rating:
             user_movie_service.delete_a_user_rating(rating)
             return f" Rating deletion for the movie with id {id_movie} completed."
+        else:
+            return f" You haven't rated the movie with id {id_movie} yet."
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
 

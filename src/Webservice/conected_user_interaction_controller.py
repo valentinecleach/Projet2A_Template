@@ -111,7 +111,7 @@ def view_my_scout_list(
 
     Returns
     -------
-    A list of the users you are following. 
+    A list of the users you are following.
     """
     current_user = get_user_from_credentials(credentials)
     try:
@@ -145,6 +145,8 @@ def add_favorite(
 
     """
     current_user = get_user_from_credentials(credentials)
+    if id_movie in current_user.own_film_collection:
+        return f"the movie {id_movie} is already in your Favorites"
     try:
         user_interaction_service.add_favorite(current_user.id_user, id_movie)
         return f"User {current_user.username} is now having film {id_movie} in favorite"
@@ -170,7 +172,7 @@ def view_my_favorite_movies(
     current_user = get_user_from_credentials(credentials)
     try:
         movies = []
-        for id in current_user.own_film_collection : 
+        for id in current_user.own_film_collection:
             movies.append(f"{movie_dao.get_by_id(id)}")
         if movies != []:
             return movies
