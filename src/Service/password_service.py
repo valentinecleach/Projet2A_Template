@@ -11,23 +11,21 @@ import bcrypt
 # Model
 # from src.Model.user import User
 
-# hash password and salt password in user_service
-
 
 def hash_password(password: str, salt: Optional[List[str]] = None) -> str:
     """Hashes the password. The salt is optional
 
-    parameters
+    Parameters
     ----------
-    password: str
-        password enter by the user
-    salt: list
-        generate a square hash
+    password : str
+        Password entered by the user
+    salt : list
+        Generates a square hash
     
-    returns
+    Returns
     -------
     str
-
+        A hashed password
     """
     if salt is None:
         hashed_password = hashlib.sha256(password.encode("utf-8")).hexdigest()
@@ -40,11 +38,17 @@ def hash_password(password: str, salt: Optional[List[str]] = None) -> str:
 def create_salt(username: str, user_password_token: Optional[str] = None) -> list[str]:
     """Creates a salt for the password to be hashed
     
-    parameters
+    Parameters
     ----------
-    username: str
-    user_password_token: str
-        the token of the password 
+    username : str
+        The username of a user
+    user_password_token : str
+        The token of users password
+
+    Returns
+    -------- 
+    List[str]
+        A list of the 3 parts of our salt : the start, the end and the token.
     """
     # Création des parties de sel
     password_token = (
@@ -57,8 +61,25 @@ def create_salt(username: str, user_password_token: Optional[str] = None) -> lis
     return [start_salt, end_salt, password_token]
 
 
-def verify_password(username, password_tried, user_password_token, hashed_password):
-    "verify the password"
+def verify_password(username, password_tried, user_password_token, hashed_password) -> bool:
+    """Verifies the password
+    
+    Parameters
+    ----------
+    username : str
+        The username of the user
+    password_tried : str
+        The password the user entered
+    user_password_token : str
+        The users token
+    hashed_password : str
+        The users hashed password 
+
+    Returns
+    -------
+    bool
+        True if password_tried corresponds to the users' password.
+    """
     salt = create_salt(username, user_password_token)
     hashed_password_tried = hash_password(password=password_tried, salt=salt)
     return hashed_password_tried == hashed_password

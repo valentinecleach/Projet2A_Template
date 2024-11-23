@@ -114,6 +114,15 @@ class Fill_tables:
             movie_maker =  self.movie_maker_service.get_movie_maker_by_name(movie_maker) 
 
     def fill_table_follower(self, id_user_created, id_user_test : Optional[int] = None):
+        """Fills a table with of followers
+
+        Parameters
+        ----------
+        id_user_created : int
+            The ID of a user
+        id_user_test : int, optional
+            The ID of a user 
+        """ 
         if id_user_test:
             for k in range(10):
                 id_followed = random.choice(id_user_created)
@@ -122,13 +131,24 @@ class Fill_tables:
                 self.user_interaction_service.follow_user(id_user_test, id_followed)
         else:
             for id_user in id_user_created:
-                for k in range(2): # we add max 2 link per user. Less if 2 time the same link
+                for k in range(2): # We add a maximum of 2 links per user. If there are less, we use the same link twice
                     id_followed = random.choice(id_user_created)
                     while id_followed == id_user:
                         id_followed = random.choice(id_user_created)
                     self.user_interaction_service.follow_user(id_user, id_followed)
 
     def fill_table_favorite(self, id_user_created, id_movie_created, id_user_test : Optional[int] = None):
+        """Fills a table with favorite movies for a user
+
+        Parameters
+        ----------
+        id_user_created : int
+            The ID of a user
+        id_movie_created : int
+            The ID of the movie that is a favorite of the user.
+        id_user_test : int, optional
+            The ID of a user 
+        """ 
         if id_user_test :
             for k in range(10): 
                 id_favorite_movie = random.choice(id_movie_created)
@@ -140,6 +160,17 @@ class Fill_tables:
                     self.user_interaction_service.add_favorite(id_user, id_favorite_movie)
 
     def fill_table_rating(self, id_user_created, id_movie_created, id_user_test : Optional[int] = None):
+        """Fills a table with ratings
+
+        Parameters
+        ----------
+        id_user_created : int
+            The ID of a user
+        id_movie_created : int
+            The ID of the movie that is rated.
+        id_user_test : int, optional
+            The ID of a user 
+        """ 
         if id_user_test:
             for k in range(10):
                 rating = random.randint(0,10)
@@ -154,6 +185,17 @@ class Fill_tables:
 
 
     def fill_table_comment(self, id_user_created, id_movie_created, id_user_test : Optional[int] = None):
+        """Fills a table with comments
+
+        Parameters
+        ----------
+        id_user_created : int
+            The ID of a user
+        id_movie_created : int
+            The ID of a movie.
+        id_user_test : int, optional
+            The ID of a user 
+        """ 
         movie_comments = [
             "The storyline was really engaging, I couldn't take my eyes off the screen!",
             "The acting was top-notch, especially the lead actor.",
@@ -179,7 +221,8 @@ class Fill_tables:
                     self.user_movie_service.add_or_update_comment(id_user, id_movie, comment)
 
     def fill_the_database(self):
-        Faker.seed(1234) # to fix seed. Same fake user each time to simplify testing
+        """Fills the database"""
+        Faker.seed(1234) # To fix the seed. Same fake user each time to simplify testing
         random.seed(1234)
         id_user_created = self.fill_table_user(100)
         id_movie_created = self.fill_table_movie(100, 100)
@@ -188,7 +231,7 @@ class Fill_tables:
         self.fill_table_rating(id_user_created, id_movie_created)
         self.fill_table_comment(id_user_created, id_movie_created)
         self.fill_table_movie_maker()
-        ### Ajout de notre utilisateur de test :
+        # Adds our new user to test :
         connected_user = self.user_service.sign_up(
                 first_name="user_nocode",
                 last_name="user_nocode",
@@ -208,7 +251,7 @@ class Fill_tables:
         print("Database successfully filled.")
 
 
-##### To fill schema (take less than 5 min) ########
+##### To fill schema (takes less than 5 min) ########
 
 # db_connection = DBConnector()
 # creation_object = TablesCreation(db_connection)

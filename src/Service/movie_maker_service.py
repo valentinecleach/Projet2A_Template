@@ -8,20 +8,19 @@ from src.TMDB.movie_maker_tmdb import MovieMakerTMDB
 
 
 class MovieMakerService:
-    """ 
+    """ A MovieMaker object in our service layer.
 
-    Parameters
+    Attributes
     ----------
-    db_connection: DBConnector
+    db_connection : DBConnector
         A connector to a database
-    movie_maker_dao: MovieMakerDao
+    movie_maker_dao : MovieMakerDao
         A DAO object used for operations related to movies makers.
-    movie_maker_tmdb: MovieMakerTMDB
-        
+    movie_maker_tmdb : MovieMakerTMDB
+        A movie maker   
     """
     def __init__(self, db_connection: DBConnector):
-        """ constructor
-        """
+        """Constructor"""
         self.db_connection = db_connection
         self.movie_maker_dao = MovieMakerDAO(db_connection)
         self.movie_maker_tmdb = MovieMakerTMDB(db_connection)
@@ -43,8 +42,8 @@ class MovieMakerService:
         # Firstly, we look for the MovieMaker in the database
         movie_makers = self.movie_maker_dao.get_by_name(name)
         if movie_makers:
-            return movie_makers # a list of 1 or many movie maker
-        # If not in our database, we look for the MovieMaker in the TMDB api.
+            return movie_makers # a list of one or more movie makers
+        # If not in our database, we look for the MovieMaker in the TMDB API.
         else:
             movie_maker_from_tmdb = self.movie_maker_tmdb.get_movie_maker_by_name(name)
             if movie_maker_from_tmdb:
@@ -52,7 +51,7 @@ class MovieMakerService:
                     self.movie_maker_dao.insert(data)
                 return movie_maker_from_tmdb
 
-            # Si rien n'est trouvé
+            # If nothing is found
             print(f"No MovieMaker found with name: {name}.")
             return None
 

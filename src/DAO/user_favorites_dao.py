@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Dict, List
+from typing import List
 
 from src.DAO.db_connection import DBConnector
 from src.DAO.movie_dao import MovieDAO
