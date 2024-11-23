@@ -24,7 +24,7 @@ class Movie(BaseModel):
         If the movie is an adult movie, adult = True. Here we wil only have
         movies that aren't adult movies.
     belongs_to_collection : MovieCollection
-        If there is a series
+        If the film is in a saga.
     budget : int
         The budget in $.
     genre : list[Genre]
@@ -38,20 +38,17 @@ class Movie(BaseModel):
         The original title
     overview : str
     popularity : float
-        ?? (for the recommendation algorithm)
+        A number that represents the popularity of the movie
     release_date : str
         The release date. It's format is YYYY-MM-DD.
     revenue : int
         The revenue in $
     runtime : int
-        The runtime (mins?)
+        The runtime
     vote_average : float
         The current average float
     vote_count : int
         The amount of votes that the film has
-    Examples
-    --------
-
     """
 
     id_movie: int = Field(

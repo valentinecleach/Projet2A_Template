@@ -12,7 +12,8 @@ from src.Model.movie import Movie
 
 class MovieMaker(BaseModel):   
     """
-    Initializes a new MovieMaker object with the provided information.
+    Initializes a new MovieMaker object with the provided information. 
+    A MovieMaker is a person in the film industry such as actors, directors etc.
 
     Parameters:
     -----------

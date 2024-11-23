@@ -7,15 +7,32 @@ from src.Model.connected_user import ConnectedUser
 
 
 class UserFollowDao(metaclass=Singleton):
+    """UserFollowDao is DAO for managing a who users follow in the database.
+
+    Attributes
+    ----------
+    db_connection : DBConnector
+        A connector to the database.
+    """
+    
     def __init__(self, db_connection: DBConnector):
+        """Constructor"""
         if not isinstance(db_connection, DBConnector):
             raise ValueError("db_connection must be an instance of DBConnector")
         self.db_connection = db_connection
 
     def insert(self, id_user: int, id_user_followed: int):
-        """Insert a follow relationship between users if it doesn't already exist."""
+        """Inserts a follow relationship between users if it doesn't already exist.
+        
+        Parameters
+        ----------
+        id_user : int
+            The ID of a user who wants a follow relationship
+        id_user_followed : int
+            The ID of a user who wants a follow relationship
+        """
         try:
-            # Vérification de l'existence de la relation
+            # Verifying the existence of the relationship
             query = """
                 SELECT COUNT(*) as count FROM follower
                 WHERE id_user= %s AND id_user_followed = %s;
@@ -44,8 +61,20 @@ class UserFollowDao(metaclass=Singleton):
 
     def get_all_user_followed(
         self, id_user: int
-    ) -> list:
-        """Get all users followed by a specific user with pagination."""
+    ) -> list|None:
+        """Gets all users followed by a specific user with pagination.
+
+        Parameters
+        ----------
+        id_user : int
+            The ID of the user who we want to know their list of users they follow.
+
+        Returns
+        -------
+        list[int] | none
+            The list of IDs of users followed. 
+            If none can bne found, the method returns None
+        """
         try:
             query = """
                 SELECT * FROM follower
@@ -57,7 +86,6 @@ class UserFollowDao(metaclass=Singleton):
             if results:
                 follow_list = [result['id_user_followed'] for result in results]
                 return follow_list
-                #return [user_dao.get_user_by_id(res["id_user_followed"]) for res in results]  #pas une bonneidée car appel en chaîne à user_dao car on cherche les favorit de l'user favorit de l'user favorit ...
             else:
                 return None
         except Exception as e:
@@ -65,7 +93,15 @@ class UserFollowDao(metaclass=Singleton):
             return None
 
     def delete(self, id_user: int, id_user_followed: int):
-        """Delete a follow relationship between two users."""
+        """Deletes a follow relationship between two users.
+        
+        Parameters
+        ----------
+        id_user : int
+            The ID of a user  
+        id_user_followed : int
+            The ID of a user 
+        """
         try:
             query = """
             DELETE FROM follower WHERE id_user = %s AND id_user_followed = %s
@@ -76,7 +112,20 @@ class UserFollowDao(metaclass=Singleton):
             print(f"Error while deleting from follower: {e}")
 
     def is_following(self, id_user: int, id_user_followed: int) -> bool:
-        """Check if a follow relationship exists between two users."""
+        """Checks if a follow relationship exists between two users.
+        
+        Parameters
+        ----------
+        id_user : int
+            The ID of a user.
+        id_user_followed : int
+            The ID of a user.
+
+        Returns
+        -------
+        bool
+            True if the users are following each other, false if else.
+        """
         try:
             query = """
                 SELECT COUNT(*) as count FROM follower
@@ -89,11 +138,3 @@ class UserFollowDao(metaclass=Singleton):
         except Exception as e:
             print(f"Error while checking follow relationship: {e}")
             return False
-
-
-# db_connection = DBConnector()
-# my_object = UserFollowDao(db_connection)
-# #print(my_object.insert(1,2))  #works
-# print(my_object.get_all_user_followed(250))
-# #print(my_object.delete(1,2)) #works
-# #print(my_object.is_following(1,2)) #works

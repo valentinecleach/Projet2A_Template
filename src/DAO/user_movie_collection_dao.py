@@ -9,26 +9,40 @@ from src.DAO.tables_creation import TablesCreation
 
 
 class UserMovieCollectionDao(metaclass=Singleton):
+    """UserMovieCollectionDao is DAO for managing collection of movies made by users in the database.
+    They can represent a collection of favorite movies.
+
+    Attributes
+    ----------
+    db_connection : DBConnector
+        A connector to the database.
+    tables_creation :
+
+    """
     def __init__(self, db_connection: DBConnector):
-        # create a DB connection object
+        """Constructor"""
         self.db_connection = db_connection
-        # Créer des tables si elles n'existent pas
+        # Creates tables if they don't already exist
         self.tables_creation = TablesCreation(db_connection)
 
     def insert(self, id_user: int, id_movie: int):
+        """
+        Adds a film to the users collection of movies.
+
+        Parameters
+        -----------
+        id_user : int
+            The ID of a user.
+        id_movie : int
+            The ID of a movie to add to the collection.
+        """
         date = datetime.now()
         try:
-            """
-            Ajoute un film dans la base de données.
-
-            Paramètres:
-            -----------
-            """
-            # Connexion
+            # Connection
             with self.db_connection.connection as connection:
-                # Création d'un curseur pour la requête
+                # Creation of a cursor for the request
                 with connection.cursor() as cursor:
-                    # SQL resquest
+                    # SQL request
                     cursor.execute(
                         "SELECT id_movie FROM user_movie_collection WHERE id_user = %s",
                         (id_user,),
@@ -54,7 +68,24 @@ class UserMovieCollectionDao(metaclass=Singleton):
 
     def get_all_collection(
         self, id_user: int, limit: int = 10, offset: int = 0
-    ) -> list:
+    ) -> list | None:
+        """Gets all movies from a users movie collection within a certain limit.
+
+        Parameters
+        ----------
+        id_user : int
+            The ID of a user.
+        limit : int 
+            The maximum number of movies to get. By default this is 10
+        offset : int
+            The amount of movies to skip before starting to return movies.
+            By default, the offset is 0.
+
+        Returns
+        -------
+        list[Movie] | None
+            The list of movies. Returns None if there was an error fetching the movies.
+        """
         try:
             query = f"SELECT * FROM user_movie_collection WHERE id_user = %s LIMIT {max(0,limit)} OFFSET {max(offset,0)}"
             with self.db_connection.connection as connection:
@@ -67,6 +98,15 @@ class UserMovieCollectionDao(metaclass=Singleton):
         return results
 
     def delete(self, id_user: int, id_movie: int):
+        """Deletes a movie from a users movie collection.
+
+        Parameters
+        ----------
+        id_user : int
+            The ID of a user.
+        id_movie : int
+            The ID of a movie to delete
+        """
         try:
             query = (
                 "DELETE FROM user_movie_collection WHERE id_user = %s and id_movie = %s"

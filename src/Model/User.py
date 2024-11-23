@@ -6,12 +6,12 @@ class User(BaseModel):
 
     Attributes
     ----------
-    ip_adress: str
-        representing an IP address if defined
+    ip_adress : str
+        Represents an IP address if defined
     """
 
     ip_address: str | None = None
 
     class Config:
-        # Options de configuration supplémentaires si nécessaire
+        # Additional configuration options if needed
         pass

@@ -3,22 +3,21 @@ from src.Model.movie import Movie
 
 
 class Comment:
-    """Comment show the present comments
+    """Comment is an object that describes a users opinion on a movie.
 
     Attributes
     ----------
-    User : ConnectedUser
-        The user who puts the comment
+    user : ConnectedUser
+        The user who wrote the comment
     movie : Movie
         The film with the commentary
     comment : str
-        the comment that was posted
+        The comment that was posted
     date : str
-        the date the comment was posted
+        The date the comment was posted
     """
 
     def __init__(
-    
         self,
         user: ConnectedUser,
         movie: Movie,
