@@ -5,13 +5,29 @@ from src.DAO.singleton import Singleton
 from src.DAO.movie_dao import MovieDAO
 
 class UserFavoriteDao(metaclass=Singleton):
+    """UserFavoriteDao is DAO for managing a users favorite movies in the database.
+
+    Attributes
+    ----------
+    db_connection : DBConnector
+        A connector to the database.
+    """
     def __init__(self, db_connection: DBConnector):
+        """Constructor"""
         self.db_connection = db_connection
 
     def insert(self, id_user: int, id_movie: int):
-        """Insert a favorite relationship between a user and a movie into user_movie_collection if it doesn't already exist."""
+        """Inserts a relationship between a user and a favorite movie into user_movie_collection if it doesn't already exist.
+        
+        Parameters
+        ----------
+        id_user: int 
+            The ID of the user.
+        id_movie : int
+            The ID of the movie.
+        """
         try:
-            # Vérification de l'existence de la relation
+            # Verifying the existence of a link
             query = """
                 SELECT COUNT(*) as count FROM user_movie_collection
                 WHERE id_user = %s AND id_movie = %s;
@@ -39,8 +55,19 @@ class UserFavoriteDao(metaclass=Singleton):
         except Exception as e:
             print("Insertion error:", str(e))
 
-    def get_favorites(self, id_user: int):
-        """Récupère la liste des films favoris d'un utilisateur."""
+    def get_favorites(self, id_user: int) -> List[int]|None:
+        """Retrieves the list of a users favorite films
+        
+        Parameters
+        ----------
+        id_user : the ID of a user.
+
+        Returns
+        -------
+        list[int]
+            The list of the ID of movies that are the users favorites. 
+            If no movies can be found, the method returns None.
+        """
         try:
             select_query = """
                 SELECT id_movie, date FROM user_movie_collection
@@ -60,7 +87,15 @@ class UserFavoriteDao(metaclass=Singleton):
             return []
 
     def remove(self, id_user: int, id_movie: int):
-        """Supprime un film des favoris d'un utilisateur."""
+        """Removes a movie from the favorites of a user.
+        
+        Parameters
+        ----------
+        id_user : int
+            The ID of a user.
+        id_movie : int
+            The ID of a movie.
+        """
         try:
             delete_query = """
                 DELETE FROM user_movie_collection
@@ -70,9 +105,3 @@ class UserFavoriteDao(metaclass=Singleton):
             print("Deletion successful: Movie removed from favorites.")
         except Exception as e:
             print("Deletion error:", str(e))
-
-
-
-# db_connection = DBConnector()
-# service = UserFavoriteDao(db_connection)
-# print(service.get_favorites(217))
