@@ -7,7 +7,7 @@ from src.Model.movie import Movie
 class Rating:
     """Rating
 
-    The rating of a movie. A user can rate a movie from one to ten.
+    The rating of a movie. A user can rate a movie from zero to ten.
 
     Attributes
     ----------
@@ -18,7 +18,7 @@ class Rating:
     date : date
         The date of when the ratin,g was published
     rate : int
-        The worth of a movie on a scale from one to ten. 
+        The worth of a movie on a scale from zero to ten. 
     """
 
     def __init__(self, user: ConnectedUser, movie: Movie, date: date, rate: int):

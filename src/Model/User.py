@@ -2,11 +2,11 @@ from pydantic import BaseModel
 
 
 class User(BaseModel):
-    """user in the system, with an optional ip_address
+    """A user in the system, with an optional ip_address
 
     Attributes
     ----------
-    ip_adress : str
+    ip_adress : str, optional
         Represents an IP address if defined
     """
 

@@ -13,7 +13,25 @@ from src.Service.movie_service import MovieService
 
 
 class UserMovieService:
+    """An object that allows interaction between users and movies.
+
+    Attributes
+    ----------
+    db_connection : DBConnector
+        A connector to a database
+    user_dao : UserDao
+        An object to interact with the database user
+    movie_dao : MovieDAO
+        An object to interact with movies in the database
+    movie_service : MovieService
+        An object to interact with movies
+    rating_dao : RatingDao
+        An object to interact with ratings in the database
+    comment_dao : CommentDao
+        An object to interact with comments in the database
+    """
     def __init__(self, db_connection: DBConnector):
+        """Constructor"""
         self.db_connection = db_connection
         self.user_dao = UserDao(db_connection)
         self.movie_dao = MovieDAO(db_connection)
@@ -24,6 +42,19 @@ class UserMovieService:
     ### For Rating ############
 
     def get_overall_rating(self, id_movie: int):
+        """
+        Gets the average rating of the movie.
+
+        Parameters
+        ----------
+        id_movie : int
+            The ID of the movie whose rating we wish to know.
+
+        Returns
+        -------
+        float | None
+            The mean of the rating of the movie. If the rating cannot be calculated, ithe method returns None.
+        """
         try:
             query = "SELECT AVG(rating) as mean  FROM  rating WHERE id_movie = %s"
             res = self.db_connection.sql_query(query, (id_movie,), return_type="one")
@@ -36,6 +67,20 @@ class UserMovieService:
             return None
 
     def get_ratings_user(self, id_user: int) -> List[Rating]:
+        """
+        Gets the ratings of a user.
+
+        Parameters
+        ----------
+        id_user : int
+            The ID of a user.
+        
+        Returns
+        -------
+        List[Rating]
+            A list of all the ratings a user has published. 
+            If the user has published no ratings, the method will return None.
+        """
         try:
             connected_user = self.user_dao.get_user_by_id(id_user)
             query = "SELECT id_movie, date, rating FROM rating where id_user = %s"
@@ -65,8 +110,21 @@ class UserMovieService:
         self, id_user: int, id_movie: int | None = None
     ):
         """
-        if id_movie is specified, the function returns the average rating given by followers for this film.
+        If id_movie is specified, the function returns the average rating given by followers for this film.
         Otherwise, the function returns all ratings given by followers.
+        
+        Parameters
+        ----------
+        id_user : int
+            The ID of the user whose followers we want to observe.
+        id_movie : int, optional
+            The ID of the movie that we want the average rating if this is what we want.
+
+        Returns
+        -------
+        list | None
+            Either a list of the average rating and the ratings or just a list of ratings depending on the parameters chosen
+            If no ratings are found, the method wil return None.
         """
         connected_user = self.user_dao.get_user_by_id(id_user)
         follow_list = connected_user.follow_list
@@ -112,7 +170,12 @@ class UserMovieService:
 
     def delete_user_and_update_ratings(self, id_user: int):
         """
-        Allow to delete a user and update all the ratings of the movies he rated.
+        Allows to delete a user and update all the ratings of the movies he rated.
+        
+        Parameters
+        ----------
+        id_user : int
+            The ID of the user whose ratings we want to modifie.
         """
         try:
             ratings = self.get_ratings_user(id_user)
@@ -123,6 +186,14 @@ class UserMovieService:
             print(f"Error while deleting user {id_user}: {e}")
 
     def delete_a_user_rating(self, rating: Rating):
+        """
+        Allows to delete a rating.
+        
+        Parameters
+        ----------
+        rating : Rating
+            The rating to delete
+        """
         try:
             movie = rating.movie
             self.rating_dao.delete(rating)
@@ -133,6 +204,14 @@ class UserMovieService:
             )
 
     def count_rating(self, id_movie: int):
+        """
+        Allows to count the ratings of a movie.
+        
+        Parameters
+        ----------
+        id_movie : int
+            The ID of a movie.
+        """
         try:
             query = "SELECT count(*) as number  FROM  rating WHERE id_movie = %s"
             res = self.db_connection.sql_query(query, (id_movie,), return_type="one")
@@ -145,13 +224,21 @@ class UserMovieService:
             return None
 
     def updating_rating_of_movie(self, movie: Movie):
+        """
+        Allows to update the ratings of a movie.
+        
+        Parameters
+        ----------
+        movie : Movie
+            A movie.
+        """
         movie.vote_average = self.get_overall_rating(movie.id_movie)
         movie.vote_count = self.count_rating(movie.id_movie)
         self.movie_service.movie_dao.update(movie)
 
     def rate_film_or_update(self, id_user: int, id_movie: int, rate: int):
         """
-        Rate a specific movie by providing a score between 0 and 10.
+        Rates a specific movie by providing a score between 0 and 10.
 
         Parameters
         ----------
@@ -159,11 +246,8 @@ class UserMovieService:
             The ID of the user who is rating.
         id_movie : int
             The ID of the movie to rate.
-        rating : int
-            The score of the movie 0-10.
-
-        Returns
-        -------
+        rate : int
+            The score of the movie on a scale from 0 to 10.
         """
         if rate > 10 or rate < 0:
             raise ValueError("the rating must be an integer between 0-10")
@@ -200,7 +284,7 @@ class UserMovieService:
 
     def add_or_update_comment(self, id_user: int, id_movie: int, comment: str):
         """
-        provide a comment to a specific movie.
+        Provides a comment to a specific movie.
 
         Parameters
         ----------
@@ -209,10 +293,7 @@ class UserMovieService:
         id_movie : int
             The ID of the movie to rate.
         comment : str
-
-        Returns
-            None
-        -------
+            The new comment to add.
         """
         try:
             movie = self.movie_service.get_movie_by_id(id_movie)
@@ -242,7 +323,21 @@ class UserMovieService:
         except Exception as error:
             raise ValueError(f"An error occurred while commenting the movie: {error}")
 
-    def get_comments_user(self, id_user: int) -> List[Rating]:
+    def get_comments_user(self, id_user: int) -> List[Comment]:
+        """
+        Gets the comments of a user.
+
+        Parameters
+        ----------
+        id_user : int
+            The ID of a user.
+        
+        Returns
+        -------
+        List[Comment]
+            A list of all the comments a user has published. 
+            If the user has published no comments, the method will return None.
+        """
         try:
             connected_user = self.user_dao.get_user_by_id(id_user)
             query = "SELECT id_movie, date, comment FROM comment where id_user = %s"
@@ -269,6 +364,14 @@ class UserMovieService:
             print(f"Error while finding user {id_user} comments: {e}")
 
     def delete_a_user_comment(self, comment: Comment):
+        """
+        Allows to delete a comment.
+        
+        Parameters
+        ----------
+        comment : Comment
+            The comment to delete
+        """
         try:
             movie = comment.movie
             self.comment_dao.delete(comment)

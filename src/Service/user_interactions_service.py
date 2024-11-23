@@ -98,7 +98,7 @@ class UserInteractionService:
         movie_id : int
             The ID of the movie to be added to favorites.
         """
-        # Ajouter le film en favori si ce n'est pas déjà fait
+        # Adds movies to the users favorites if it isn't already done
         try:
             self.user_favorites_dao.insert(id_user, id_movie)
         except Exception as error:
@@ -115,13 +115,13 @@ class UserInteractionService:
         movie_id : int
             The ID of the movie to remove from favorites.
         """
-        # Vérification si le film est dans les favoris
+        # Verifies if the film is already in their favorites
         favorites = self.user_favorites_dao.get_favorites(user_id)
 
         if id_movie not in favorites:
             raise ValueError("This movie is not in the user's favorites.")
 
-        # Suppression du favori
+        # Deletes the favorite
         try:
             self.user_favorites_dao.remove(user_id, id_movie)
         except Exception as error:
@@ -131,21 +131,21 @@ class UserInteractionService:
 
     def get_user_favorites(self, user_id: int) -> list:
         """
-        Récupère la liste des films favoris d'un utilisateur.
+        Retrieves a user's list of favorite movies. 
 
         Parameters
         ----------
         user_id : int
-            L'ID de l'utilisateur dont on veut récupérer les favoris.
+            The ID of the user.
 
         Returns
         -------
         list
-            Une liste des films favoris de l'utilisateur, ou une liste vide si aucune donnée n'est trouvée.
+            A list of the user's favorite , or an empty list if no movies are found.
         """
         try:
             favorites = self.user_favorites_dao.get_favorites(user_id)
-            return favorites if favorites is not None else []  # Protection contre None
+            return favorites if favorites is not None else []  # Protection against None
         except Exception as error:
             raise ValueError(f"An error occurred while retrieving favorites: {error}")
 

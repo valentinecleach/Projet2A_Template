@@ -15,6 +15,15 @@ from src.Service.password_service import (
 
 
 class UserService:
+    """ A User object in our service layer
+
+    Attributes
+    ----------
+    db_connection : DBConnector
+        A connector to a database
+    user_dao : UserDao
+        A DAO object used for operations related to users.
+    """
     def __init__(self, db_connection: DBConnector):
         self.db_connection = db_connection
         self.user_dao = UserDao(db_connection)
