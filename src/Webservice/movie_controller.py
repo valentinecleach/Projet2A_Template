@@ -51,7 +51,7 @@ def get_movie_by_id(tmdb_id: int) -> Movie:
         raise HTTPException(status_code=400, detail=f"Invalid request: {str(e)}")
 
 
-@movie_router.get("/movies", response_model=List[Movie], status_code=status.HTTP_200_OK)
+@movie_router.get("/view", response_model=List[Movie], status_code=status.HTTP_200_OK)
 def view_movies(
     genre: str = None,
     original_language: str = None,

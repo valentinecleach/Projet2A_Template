@@ -15,7 +15,7 @@ user_favorite_router = APIRouter(
 )
 
 
-@user_interaction_router.post("/{username}", status_code=status.HTTP_201_CREATED)
+@user_interaction_router.get("/{username}", status_code=status.HTTP_201_CREATED)
 def find_a_user(username: str) -> list:
     """
     Find a user registerred on the API.
@@ -41,7 +41,7 @@ def find_a_user(username: str) -> list:
 
 
 @user_interaction_router.post(
-    "/{user_id}/follow",
+    "/follow",
     dependencies=[Depends(JWTBearer())],
     status_code=status.HTTP_201_CREATED,
 )
@@ -71,7 +71,7 @@ def follow_user(
 
 
 @user_interaction_router.delete(
-    "/{user_id}/follow",
+    "/unfollow",
     dependencies=[Depends(JWTBearer())],
     status_code=status.HTTP_201_CREATED,
 )
@@ -99,9 +99,9 @@ def unfollow_user(
 
 
 @user_interaction_router.get(
-    "/{user_id}/follow_list",
+    "/scout_list/{user_id}",
     dependencies=[Depends(JWTBearer())],
-    status_code=status.HTTP_201_CREATED,
+    status_code=status.HTTP_200_OK,
 )
 def view_my_scout_list(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(JWTBearer())],
