@@ -59,9 +59,9 @@ def follow_user(
 
     """
     current_user = get_user_from_credentials(credentials)
-
-    if user_to_follow_id in current_user.follow_list:
-        return f"User {current_user.username} is already following user {user_to_follow_id}"
+    if current_user.follow_list:
+        if user_to_follow_id in current_user.follow_list:
+            return f"User {current_user.username} is already following user {user_to_follow_id}"
 
     try:
         user_interaction_service.follow_user(current_user.id_user, user_to_follow_id)
@@ -99,7 +99,7 @@ def unfollow_user(
 
 
 @user_interaction_router.get(
-    "/scout_list/{user_id}",
+    "/{user_id}/scout_list",
     dependencies=[Depends(JWTBearer())],
     status_code=status.HTTP_200_OK,
 )
@@ -115,19 +115,20 @@ def view_my_scout_list(
     """
     current_user = get_user_from_credentials(credentials)
     try:
-        users = [
-            user_dao.get_user_by_id(id).to_dict() for id in current_user.follow_list
-        ]
-        if users:
-            return users
-        else:
-            return f"User {current_user.username} doesn't follow any user yet"
+        if current_user.follow_list:
+            users = [
+                user_dao.get_user_by_id(id).to_dict() for id in current_user.follow_list
+            ]
+            if users:
+                return users
+            else:
+                return f"User {current_user.username} doesn't follow any user yet"
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
 
 
 @user_favorite_router.post(
-    "/{user_id}/favorite",
+    "/{user_id}/add_favorite",
     dependencies=[Depends(JWTBearer())],
     status_code=status.HTTP_201_CREATED,
 )
@@ -145,8 +146,9 @@ def add_favorite(
 
     """
     current_user = get_user_from_credentials(credentials)
-    if id_movie in current_user.own_film_collection:
-        return f"the movie {id_movie} is already in your Favorites"
+    if current_user.own_film_collection:
+        if id_movie in current_user.own_film_collection:
+            return f"the movie {id_movie} is already in your Favorites"
     try:
         user_interaction_service.add_favorite(current_user.id_user, id_movie)
         return f"User {current_user.username} is now having film {id_movie} in favorite"
@@ -172,8 +174,9 @@ def view_my_favorite_movies(
     current_user = get_user_from_credentials(credentials)
     try:
         movies = []
-        for id in current_user.own_film_collection:
-            movies.append(f"{movie_dao.get_by_id(id)}")
+        if current_user.own_film_collection :
+            for id in current_user.own_film_collection:
+                movies.append(f"{movie_dao.get_by_id(id)}")
         if movies != []:
             return movies
         else:
@@ -183,7 +186,7 @@ def view_my_favorite_movies(
 
 
 @user_favorite_router.delete(
-    "/{user_id}/favorite",
+    "/{user_id}/delete_favorite",
     dependencies=[Depends(JWTBearer())],
     status_code=status.HTTP_201_CREATED,
 )

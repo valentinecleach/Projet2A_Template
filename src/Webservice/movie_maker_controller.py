@@ -5,7 +5,7 @@ from typing import List
 
 movie_maker_router = APIRouter(prefix="/movie_makers", tags=["Movie Makers"])
 
-@movie_maker_router.get("/name/{movie_maker_name}", response_model= List[MovieMaker], status_code=status.HTTP_200_OK)
+@movie_maker_router.get("/name", response_model= List[MovieMaker], status_code=status.HTTP_200_OK)
 def get_movie_maker_by_name(name: str) -> List[MovieMaker]:
     """ 
     To get a list of MovieMaker by name

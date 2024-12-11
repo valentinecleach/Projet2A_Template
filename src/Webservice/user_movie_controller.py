@@ -117,8 +117,6 @@ def get_user_follow_average_vote_and_ratings_for_a_movie(
     ----------
     id_movie : int \n
         The optional id of the movie
-    id_user : int \n
-        The optional id of a user
     """
     current_user = get_user_from_credentials(credentials)
     if id_movie:
@@ -292,26 +290,31 @@ def get_user_follow_comment(
     """
     current_user = get_user_from_credentials(credentials)
     try:
-        if id_movie:
-            comments = [
-                user_movie_service.comment_dao.get_comment(
-                    id_user=id_user, id_movie=id_movie
+        if current_user.follow_list:
+            if id_movie:
+                comments = [
+                    user_movie_service.comment_dao.get_comment(
+                        id_user=id_user, id_movie=id_movie
+                    )
+                    for id_user in current_user.follow_list
+                ]
+            else:
+                listcomments = [
+                    user_movie_service.comment_dao.get_all_user_comment(id_user=id_user)
+                    for id_user in current_user.follow_list
+                ]
+                comments = list(itertools.chain(*listcomments))
+            comments = [x for x in comments if x != None]
+            if comments:
+                return [f"{c}" for c in comments]
+            else:
+                return (
+                    "No comments send by your followed users for this movie for the moment"
                 )
-                for id_user in current_user.follow_list
-            ]
-        else:
-            listcomments = [
-                user_movie_service.comment_dao.get_all_user_comment(id_user=id_user)
-                for id_user in current_user.follow_list
-            ]
-            comments = list(itertools.chain(*listcomments))
-        comments = [x for x in comments if x != None]
-        if comments:
-            return [f"{c}" for c in comments]
-        else:
+        else :
             return (
-                "No comments send by your followed users for this movie for the moment"
-            )
+                    "You don't have any follower."
+                )
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
 
